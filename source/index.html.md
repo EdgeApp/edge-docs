@@ -1,15 +1,13 @@
 ---
-title: API Reference
+title: AirbitzCore API/SDK Reference
 
 language_tabs:
-  - shell
-  - ruby
-  - python
-  - javascript
+  - javascript: Javascript
+  - objective_c: Objective C
+  - java: Java/Android
 
 toc_footers:
   - <a href='#'>Sign Up for a Developer Key</a>
-  - <a href='https://github.com/tripit/slate'>Documentation Powered by Slate</a>
 
 includes:
   - errors
@@ -19,171 +17,76 @@ search: true
 
 # Introduction
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
+AirbitzCore (ABC) is a Javascript/ObjC/Java client-side blockchain and Edge Security SDK providing auto-encrypted and auto-backed up accounts and wallets with zero-knowledge security and privacy. All blockchain/bitcoin private and public keys are fully encrypted by the users' credentials before being backed up on to peer to peer servers. 
 
-We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
+ABC allows developers to apply client-side data security, encrypted such that only the end-user can access the data. ABCDataStore object in the Airbitz ABCAccount object allows developers to store arbitrary Edge-Secured data on the user’s account which is automatically encrypted, automatically backed up, and automatically synchronized between the user’s authenticated devices.
 
-This example API documentation page was created with [Slate](https://github.com/tripit/slate). Feel free to edit it and use it as a base for your own API's documentation.
+To get started, you’ll first need an API key. Get one at our [developer portal.](https://developer.airbitz.co)
 
-# Authentication
+# API Reference
 
-> To authorize, use this code:
+## Install the SDK
 
-```ruby
-require 'kittn'
+See the following Github repos for your various development languages. Installation instructions are in the README.md files
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-```
 
-```python
-import kittn
+[Javascript](https://github.com/Airbitz/airbitz-core-js)
 
-api = kittn.authorize('meowmeowmeow')
-```
+[Objective-C](https://github.com/Airbitz/airbitz-core-objc)
 
-```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here"
-  -H "Authorization: meowmeowmeow"
-```
+[Java/Android](https://github.com/Airbitz/airbitz-core-java)
+
+For Javascript using React Native, see instructions for [Objective C](https://github.com/Airbitz/airbitz-core-objc)
+
+
+## Include and initialize the SDK
 
 ```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
+var abc = require ('./abc.js')
 ```
 
-> Make sure to replace `meowmeowmeow` with your API key.
-
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
-
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
-
-`Authorization: meowmeowmeow`
-
-<aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
-</aside>
-
-# Kittens
-
-## Get All Kittens
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
+```objective_c
+#import "AirbitzCore.h"
 ```
 
-```python
-import kittn
+Include the proper header files and/or libraries for your language.
 
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
-```
+<a name="ABCContext"></a>
+## ABCContext
 
-```shell
-curl "http://example.com/api/kittens"
-  -H "Authorization: meowmeowmeow"
-```
+Starting point of Airbitz Core SDK. Used for operations that do not require a logged in ABCAccount
+
+### makeABCContext
 
 ```javascript
-const kittn = require('kittn');
+var abcContext = null
 
-let api = kittn.authorize('meowmeowmeow');
-let kittens = api.kittens.get();
-```
-
-> The above command returns JSON structured like this:
-
-```json
-[
-  {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
-  },
-  {
-    "id": 2,
-    "name": "Max",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
+abc.ABCContext.makeABCContext('your-api-key-here', null, function (error, context) {
+  if (error) {
+  } else {
+    abcContext = context
   }
-]
+})
 ```
 
-This endpoint retrieves all kittens.
-
-### HTTP Request
-
-`GET http://example.com/api/kittens`
-
-### Query Parameters
-
-Parameter | Default | Description
---------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
-
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
-</aside>
-
-## Get a Specific Kitten
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
+```objective_c
+ABCContext abcContext = [ABCContext makeABCContext:abcAPIKey hbits:hbitsKey];
 ```
 
-```python
-import kittn
+Initialize and create an ABCContext object. Required for functionality of ABC SDK.
 
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
-```
+| Param | Type | Description |
+| --- | --- | --- |
+| apiKey | <code>string</code> | Get an API Key from https://developer.airbitz.co |
+| hbitsKey | <code>string</code> | (Optional) |
 
-```shell
-curl "http://example.com/api/kittens/2"
-  -H "Authorization: meowmeowmeow"
-```
+| Return Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#ABCError)</code> | Error object. Null if no error |
+| context | <code>[ABCContext](#ABCContext)</code> | Initialized context |
 
-```javascript
-const kittn = require('kittn');
 
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.get(2);
-```
+<a name="ABCAccount"></a>
+## ABCAccount
 
-> The above command returns JSON structured like this:
-
-```json
-{
-  "id": 2,
-  "name": "Max",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
-}
-```
-
-This endpoint retrieves a specific kitten.
-
-<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
-
-### HTTP Request
-
-`GET http://example.com/kittens/<ID>`
-
-### URL Parameters
-
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to retrieve
 

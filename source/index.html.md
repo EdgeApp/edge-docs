@@ -52,6 +52,7 @@ var abc = require ('./abc.js')
 Include the proper header files and/or libraries for your language.
 
 <a name="ABCContext"></a>
+
 ## ABCContext
 
 Starting point of Airbitz Core SDK. Used for operations that do not require a logged in ABCAccount
@@ -84,6 +85,48 @@ Initialize and create an ABCContext object. Required for functionality of ABC SD
 | --- | --- | --- |
 | error | <code>[ABCError](#ABCError)</code> | Error object. Null if no error |
 | context | <code>[ABCContext](#ABCContext)</code> | Initialized context |
+
+
+### createAccount
+
+```javascript
+```
+
+```objective_c
+
+ABCAccount *abcAccount;
+
+[abc createAccount:@"myUsername"
+          password:@"myNot5oGoodPassw0rd"
+               pin:@"2946"
+          delegate:self
+          callback:^(NSError *error, ABCAccount *account)
+{
+    if (error)
+    {
+        abcAccount = account;
+    }
+    else
+    {
+        // Yikes
+    }
+}];
+
+```
+
+Initialize and create an ABCContext object. Required for functionality of ABC SDK.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| username | <code>string</code> | Account username |
+| password | <code>string</code> | Account password |
+| pin | <code>string</code> | Account PIN for fast re-login |
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#ABCError)</code> | Error object. Null if no error |
+| account | <code>[ABCAccount](#ABCAccount)</code> | Initialized account |
+
 
 
 <a name="ABCAccount"></a>

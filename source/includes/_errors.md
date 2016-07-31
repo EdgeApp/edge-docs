@@ -1,4 +1,4 @@
-## ABCConditionCode - Error Codes
+## ABCConditionCode
 
 ```javascript
 abc = require('abc.js')
@@ -17,10 +17,11 @@ if (code === abcc.ABCConditionCodeOk)
   printf("Yay!");
 
 ```
+
 The AirbitzCore API uses the following error codes:
 
 
-Error Code | Code | Meaning
+Error Number | Code | Meaning
 ---------- | ------- | ------------
 0 | ABCConditionCodeOk | The function completed without an error
 1 | ABCConditionCodeError | An error occured

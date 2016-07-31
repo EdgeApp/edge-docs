@@ -80,6 +80,8 @@ Initialize and create an ABCContext object. Required for functionality of ABC SD
 | --- | --- | --- |
 | apiKey | <code>string</code> | Get an API Key from https://developer.airbitz.co |
 | hbitsKey | <code>string</code> | (Optional) |
+| callbacks | <code>[ABCCallbacks](#ABCCallbacks)</code> | (Javascript) Callback event routines |
+| delegate | <code>[ABCAccountDelegate](#ABCAccountDelegate)</code> | (ObjC) Callback event delegates |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
@@ -90,17 +92,27 @@ Initialize and create an ABCContext object. Required for functionality of ABC SD
 ### createAccount
 
 ```javascript
+abcContext.accountCreate("myUsername", 
+                         "myNot5oGoodPassw0rd", 
+                         "2946", 
+                         callbacks, 
+                         (error, account) => {
+    if (error) {
+      reject(funcname)
+    } else {
+      abcAccount = account;
+    }
 ```
 
 ```objective_c
 
 ABCAccount *abcAccount;
 
-[abc createAccount:@"myUsername"
-          password:@"myNot5oGoodPassw0rd"
-               pin:@"2946"
-          delegate:self
-          callback:^(NSError *error, ABCAccount *account)
+[abcContext createAccount:@"myUsername"
+                 password:@"myNot5oGoodPassw0rd"
+                      pin:@"2946"
+                 delegate:self
+                 callback:^(NSError *error, ABCAccount *account)
 {
     if (error)
     {
@@ -114,7 +126,7 @@ ABCAccount *abcAccount;
 
 ```
 
-Initialize and create an ABCContext object. Required for functionality of ABC SDK.
+Create and log into a new ABCAccount
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -132,4 +144,40 @@ Initialize and create an ABCContext object. Required for functionality of ABC SD
 <a name="ABCAccount"></a>
 ## ABCAccount
 
+### Class Properties
+| Property | Type | Description |
+| --- | --- | --- |
+| username | <code>string</code> | Account username |
 
+### logout
+
+```objective_c
+NSError *error = [abcAccount logout];
+```
+
+```javascript
+abcAccount.logout(function(error) {
+  if (error) {
+    // Oh no
+  } else {
+    // Hooray. I'm out
+  }
+})
+```
+
+Logout the currently logged in ABCAccount
+
+| Param | Type | Description |
+| --- | --- | --- |
+| account | <code>[ABCAccount](#ABCAccount)</code> | Account object|
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#ABCError)</code> | Error object. Null if no error |
+
+<a name="ABCWallet"></a>
+## ABCWallet
+
+<a name="ABCTransaction"></a>
+## ABCTransaction

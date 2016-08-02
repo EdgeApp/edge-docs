@@ -15,175 +15,6 @@ includes:
 search: true
 ---
 
-# Introduction
-
-AirbitzCore (ABC) is a Javascript/ObjC/Java client-side blockchain and Edge Security SDK providing auto-encrypted and auto-backed up accounts and wallets with zero-knowledge security and privacy. All blockchain/bitcoin private and public keys are fully encrypted by the users' credentials before being backed up on to peer to peer servers. 
-
-ABC allows developers to apply client-side data security, encrypted such that only the end-user can access the data. ABCDataStore object in the Airbitz ABCAccount object allows developers to store arbitrary Edge-Secured data on the user’s account which is automatically encrypted, automatically backed up, and automatically synchronized between the user’s authenticated devices.
-
-To get started, you’ll first need an API key. Get one at our [developer portal.](https://developer.airbitz.co)
-
-# API Reference
-
-## Install the SDK
-
-See the following Github repos for your various development languages. Installation instructions are in the README.md files
-
-
-[Javascript](https://github.com/Airbitz/airbitz-core-js)
-
-[Objective-C](https://github.com/Airbitz/airbitz-core-objc)
-
-[Java/Android](https://github.com/Airbitz/airbitz-core-java)
-
-For Javascript using React Native, see instructions for [Objective C](https://github.com/Airbitz/airbitz-core-objc)
-
-
-## Include and initialize the SDK
-
-```javascript
-var abc = require ('./abc.js')
-```
-
-```objective_c
-#import "AirbitzCore.h"
-```
-
-Include the proper header files and/or libraries for your language.
-
-<a name="ABCContext"></a>
-
-## ABCContext
-
-Starting point of Airbitz Core SDK. Used for operations that do not require a logged in ABCAccount
-
-### makeABCContext
-
-```javascript
-var abcContext = null
-
-abc.ABCContext.makeABCContext('your-api-key-here', null, function (error, context) {
-  if (error) {
-  } else {
-    abcContext = context
-  }
-})
-```
-
-```objective_c
-ABCContext abcContext = [ABCContext makeABCContext:abcAPIKey hbits:hbitsKey];
-```
-
-Initialize and create an ABCContext object. Required for functionality of ABC SDK.
-
-| Param | Type | Description |
-| --- | --- | --- |
-| apiKey | <code>string</code> | Get an API Key from https://developer.airbitz.co |
-| hbitsKey | <code>string</code> | (Optional) |
-| callbacks | <code>[ABCCallbacks](#ABCCallbacks)</code> | (Javascript) Callback event routines |
-| delegate | <code>[ABCAccountDelegate](#ABCAccountDelegate)</code> | (ObjC) Callback event delegates |
-
-| Return Param | Type | Description |
-| --- | --- | --- |
-| error | <code>[ABCError](#ABCError)</code> | Error object. Null if no error |
-| context | <code>[ABCContext](#ABCContext)</code> | Initialized context |
-
-
-### createAccount
-
-```javascript
-abcContext.accountCreate("myUsername", 
-                         "myNot5oGoodPassw0rd", 
-                         "2946", 
-                         callbacks, 
-                         (error, account) => {
-    if (error) {
-      reject(funcname)
-    } else {
-      abcAccount = account;
-    }
-```
-
-```objective_c
-
-ABCAccount *abcAccount;
-
-[abcContext createAccount:@"myUsername"
-                 password:@"myNot5oGoodPassw0rd"
-                      pin:@"2946"
-                 delegate:self
-                 callback:^(NSError *error, ABCAccount *account)
-{
-    if (error)
-    {
-        abcAccount = account;
-    }
-    else
-    {
-        // Yikes
-    }
-}];
-
-```
-
-Create and log into a new ABCAccount
-
-| Param | Type | Description |
-| --- | --- | --- |
-| username | <code>string</code> | Account username |
-| password | <code>string</code> | Account password |
-| pin | <code>string</code> | Account PIN for fast re-login |
-
-| Return Param | Type | Description |
-| --- | --- | --- |
-| error | <code>[ABCError](#ABCError)</code> | Error object. Null if no error |
-| account | <code>[ABCAccount](#ABCAccount)</code> | Initialized account |
-
-
-
-<a name="ABCAccount"></a>
-## ABCAccount
-
-### Class Properties
-| Property | Type | Description |
-| --- | --- | --- |
-| username | <code>string</code> | Account username |
-
-### logout
-
-```objective_c
-NSError *error = [abcAccount logout];
-```
-
-```javascript
-abcAccount.logout(function(error) {
-  if (error) {
-    // Oh no
-  } else {
-    // Hooray. I'm out
-  }
-})
-```
-
-Logout the currently logged in ABCAccount
-
-| Param | Type | Description |
-| --- | --- | --- |
-| account | <code>[ABCAccount](#ABCAccount)</code> | Account object|
-| callback | <code>Callback</code> | (Javascript) Callback function |
-
-| Return Param | Type | Description |
-| --- | --- | --- |
-| error | <code>[ABCError](#ABCError)</code> | Error object. Null if no error |
-
-<a name="ABCWallet"></a>
-## ABCWallet
-
-<a name="ABCTransaction"></a>
-## ABCTransaction
-
-
-
 
 # Airbitz Plugin API
 
@@ -227,7 +58,7 @@ First off, lets make sure you have the dependencies installed.
 
 To create a new plugin, you can copy the blank plugin and begin coding.
 
-`cp -a blank myplugin`
+`cp -a blank yourpluginname`
 
 ### Plugin Files
 
@@ -239,11 +70,11 @@ To create a new plugin, you can copy the blank plugin and begin coding.
 ```
 
 ```javascript
-plugins/myplugin/index.html
-plugins/myplugin/css/style.css
-plugins/myplugin/js/script.js
-plugins/myplugin/vendors/jquery-2.1.3.min.js
-plugins/myplugin/vendors/qrcode.min.js
+plugins/yourpluginname/index.html
+plugins/yourpluginname/css/style.css
+plugins/yourpluginname/js/script.js
+plugins/yourpluginname/vendors/jquery-2.1.3.min.js
+plugins/yourpluginname/vendors/qrcode.min.js
 ```
 
 And here is a list of the files in the new plugin.
@@ -336,12 +167,12 @@ $(function() {
     height: 128,
   });
   // If the user changes the wallet, we want to know about it
-  Airbitz.core.setWalletChangeListener(function(wallet) {
+  Airbitz.core.walletSelectedChangeListener(function(wallet) {
     Airbitz.ui.showAlert("Wallet Changed", "Wallet Changed to " + wallet.name + ".");
     updateUi(wallet);
   });
   // After loading, lets fetch the currently selected wallet
-  Airbitz.core.selectedWallet({
+  Airbitz.core.getSelectedWallet({
       success: updateUi,
       error: function() {
           Airbitz.ui.showAlert("Wallet Error", "Unable to load wallet!");
@@ -352,7 +183,7 @@ $(function() {
 
 The next important part of your plugin is the javascript. As we can see from the `index.html`, we are using `abc.js`, `jquery-2.1.3.min.js`, `qrcode.min.js` and finally `script.js`. `script.js` is the plugin's code that implements the core business logic and application functionality
 
-The `script.js` calls into the Airbitz core in a few ways. First it calls `Airbitz.ui.title` to change the page title. Next is sets up a wallet listener using `Airbitz.core.setWalletChangeListener`, so when the user changes their selected wallet, our code knows about it. Lastly, it requests the current wallet using `Airbitz.ui.selectedWallet`. You can view the sample code here.
+The `script.js` calls into the Airbitz core in a few ways. First it calls `Airbitz.ui.title` to change the page title. Next is sets up a wallet listener using `Airbitz.core.walletSelectedChangeListener `, so when the user changes their selected wallet, our code knows about it. Lastly, it requests the current wallet using `Airbitz.ui.getSelectedWallet`. You can view the sample code here.
 
 ### updateUI()
 
@@ -366,7 +197,7 @@ The `script.js` calls into the Airbitz core in a few ways. First it calls `Airbi
 ```javascript
 function updateUi(wallet) {
   $('#walletName').text(wallet.name);
-  Airbitz.core.createReceiveRequest(wallet, {
+  Airbitz.core.receiveRequestCreate(wallet, {
     label: "Blank App Request",
     category: "Income:Plugin",
     notes: "Income generated from a plugin",
@@ -412,8 +243,10 @@ In order to see your plugin in Airbitz, you must modify the Native app to includ
 ```javascript
 gulp glidera-android
 gulp foldapp-android
+gulp yourpluginname-android
 cp build/android/glidera/index.html ${CURRENT_DIR}/Airbitz/airbitz/src/main/assets/glidera.html
 cp build/android/foldapp/index.html ${CURRENT_DIR}/Airbitz/airbitz/src/main/assets/foldapp.html
+cp build/android/yourpluginname/index.html ${CURRENT_DIR}/Airbitz/airbitz/src/main/assets/foldapp.html
 ```
 ##
 
@@ -504,10 +337,10 @@ Then find the lines that begin with `cp ...` and add a line of the format
 
 ```javascript
 plugin = [[Plugin alloc] init];
-plugin.pluginId = @"com.myplugin.plugin";
-plugin.sourceFile = @"myplugin";
+plugin.pluginId = @"com.yourcompany.yourpluginname";
+plugin.sourceFile = @"yourpluginname";
 plugin.sourceExtension = @"html";
-plugin.name = @"MyPlugin";
+plugin.name = @"YourPluginName";
 plugin.env = @{
     @"SANDBOX": (isTestnet ? @"true" : @"false"),
 };
@@ -526,7 +359,91 @@ To submit your plugin for inclusion in Airbitz, submit a pull request for the ch
 
 # Plugin API Reference
 
-## receiveRequestCreate
+## ABCWallet object
+
+```objc
+// No content for this language. Select 'Javascript/HTML` above
+```
+```java
+// No content for this language. Select 'Javascript/HTML` above
+```
+
+```javascript
+{
+    "id": "wallet-id",
+    "name": "My Wallet",
+    "currency": "USD",
+    "currencyCode": 840,
+    "balance": 1000000,
+}
+```
+
+The ABCWallet object represents a single BIP32 HD wallet in the user's Airbitz account. Users can switch which wallet they currently use for requests and sends. Developers should check and use the current ABCWallet object using getSelectedWallet or setWalletChangeListener.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| id | <code>String</code> | Wallet ID |
+| name | <code>String</code> | Wallet text name |
+| currency | <code>String</code> | Wallet 3 letter currency code |
+| currencyCode | <code>Number</code> | Wallet ISO currency code number |
+| balance | <code>Number</code> | Wallet balance in satoshis |
+
+
+## getSelectedWallet
+
+```objc
+// No content for this language. Select 'Javascript/HTML` above
+```
+```java
+// No content for this language. Select 'Javascript/HTML` above
+```
+
+```javascript
+Airbitz.core.getSelectedWallet(callback)
+
+// Example
+
+Airbitz.core.getSelectedWallet(function (response){
+  console.log("Wallet name: " + response['name'])
+  console.log("Wallet balance in satoshis: " + response['balance'])  
+});
+```
+
+Returns the user’s currently selected wallet as the first parameter of the callback.
+
+
+| Response | Type | Description |
+| --- | --- | --- |
+| wallet | <code>ABCWallet</code> | ABCWallet object |
+
+## setWalletChangeListener
+
+```objc
+// No content for this language. Select 'Javascript/HTML` above
+```
+```java
+// No content for this language. Select 'Javascript/HTML` above
+```
+
+```javascript
+Airbitz.core.setWalletChangeListener(callback)
+
+// Example
+
+Airbitz.core.setWalletChangeListener(function (response){
+  console.log("Wallet name: " + response['name'])
+  console.log("Wallet balance in satoshis: " + response['balance'])  
+});
+```
+
+Callback is called when wallet is changed AND every time the plugin is initialized.
+
+
+| Response | Type | Description |
+| --- | --- | --- |
+| wallet | <code>ABCWallet</code> | ABCWallet object |
+
+## createReceiveRequest
 
 
 ```objc
@@ -537,11 +454,11 @@ To submit your plugin for inclusion in Airbitz, submit a pull request for the ch
 ```
 
 ```javascript
-Airbitz.core. receiveRequestCreate(wallet, options)
+Airbitz.core.createReceiveRequest(wallet, options)
 
 // Example
 
-Airbitz.core. receiveRequestCreate(wallet, {
+Airbitz.core.createReceiveRequest(wallet, {
     label: "Roger Mark",
     category: "Income:Consulting",
     notes: "Web development project from 2016-04",
@@ -553,29 +470,6 @@ Airbitz.core. receiveRequestCreate(wallet, {
       console.log("Error getting address")
     }
 });
-```
-    
-> Options
-    
-```objc
-// No content for this language. Select 'Javascript/HTML` above
-```
-```java
-// No content for this language. Select 'Javascript/HTML` above
-```
-```javascript
-{
-    label: "Payee name",
-    category: "Income:Consulting",
-    notes: "Misc Notes of transaction",
-    amountSatoshi: amountSatoshi,
-    success: function(response) {
-       ...
-    },
-    error: function() {
-       ...
-    }
-}    
 ```
     
 > Response
@@ -592,20 +486,27 @@ Airbitz.core. receiveRequestCreate(wallet, {
 }
 ```
 
-Create a receive request from the provided wallet. Returns an object with an address and requestId.
+Create a receive request from the provided wallet. Returns an object with a bitcoin address.
 
 | Param | Type | Description |
 | --- | --- | --- |
 | wallet | <code>ABCWallet</code> | Wallet to create a receive request/address from |
-
 | options | <code>Object</code> | JS Object of options for receive request |
 
-
-| Return Param | Type | Description |
+| Response | Type | Description |
 | --- | --- | --- |
 | address | <code>String</code> | Bitcoin public address of request |
 
-## receiveRequestFinalize
+| Options | Type | Description |
+| --- | --- | --- |
+| label | <code>String</code> | (Optional) Transaction 'Payee/Payer' name |
+| category | <code>String</code> | (Optional) Transaction category such as "Expense:Rent" |
+| notes | <code>String</code> | (Optional) Transaction misc notes field |
+| amountSatoshi | <code>Number</code> | (Optional) Amount, in satoshis, for this request |
+| success | <code>Function</code> | Success callback |
+| error | <code>Function</code> | Error callback |
+
+## finalizeReceiveRequest
 
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
@@ -614,20 +515,20 @@ Create a receive request from the provided wallet. Returns an object with an add
 // No content for this language. Select 'Javascript/HTML` above
 ```
 ```javascript
-Airbitz.core.receiveRequestFinalize(ABCWallet, address)
+Airbitz.core.finalizeReceiveRequest(ABCWallet, address)
 
 // Example
 
-Airbitz.core.selectedWallet({
+Airbitz.core.walletSelected({
   success: function(wallet) {
-    Airbitz.core.receiveRequestCreate(wallet, {
+    Airbitz.core.createReceiveRequest(wallet, {
         label: "Roger Mark",
         category: "Income:Consulting",
         notes: "Web development project from 2016-04",
         amountSatoshi: 12345234,
         success: function(response) {
           console.log("Got address " + response['address'])
-          Airbitz.core.receiveRequestFinalize(wallet, data["address"]);
+          Airbitz.core.finalizeReceiveRequest(wallet, data["address"]);
         },
         error: function() {
           console.log("Error getting address")
@@ -642,8 +543,140 @@ Airbitz.core.selectedWallet({
 | wallet | <code>ABCWallet</code> | Wallet to finalize receive request/address from |
 | address | <code>String</code> | Address to finalize |
 
-Finalizing a request marks the address as used and it will not be used for future requests. The metadata will also be written for this address. This is useful so that when a future payment comes in, the metadata can be auto-populated.
+Finalizing a request marks the address as used and it will not be used for future requests. The optional metadata given in 'options' such as 'label', 'category', and 'notes' will also be written for this address. This is useful so that when a future payment comes in, the metadata can be auto-populated in the user's transaction details.
+
+## createSpendRequest
 
 
+```objc
+// No content for this language. Select 'Javascript/HTML` above
+```
+```java
+// No content for this language. Select 'Javascript/HTML` above
+```
 
+```javascript
+Airbitz.core.createSpendRequest(wallet, address, amount, options)
+
+// Example
+
+Airbitz.core.createSpendRequest(wallet, "", {
+    label: "Roger Mark",
+    category: "Income:Consulting",
+    notes: "Web development project from 2016-04",
+    success: function(response) {
+      if (response.back) {
+        console.log("User pressed back button. Funds not sent")
+      } else {
+        console.log("Bitcoin sent")
+      }
+    },
+    error: function() {
+      console.log("Error sending funds")
+    }
+});
+```
+    
+> Response
+ 
+```objc
+// No content for this language. Select 'Javascript/HTML` above
+```
+```java
+// No content for this language. Select 'Javascript/HTML` above
+```
+```javascript
+{
+    "back": false
+}
+```
+
+Request that the user spends. This takes the user to the native spend confirmation screen so they can confirm the spend.
+
+The optional metadata given in 'options' such as 'label', 'category', and 'notes' will also be written for this transaction. 
+
+| Param | Type | Description |
+| --- | --- | --- |
+| wallet | <code>ABCWallet</code> | Wallet to create a receive request/address from |
+| address | <code>String</code> | Bitcoin address or BIP21 URI |
+| options | <code>Object</code> | JS Object of options for receive request |
+
+| Response | Type | Description |
+| --- | --- | --- |
+| back | <code>Boolean</code> | True if user pressed back button and did not authorize the spend |
+
+| Options | Type | Description |
+| --- | --- | --- |
+| label | <code>String</code> | (Optional) Transaction 'Payee/Payer' name |
+| category | <code>String</code> | (Optional) Transaction category such as "Expense:Rent" |
+| notes | <code>String</code> | (Optional) Transaction misc notes field |
+| success | <code>Function</code> | Success callback |
+| error | <code>Function</code> | Error callback |
+
+
+## createSpendRequest2
+
+
+```objc
+// No content for this language. Select 'Javascript/HTML` above
+```
+```java
+// No content for this language. Select 'Javascript/HTML` above
+```
+
+```javascript
+Airbitz.core.createSpendRequest2(wallet, address, amount, address2, amount2, options)
+
+// Example
+
+Airbitz.core.createSpendRequest2(wallet, "", {
+    label: "Roger Mark",
+    category: "Income:Consulting",
+    notes: "Web development project from 2016-04",
+    success: function(response) {
+      if (response.back) {
+        console.log("User pressed back button. Funds not sent")
+      } else {
+        console.log("Bitcoin sent")
+      }
+    },
+    error: function() {
+      console.log("Error sending funds")
+    }
+});
+```
+    
+> Response
+ 
+```objc
+// No content for this language. Select 'Javascript/HTML` above
+```
+```java
+// No content for this language. Select 'Javascript/HTML` above
+```
+```javascript
+{
+    "back": false
+}
+```
+
+Request that the user spends to two different addresses with two different amounts. This takes the user to the native spend confirmation screen so they can confirm the spend. The amount2 value will be added to the 'fee' amount shown on the Send Confirmation screen presented to the user.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| wallet | <code>ABCWallet</code> | Wallet to create a receive request/address from |
+| address | <code>String</code> | Bitcoin address or BIP21 URI |
+| options | <code>Object</code> | JS Object of options for receive request |
+
+| Response | Type | Description |
+| --- | --- | --- |
+| back | <code>Boolean</code> | True if user pressed back button and did not authorize the spend |
+
+| Options | Type | Description |
+| --- | --- | --- |
+| label | <code>String</code> | (Optional) Transaction 'Payee/Payer' name |
+| category | <code>String</code> | (Optional) Transaction category such as "Expense:Rent" |
+| notes | <code>String</code> | (Optional) Transaction misc notes field |
+| success | <code>Function</code> | Success callback |
+| error | <code>Function</code> | Error callback |
 

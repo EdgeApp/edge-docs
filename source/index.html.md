@@ -622,7 +622,7 @@ To submit your plugin for inclusion in Airbitz, submit a pull request for the ch
 }
 ```
 
-The ABCWallet object represents a single BIP32 HD wallet in the user's Airbitz account. Users can switch which wallet they currently use for requests and sends. Developers should check and use the current ABCWallet object using getSelectedWallet or setWalletChangeListener.
+The ABCWallet object represents a single BIP32 HD wallet in the user's Airbitz account. Users can switch which wallet they currently use for requests and sends. Developers should check and use the current ABCWallet object using getSelectedWallet or setupWalletChangeListener.
 
 | Property | Type | Description |
 | --- | --- | --- |
@@ -633,7 +633,8 @@ The ABCWallet object represents a single BIP32 HD wallet in the user's Airbitz a
 | balance | <code>Number</code> | Wallet balance in satoshis |
 
 
-## getSelectedWallet
+## Airbitz Core
+### getSelectedWallet
 
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
@@ -660,7 +661,7 @@ Returns the user’s currently selected wallet as the first parameter of the cal
 | --- | --- | --- |
 | wallet | <code>ABCWallet</code> | ABCWallet object |
 
-## setWalletChangeListener
+## setupWalletChangeListener
 
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
@@ -670,11 +671,11 @@ Returns the user’s currently selected wallet as the first parameter of the cal
 ```
 
 ```javascript
-Airbitz.core.setWalletChangeListener(callback)
+Airbitz.core.setupWalletChangeListener(callback)
 
 // Example
 
-Airbitz.core.setWalletChangeListener(function (response){
+Airbitz.core.setupWalletChangeListener(function (response){
   console.log("Wallet name: " + response['name'])
   console.log("Wallet balance in satoshis: " + response['balance'])  
 });
@@ -687,7 +688,7 @@ Callback is called when wallet is changed AND every time the plugin is initializ
 | --- | --- | --- |
 | wallet | <code>ABCWallet</code> | ABCWallet object |
 
-## createReceiveRequest
+### createReceiveRequest
 
 
 ```objc
@@ -750,7 +751,7 @@ Create a receive request from the provided wallet. Returns an object with a bitc
 | success | <code>Function</code> | Success callback |
 | error | <code>Function</code> | Error callback |
 
-## finalizeReceiveRequest
+### finalizeReceiveRequest
 
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
@@ -789,7 +790,7 @@ Airbitz.core.walletSelected({
 
 Finalizing a request marks the address as used and it will not be used for future requests. The optional metadata given in 'options' such as 'label', 'category', and 'notes' will also be written for this address. This is useful so that when a future payment comes in, the metadata can be auto-populated in the user's transaction details.
 
-## createSpendRequest
+### createSpendRequest
 
 
 ```objc
@@ -858,8 +859,7 @@ The optional metadata given in 'options' such as 'label', 'category', and 'notes
 | error | <code>Function</code> | Error callback |
 
 
-## createSpendRequest2
-
+### createSpendRequest2
 
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
@@ -923,4 +923,233 @@ Request that the user spends to two different addresses with two different amoun
 | notes | <code>String</code> | (Optional) Transaction misc notes field |
 | success | <code>Function</code> | Success callback |
 | error | <code>Function</code> | Error callback |
+
+### writeData
+
+
+```objc
+// No content for this language. Select 'Javascript/HTML` above
+```
+```java
+// No content for this language. Select 'Javascript/HTML` above
+```
+
+```javascript
+Airbitz.core.writeData(key, data)
+
+// Example
+
+Airbitz.core.writeData("userInfo", '{ "name": "Joe",
+                                      "phone": "619-800-1234",
+                                      "age:" 69 }')
+```
+
+Securely persist data into the Airbitz core under this user's account. Only the current plugin will have access to that data. Data is fully encrypted and synchronized between devices that the user logs into.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| key | <code>String</code> | Key string to reference the data |
+| data | <code>String</code> | Value to store |
+
+### readData
+
+
+```objc
+// No content for this language. Select 'Javascript/HTML` above
+```
+```java
+// No content for this language. Select 'Javascript/HTML` above
+```
+
+```javascript
+data = Airbitz.core.readData(key)
+
+// Example
+
+Airbitz.core.writeData("userInfo", '{ "name": "Joe",
+                                      "phone": "619-800-1234",
+                                      "age:" 69 }')
+data = Airbitz.core.readData("userInfo")
+
+console.log(data) => { "name": "Joe",
+                       "phone": "619-800-1234",
+                       "age": 69 }
+```    
+Read back data from the Airbitz core under this user's account. Only the current plugin will have access to that data. Data is fully encrypted and synchronized between devices that the user logs into.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| key | <code>String</code> | Key string to reference the data |
+
+| Response | Type | Description |
+| --- | --- | --- |
+| data | <code>String</code> | Data stored from a previous call to writeData |
+
+### clearData
+
+
+```objc
+// No content for this language. Select 'Javascript/HTML` above
+```
+```java
+// No content for this language. Select 'Javascript/HTML` above
+```
+
+```javascript
+Airbitz.core.clearData()
+```    
+
+Clear all data in the Airbitz core, for the current plugin.
+
+### getBtcDenomination
+
+```objc
+// No content for this language. Select 'Javascript/HTML` above
+```
+```java
+// No content for this language. Select 'Javascript/HTML` above
+```
+
+```javascript
+denom = Airbitz.core.getBtcDenomination()
+```
+
+Get the user’s currently selected BTC denomination. It can be BTC, mBTC or bits. Returns a denomination string.
+
+| Response | Type | Description |
+| --- | --- | --- |
+| denomination | <code>String</code> | "BTC", "mBTC" or "bits" |
+
+
+### formatSatoshi
+
+```objc
+// No content for this language. Select 'Javascript/HTML` above
+```
+```java
+// No content for this language. Select 'Javascript/HTML` above
+```
+
+```javascript
+amountString = Airbitz.core.formatSatoshi(amountSatoshi, withSymbol)
+
+// Example
+amountString = Airbitz.core.formatSatoshi(125834, true)
+
+console.log(amountString) => "ƀ1258.34"
+```
+
+Formats satoshis to display to the user. This uses the user’s BTC denomination in their settings to format including the correct code and symbol.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| amountSatoshi | <code>Number</code> | Number of satoshis to convert |
+| withSymbol | <code>Boolean</code> | Set to true to display the denomination symbol "Ƀ, mɃ, ƀ" |
+
+| Response | Type | Description |
+| --- | --- | --- |
+| amountString | <code>String</code> | Formatted denomination string |
+
+
+## Airbitz Config
+### get
+
+```objc
+// No content for this language. Select 'Javascript/HTML` above
+```
+```java
+// No content for this language. Select 'Javascript/HTML` above
+```
+
+```javascript
+value = Airbitz.config.get(key)
+
+// Example
+
+value = Airbitz.config.get("API_KEY")
+```
+
+Fetch a configuration value. These are set in the native iOS/Android code, before the webview is loaded. Useful to pass in parameters such as API keys embedded in the native app.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| key | <code>String</code> | Key string to reference the data |
+
+| Response | Type | Description |
+| --- | --- | --- |
+| value | <code>String</code> | Data passed in from native app |
+
+## Airbitz UI
+
+### title
+
+```objc
+// No content for this language. Select 'Javascript/HTML` above
+```
+```java
+// No content for this language. Select 'Javascript/HTML` above
+```
+
+```javascript
+Airbitz.ui.title(title)
+
+// Examples
+
+Airbitz.ui.title("Bob's Awesome Plugin");
+```
+Set the title of the current view. This updates the native apps titlebar.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| title | <code>String</code> | Title on navbar |
+
+
+### showAlert
+
+```objc
+// No content for this language. Select 'Javascript/HTML` above
+```
+```java
+// No content for this language. Select 'Javascript/HTML` above
+```
+
+```javascript
+Airbitz.ui.showAlert(title, message, options)
+
+// Examples
+
+Airbitz.ui.showAlert("Account creation error", "Error creating account. Please try again later");
+
+Airbitz.ui.showAlert("Creating account", "Please wait...", {"showSpinner": true});
+
+```
+
+
+Launches a native alert dialog. Alert will automatically fade when tapped or after ~6 seconds unless the showSpinner option is given.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| title | <code>String</code> | Title of alert |
+| message | <code>String</code> | Body of alert  |
+| options | <code>Object</code> | Optional parameters |
+
+| Options | Type | Description |
+| --- | --- | --- |
+| showSpinner | <code>Boolean</code> | (Optional) Add spinner to alert. Alert will persist until hideAlert is called. |
+
+### hideAlert
+
+```objc
+// No content for this language. Select 'Javascript/HTML` above
+```
+```java
+// No content for this language. Select 'Javascript/HTML` above
+```
+
+```javascript
+Airbitz.ui.hideAlert()
+
+```
+
+Hides any currently displaying alert from showAlert
 

@@ -378,7 +378,7 @@ To submit your plugin for inclusion in Airbitz, submit a pull request for the ch
 }
 ```
 
-The ABCWallet object represents a single BIP32 HD wallet in the user's Airbitz account. Users can switch which wallet they currently use for requests and sends. Developers should check and use the current ABCWallet object using getSelectedWallet or setWalletChangeListener.
+The ABCWallet object represents a single BIP32 HD wallet in the user's Airbitz account. Users can switch which wallet they currently use for requests and sends. Developers should check and use the current ABCWallet object using getSelectedWallet or setupWalletChangeListener.
 
 | Property | Type | Description |
 | --- | --- | --- |
@@ -417,7 +417,7 @@ Returns the user’s currently selected wallet as the first parameter of the cal
 | --- | --- | --- |
 | wallet | <code>ABCWallet</code> | ABCWallet object |
 
-### setWalletChangeListener
+## setupWalletChangeListener
 
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
@@ -427,11 +427,11 @@ Returns the user’s currently selected wallet as the first parameter of the cal
 ```
 
 ```javascript
-Airbitz.core.setWalletChangeListener(callback)
+Airbitz.core.setupWalletChangeListener(callback)
 
 // Example
 
-Airbitz.core.setWalletChangeListener(function (response){
+Airbitz.core.setupWalletChangeListener(function (response){
   console.log("Wallet name: " + response['name'])
   console.log("Wallet balance in satoshis: " + response['balance'])  
 });

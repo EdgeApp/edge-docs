@@ -139,7 +139,6 @@ Create and log into a new ABCAccount
 | account | <code>[ABCAccount](#ABCAccount)</code> | Initialized account |
 
 
-
 <a name="ABCAccount"></a>
 ## ABCAccount
 
@@ -152,6 +151,12 @@ Create and log into a new ABCAccount
 
 ```objective_c
 NSError *error = [abcAccount logout];
+if (error) {
+    // Oh no
+} else {
+    // Hooray. I'm out
+}
+
 ```
 
 ```javascript
@@ -174,6 +179,76 @@ Logout the currently logged in ABCAccount
 | Return Param | Type | Description |
 | --- | --- | --- |
 | error | <code>[ABCError](#ABCError)</code> | Error object. Null if no error |
+
+
+
+### changePassword
+
+```objective_c
+NSError *error = [abcAccount changePassword:password];
+if (error) {
+    // Oh no
+} else {
+    // Yay, new password
+}
+```
+
+```javascript
+abcAccount.changePassword(password, function(error) {
+  if (error) {
+    // Oh no
+  } else {
+    // Yay!
+  }
+})
+```
+
+Logout the currently logged in ABCAccount
+
+| Param | Type | Description |
+| --- | --- | --- |
+| password | <code>String</code> | Password string|
+| callback | <code>Callback</code> | Callback function |
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#ABCError)</code> | Error object. Null if no error |
+
+
+
+### changePIN
+
+```objective_c
+NSError *error = [abcAccount changePIN:pin];
+if (error) {
+    // Oh no
+} else {
+    // Yay, new password
+}
+```
+
+```javascript
+abcAccount.changePassword(pin, function(error) {
+  if (error) {
+    // Oh no
+  } else {
+    // Yay!
+  }
+})
+```
+
+Logout the currently logged in ABCAccount
+
+| Param | Type | Description |
+| --- | --- | --- |
+| password | <code>String</code> | Password string|
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#ABCError)</code> | Error object. Null if no error |
+
+
 
 <a name="ABCWallet"></a>
 ## ABCWallet

@@ -109,7 +109,7 @@ abcContext.createAccount("myUsername",
                          "myNot5oGoodPassw0rd", 
                          "2946", 
                          callbacks, 
-                         (error, account) => {
+                         function (error, account) {
     if (error) {
       reject(funcname)
     } else {
@@ -385,8 +385,7 @@ abcContext.pinLoginEnabled(username, callback)
 
 // Example
 
-abcContext.pinLoginEnabled(username,
-                           (error, enabled) => {
+abcContext.pinLoginEnabled(username,function (error, enabled) {
     if (!error) {
       console.log("PIN Login enabled state: " + enabled)
     }
@@ -422,7 +421,7 @@ abcContext.listUsernames(callback)
 
 // Example
 
-abcContext.listUsernames((error, usernames) => {
+abcContext.listUsernames(function (error, usernames) {
     if (!error) {
       console.log("username 0: " + usernames[0])
     }
@@ -459,8 +458,7 @@ abcContext.usernameAvailable(username, callback)
 
 // Example
 
-abcContext.usernameAvailable(username,
-                             (error, available) => {
+abcContext.usernameAvailable(username,function (error, available) {
     if (!error) {
       console.log("username available = " + available)
     }
@@ -503,24 +501,14 @@ Checks if PIN login is possible for the given username. This checks if there is 
 
 ### logout
 
-```objective_c
-ABCError *error = [abcAccount logout];
-if (error) {
-    // Oh no
-} else {
-    // Hooray. I'm out
-}
-
+```javascript
+abcAccount.logout(function() {
+  // Hooray. I'm out
+})
 ```
 
-```javascript
-abcAccount.logout(function(error) {
-  if (error) {
-    // Oh no
-  } else {
-    // Hooray. I'm out
-  }
-})
+```objc
+[abcAccount logout];
 ```
 
 Logout the currently logged in ABCAccount
@@ -530,33 +518,14 @@ Logout the currently logged in ABCAccount
 | account | <code>[ABCAccount](#ABCAccount)</code> | Account object|
 | callback | <code>Callback</code> | (Javascript) Callback function |
 
-| Return Param | Type | Description |
-| --- | --- | --- |
-| error | <code>[ABCError](#ABCError)</code> | Error object. Null if no error |
-
-
 
 ### changePassword
 
-```objective_c
-ABCError *error = [abcAccount changePassword:password];
-if (error) {
-    // Oh no
-} else {
-    // Yay, new password
-}
-
-[abcAccount changePassword:password callback:^(ABCError *error) {
-    if (error) {
-        // Oh no
-    } else {
-        // Yay, new password
-    }
-}];
-
-```
-
 ```javascript
+abcAccount.changePassword(password, callback)
+
+// Example
+
 abcAccount.changePassword(password, function(error) {
   if (error) {
     // Oh no
@@ -566,7 +535,23 @@ abcAccount.changePassword(password, function(error) {
 })
 ```
 
-Logout the currently logged in ABCAccount
+```objc
+- (void)changePassword:(NSString *)password
+              callback:(void (^)(ABCError *error)) callback;
+
+// Example
+
+[abcAccount changePassword:password callback:^(ABCError *error) {
+    if (error) {
+        // Oh no
+    } else {
+        // Yay, new password set
+    }
+}];
+
+```
+
+Change the password of the currently logged in ABCAccount
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -581,24 +566,11 @@ Logout the currently logged in ABCAccount
 
 ### changePIN
 
-```objective_c
-NSError *error = [abcAccount changePIN:pin];
-if (error) {
-    // Oh no
-} else {
-    // Yay, new password
-}
-
-[abcAccount changePIN:pin callback:^(ABCError *error) {
-    if (error) {
-        // Oh no
-    } else {
-        // Yay, new password
-    }
-}];
-```
-
 ```javascript
+abcAccount.changePIN(pin, callback)
+
+// Example
+
 abcAccount.changePIN(pin, function(error) {
   if (error) {
     // Oh no
@@ -606,6 +578,21 @@ abcAccount.changePIN(pin, function(error) {
     // Yay!
   }
 })
+```
+
+```objc
+- (void)changePIN:(NSString *)pin
+         callback:(void (^)(ABCError *error)) callback;
+
+// Example
+
+[abcAccount changePIN:pin callback:^(ABCError *error) {
+    if (error) {
+        // Oh no
+    } else {
+        // Yay, new PIN set
+    }
+}];
 ```
 
 Change the PIN of the currently logged in ABCAccount
@@ -624,25 +611,33 @@ Change the PIN of the currently logged in ABCAccount
 ### checkPassword
 
 ```javascript
-abcAccount.checkPassword(password,
-                         (error, passwordCorrect) => {
-    if (error) {
-      reject(funcname)
-    } else {
-      abcAccount = account;
+abcAccount.checkPassword(password, callback)
+
+// Example
+
+abcAccount.checkPassword(password, function (error, passwordCorrect) {
+    if (!error) {
+      if (passwordCorrect) {
+        // Yay
+      }
     }
 })
 ```
 
 ```objective_c
+- (BOOL)checkPassword:(NSString *)password;
+
+// Example
+
 BOOL passwordCorrect = [abcAccount checkPassword:password];
 ```
 
-Check if a string is the correct password for the current account
+Checks if password is the correct password for this account
 
 | Param | Type | Description |
 | --- | --- | --- |
 | password | <code>string</code> | Account password |
+| callback | <code>Callback</code> | (Javascript) Callback function |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
@@ -654,8 +649,11 @@ Check if a string is the correct password for the current account
 ### enablePINLogin
 
 ```javascript
-abcAccount.enablePINLogin(enable,
-                         (error) => {
+abcAccount.enablePINLogin(enable, callback)
+
+// Example
+
+abcAccount.enablePINLogin(enable, function (error) {
     if (error) {
       // Failed
     } else {
@@ -665,6 +663,10 @@ abcAccount.enablePINLogin(enable,
 ```
 
 ```objective_c
+- (NSError *) enablePINLogin:(BOOL)enable;
+
+// Example
+
 ABCError *error = [abcAccount enablePINLogin:enable];
 ```
 
@@ -673,19 +675,95 @@ Enable or disable PIN login on this account. Set enable = YES to allow PIN login
 | Param | Type | Description |
 | --- | --- | --- |
 | enable | <code>Boolean</code> | Set true to enable PIN login. False to disable |
+| callback | <code>Callback</code> | (Javascript) Callback function |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
 | error | <code>[ABCError](#ABCError)</code> | (Javascript) Error object. Null if no error |
 
 
+### setupOTPKey
+
+```javascript
+abcAccount.setupOTPKey(key, callback)
+
+// Example
+
+abcAccount.setupOTPKey(key, function (error) {
+    if (error) {
+      // Failed
+    } else {
+      // Yay. Success
+    }
+})
+```
+
+```objective_c
+- (ABCError *) setupOTPKey:(NSString *)key;
+
+// Example
+
+ABCError *error = [abcAccount setupOTPKey:key];
+```
+
+Associates an OTP key with the account. An OTP key can be retrieved from a previously logged in account using otpLocalKeyGet. The account must have had OTP enabled by using otpEnable()
+
+| Param | Type | Description |
+| --- | --- | --- |
+| key | <code>String</code> | OTP key |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#ABCError)</code> | (Javascript) Error object. Null if no error |
+
+
+### getOTPLocalKey
+
+```javascript
+abcAccount.getOTPLocalKey(callback)
+
+// Example
+
+abcAccount.getOTPLocalKey(key, function (error, key) {
+    if (!error) {
+      // Yay. Success
+      console.log("My key is: " + key)
+    }
+})
+```
+
+```objective_c
+- (NSError *) getOTPLocalKey:(BOOL)enable;
+
+// Example
+
+ABCError *error;
+NSString *key = [abcAccount getOTPLocalKey:&error];
+```
+
+Gets the locally saved OTP key for the current user
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#ABCError)</code> | (Javascript) Error object. Null if no error |
+| key | <code>String</code> | OTP key |
+
+
 
 <a name="ABCWallet"></a>
 ## ABCWallet
 
+Coming Soon...
+
 <a name="ABCTransaction"></a>
 ## ABCTransaction
 
+Coming Soon...
 
 
 

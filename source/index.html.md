@@ -487,6 +487,50 @@ Checks if PIN login is possible for the given username. This checks if there is 
 | enabled | <code>Boolean</code> | True if PIN login is enabled |
 
 
+### requestOTPReset
+
+```javascript
+abcContext.requestOTPReset(username, otpResetToken, callback)
+
+// Example
+abcContext.requestOTPReset("JoeHomey", "ZR2G9d8TYW8DH6", function (error) {
+    if (!error) {
+      // Yay
+    }
+})
+```
+
+```objective_c
+
+- (void)requestOTPReset:(NSString *)username
+                  token:(NSString *)otpResetToken
+               callback:(void (^)(ABCError *error)) callback;
+
+// Example
+
+[abc requestOTPReset:@"JoeHomey" token:@"ZR2G9d8TYW8DH6" callback:^(ABCError *error)
+{
+    if (!error)
+        // Yay. Now to wait until the timeout expires to login again.
+}];
+
+```
+Launches an OTP reset timer on the server, which will disable the OTP authentication requirement on the account `username` when timeout expires. The expiration timeout is set when OTP is first enabled using [ABCAccount.enableOTP](ABCAccount.enableOTP).
+
+To obtain an otpResetToken, attempt a login into the OTP protected account using loginWithPassword with the correct username/password. The login should fail with error.code == ABCConditionCodeInvalidOTP. The OTP token will be in the error.otpResetToken property of the ABCError object.
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| username | <code>String</code> | Account username |
+| otpResetToken | <code>String</code> | Reset token from loginWithPassword |
+| callback | <code>Callback</code> | (Javascript) Callback function when routine completes |
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#ABCError)</code> | Error object. Null if no error |
+
+
 
 
 <a name="ABCAccount"></a>
@@ -752,6 +796,152 @@ Gets the locally saved OTP key for the current user
 | --- | --- | --- |
 | error | <code>[ABCError](#ABCError)</code> | (Javascript) Error object. Null if no error |
 | key | <code>String</code> | OTP key |
+
+
+### getOTPDetails
+
+```javascript
+abcAccount.getOTPDetails(callback)
+
+// Example
+
+abcAccount.getOTPDetails(function (error, enabled, timeout) {
+    // Do something with 'enabled' or 'timeout'
+})
+```
+
+```objective_c
+- (ABCError *)getOTPDetails:(bool *)enabled
+                   timeout:(long *)timeout;
+
+// Example
+
+BOOL on = NO;
+long timeout = 0;
+    
+ABCError *error = [abcAccount getOTPDetails:&on
+                                   timeout:&timeout];
+```
+
+Reads the OTP configuration from the server. Gets information on whether OTP is enabled for the current account, and how long a reset request will take. An OTP reset is a request to disable OTP made through the method ABCContext.requestOTPReset.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#ABCError)</code> | (Javascript) Error object. Null if no error |
+| enabled | <code>Boolean</code> | True if OTP is enabled on this accout |
+| timeout | <code>Number</code> | Number seconds required after a reset is requested before OTP is disabled |
+
+
+<a name="ABCAccount.enableOTP"></a>
+### enableOTP
+
+```javascript
+abcAccount.enableOTP(timeout, callback)
+
+// Example
+
+abcAccount.enableOTP(timeout, function (error) {
+    if (error) {
+      // Failed
+    } else {
+      // Yay. Success
+    }
+})
+```
+
+```objective_c
+- (ABCError *)enableOTP:(long)timeout;
+
+// Example
+
+#define OTP_RESET_DELAY (60 * 60 * 24 * 7) // 7 days
+
+ABCError *error;
+error = [abcAccount enableOTP:OTP_RESET_DELAY];
+```
+
+Sets up OTP authentication on the server for currently logged in user. This will generate a new token if the username doesn't already have one.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| timeout | <code>Number</code> | Number seconds required after a reset is requested before OTP is disabled |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#ABCError)</code> | (Javascript) Error object. Null if no error |
+
+
+### disableOTP
+
+```javascript
+abcAccount.disableOTP(callback)
+
+// Example
+
+abcAccount.disableOTP(function (error) {
+    if (error) {
+      // Failed
+    } else {
+      // Yay. Success
+    }
+})
+```
+
+```objective_c
+- (ABCError *)disableOTP;
+
+// Example
+ABCError *error = [abcAccount disableOTP];
+```
+
+Removes the OTP authentication requirement from the server for the currently logged in user. Also removes local key from device
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#ABCError)</code> | (Javascript) Error object. Null if no error |
+
+
+### cancelOTPResetRequest
+
+```javascript
+abcAccount.cancelOTPResetRequest(callback)
+
+// Example
+
+abcAccount.cancelOTPResetRequest(function (error) {
+    if (error) {
+      // Failed
+    } else {
+      // Yay. Success
+    }
+})
+```
+
+```objective_c
+- (ABCError *)cancelOTPResetRequest;
+
+// Example
+ABCError *error = [abcAccount cancelOTPResetRequest];
+```
+
+Removes the OTP reset request from the server for the currently logged in user. When a user logs in on a new device for an account with OTP enabled, the login will fail with ABCConditionCodeInvalidOTP. A reset request can then be made using ABCContext.requestOTPReset. cancelOTPResetRequest allows a logged in user to cancel that request and prevent that device from logging in.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#ABCError)</code> | (Javascript) Error object. Null if no error |
 
 
 

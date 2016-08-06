@@ -70,7 +70,9 @@ abc.ABCContext.makeABCContext('your-api-key-here', null, function (error, contex
 ```
 
 ```objective_c
-ABCContext abcContext = [ABCContext makeABCContext:abcAPIKey hbits:hbitsKey];
++(ABCContext *) makeABCContext:(NSString *)abcAPIKey hbits:(NSString *)hbitsKey
+
+ABCContext *abcContext = [ABCContext makeABCContext:@"your-api-key-here" hbits:null];
 ```
 
 Initialize and create an ABCContext object. Required for functionality of ABC SDK.
@@ -78,19 +80,26 @@ Initialize and create an ABCContext object. Required for functionality of ABC SD
 | Param | Type | Description |
 | --- | --- | --- |
 | apiKey | <code>string</code> | Get an API Key from https://developer.airbitz.co |
-| hbitsKey | <code>string</code> | (Optional) |
-| callbacks | <code>[ABCCallbacks](#ABCCallbacks)</code> | (Javascript) Callback event routines |
-| delegate | <code>[ABCAccountDelegate](#ABCAccountDelegate)</code> | (ObjC) Callback event delegates |
+| hbitsKey | <code>string</code> | (Optional) Unique key used to encrypt private keys for use as implementation specific "gift cards" that are only redeemable by applications using this implementation.|
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#ABCError)</code> | Error object. Null if no error |
+| error | <code>[ABCError](#ABCError)</code> | (Javascript) Error object. Null if no error |
 | context | <code>[ABCContext](#ABCContext)</code> | Initialized context |
+
 
 
 ### createAccount
 
 ```javascript
+abcContext.createAccount(username, 
+                         password, 
+                         pin, 
+                         callbacks, 
+                         callback)
+
+// Example
+
 abcContext.createAccount("myUsername", 
                          "myNot5oGoodPassw0rd", 
                          "2946", 
@@ -105,13 +114,21 @@ abcContext.createAccount("myUsername",
 
 ```objective_c
 
+-(void) createAccount:(NSString *) username
+             password:(NSString *) password
+                  pin:(NSString *) pin
+             delegate:(ABCAccountDelegate) delegate
+             callback:^(ABCError *error, ABCAccount *account)
+
+// Example
+
 ABCAccount *abcAccount;
 
 [abcContext createAccount:@"myUsername"
                  password:@"myNot5oGoodPassw0rd"
                       pin:@"2946"
                  delegate:self
-                 callback:^(NSError *error, ABCAccount *account)
+                 callback:^(ABCError *error, ABCAccount *account)
 {
     if (error)
     {
@@ -132,11 +149,267 @@ Create and log into a new ABCAccount
 | username | <code>string</code> | Account username |
 | password | <code>string</code> | Account password |
 | pin | <code>string</code> | Account PIN for fast re-login |
+| callbacks | <code>[ABCCallbacks](#ABCCallbacks)</code> | (Javascript) Callback event routines |
+| delegate | <code>[ABCAccountDelegate](#ABCAccountDelegate)</code> | (ObjC) Callback event delegates |
+| callback | <code>Callback</code> | Callback function when routine completes|
+
 
 | Return Param | Type | Description |
 | --- | --- | --- |
 | error | <code>[ABCError](#ABCError)</code> | Error object. Null if no error |
 | account | <code>[ABCAccount](#ABCAccount)</code> | Initialized account |
+
+
+
+### loginWithPassword
+
+```javascript
+abcContext.loginWithPassword(username, password, otp, callbacks, callback)
+
+// Example
+abcContext.loginWithPassword("JoeHomey", "My0KPa55WoRd@Airb1t5", null, null, 
+                             function (error, account) {
+    if (error) {
+      if (error.code === ABCConditionCodeInvalidOTP) {
+        console.log("otpResetToken: " + error.otpResetToken)
+      }
+    } else {
+      // Yay. logged in
+      console.log("Account name = " + account.username)
+    }
+})
+```
+
+```objc
+
+-(void) loginWithPassword:(NSString *) username
+                 password:(NSString *) password
+                 delegate:(ABCAccountDelegate) delegate
+                 callback:^(ABCError *error, ABCAccount *account);
+
+// Example
+
+ABCAccount *abcAccount;
+
+[abcContext loginWithPassword:@"myUsername"
+                     password:@"myNot5oGoodPassw0rd"
+                     delegate:self
+                     callback:^(ABCError *error, ABCAccount *account)
+{
+    if (error)
+    {       
+      // Yikes
+      if (error.code == ABCConditionCodeInvalidOTP) {
+        NSLog(@"otpResetToken: %@", error.otpResetToken)
+      }
+    }
+    else
+    {
+        NSLog(@"Account name = %@", account.username);
+    }
+}];
+
+```
+Login to an Airbitz account with a full password. May optionally send 'otp' key which is required for any accounts that have OTP enabled using ABCAccount.enableOTP. OTP key can be retrieved from a device that has account logged in and OTP enabled using getOTPLocalKey.
+
+If routine returns with error.code == ABCConditionCodeInvalidOTP, then the the account has OTP enabled and needs the OTP key specified in parameter 'otp'. ABCError object may have properties otpResetToken and otpResetDate set which allow the user to call requestOTPReset to disable OTP.
+
+This routine allows caller to receive back an error.otpResetToken which is used with requestOTPReset to remove OTP from the specified account.
+
+The otpResetToken is only returned if the caller has provided the correct username and password but the account had OTP enabled. error.otpResetDate is the date when the account OTP will be disabled if a prior OTP reset was successfully requested. The reset date is set by default to 7 days from when a reset was initially requested.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| username | <code>string</code> | Account username |
+| password | <code>string</code> | Account password |
+| otp | <code>string</code> | (Optional) OTP key retrieved from getOTPLocalKey |
+| callbacks | <code>[ABCCallbacks](#ABCCallbacks)</code> | (Javascript) Callback event routines |
+| delegate | <code>[ABCAccountDelegate](#ABCAccountDelegate)</code> | (ObjC) Callback event delegates |
+| callback | <code>Callback</code> | Callback function when routine completes|
+
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#ABCError)</code> | Error object. Null if no error |
+| account | <code>[ABCAccount](#ABCAccount)</code> | Initialized account |
+
+
+
+### loginWithPIN
+
+```javascript
+abcContext.loginWithPIN(username, pin, callbacks, callback)
+
+// Example
+abcContext.loginWithPIN("JoeHomey", "2847", null, 
+                        function (error, account) {
+    if (error) {
+      // Error
+    } else {
+      // Yay. logged in
+    }
+})
+```
+
+```objective_c
+-(void) loginWithPIN:(NSString *) username
+            password:(NSString *) password
+            delegate:(ABCAccountDelegate) delegate
+            callback:^(ABCError *error, ABCAccount *account);
+
+// Example
+
+ABCAccount *abcAccount;
+
+[abcContext loginWithPIN:@"myUsername"
+                     pin:@"4728"
+                delegate:self
+                callback:^(ABCError *error, ABCAccount *account)
+{
+    if (!error)
+    {
+        NSLog(@"Account name = %@", account.username);
+    }
+    else
+    {
+        // Yikes
+    }
+}];
+
+```
+Login to an Airbitz account with PIN. Used to sign into devices that have previously been logged into using a full username & password
+
+| Param | Type | Description |
+| --- | --- | --- |
+| username | <code>string</code> | Account username |
+| pin | <code>string</code> | Account PIN for fast re-login |
+| callbacks | <code>[ABCCallbacks](#ABCCallbacks)</code> | (Javascript) Callback event routines |
+| delegate | <code>[ABCAccountDelegate](#ABCAccountDelegate)</code> | (ObjC) Callback event delegates |
+| callback | <code>Callback</code> | Callback function when routine completes|
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#ABCError)</code> | Error object. Null if no error |
+| account | <code>[ABCAccount](#ABCAccount)</code> | Initialized account |
+
+
+### accountHasPassword
+
+```javascript
+abcContext.accountHasPassword(username, callback)
+
+// Example
+abcContext.accountHasPassword("JoeHomey", function (error, hasPassword) {
+    if (error) {
+      // Error
+    } else {
+      if (hasPassword) {
+        // This account has a password
+      }
+    }
+})
+```
+
+```objective_c
+
+-(BOOL) accountHasPassword:(NSString *) username
+                     error:(ABCError *) error;
+
+// Example
+
+ABCError *error;
+
+BOOL hasPassword = [abcContext accountHasPassword:@"myUsername"
+                                            error:&error
+
+```
+Check if specified username has a password on the account or if it is a PIN-only account.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| username | <code>string</code> | Account username |
+| callback | <code>Callback</code> | (Javascript) Callback function when routine completes|
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#ABCError)</code> | Error object. Null if no error |
+| hasPassword | <code>Boolean</code> | True if account has a password |
+
+
+### deleteLocalAccount
+
+```javascript
+abcContext.deleteLocalAccount(username, callback)
+
+// Example
+abcContext.deleteLocalAccount("JoeHomey", function (error) {
+    if (error) {
+      // Error
+    } else {
+    }
+})
+```
+
+```objective_c
+
+- (ABCError *) deleteLocalAccount:(NSString *) username;
+
+// Example
+
+ABCError *error;
+
+ABCError *error = [abcContext accountHasPassword:@"myUsername"];
+
+```
+Check if specified username has a password on the account or if it is a PIN-only account.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| username | <code>string</code> | Account username |
+| callback | <code>Callback</code> | (Javascript) Callback function when routine completes|
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#ABCError)</code> | Error object. Null if no error |
+| hasPassword | <code>Boolean</code> | True if account has a password |
+
+
+
+
+
+### pinLoginEnabled
+
+```javascript
+abcContext.pinLoginEnabled(username,
+                           (error, enabled) => {
+    if (error) {
+      reject(funcname)
+    } else {
+      console.log("PIN Login enabled state: " + enabled)
+    }
+})
+```
+
+```objective_c
+- (BOOL)pinLoginEnabled:(NSString *)username error:(NSError **)error;
+
+// Example
+
+ABCError *error;
+BOOL enabled = [abcContext pinLoginEnabled:username error:&error];
+```
+
+Check if a string is the correct password for the current account
+
+| Param | Type | Description |
+| --- | --- | --- |
+| username | <code>string</code> | Account username |
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#ABCError)</code> | Error object. Null if no error |
+| enabled | <code>Boolean</code> | True if PIN login is enabled |
+
 
 
 <a name="ABCAccount"></a>
@@ -147,10 +420,12 @@ Create and log into a new ABCAccount
 | --- | --- | --- |
 | username | <code>string</code> | Account username |
 
+
+
 ### logout
 
 ```objective_c
-NSError *error = [abcAccount logout];
+ABCError *error = [abcAccount logout];
 if (error) {
     // Oh no
 } else {
@@ -185,12 +460,21 @@ Logout the currently logged in ABCAccount
 ### changePassword
 
 ```objective_c
-NSError *error = [abcAccount changePassword:password];
+ABCError *error = [abcAccount changePassword:password];
 if (error) {
     // Oh no
 } else {
     // Yay, new password
 }
+
+[abcAccount changePassword:password callback:^(ABCError *error) {
+    if (error) {
+        // Oh no
+    } else {
+        // Yay, new password
+    }
+}];
+
 ```
 
 ```javascript
@@ -225,10 +509,18 @@ if (error) {
 } else {
     // Yay, new password
 }
+
+[abcAccount changePIN:pin callback:^(ABCError *error) {
+    if (error) {
+        // Oh no
+    } else {
+        // Yay, new password
+    }
+}];
 ```
 
 ```javascript
-abcAccount.changePassword(pin, function(error) {
+abcAccount.changePIN(pin, function(error) {
   if (error) {
     // Oh no
   } else {
@@ -237,16 +529,75 @@ abcAccount.changePassword(pin, function(error) {
 })
 ```
 
-Logout the currently logged in ABCAccount
+Change the PIN of the currently logged in ABCAccount
 
 | Param | Type | Description |
 | --- | --- | --- |
-| password | <code>String</code> | Password string|
-| callback | <code>Callback</code> | (Javascript) Callback function |
+| pin | <code>String</code> | 4 digit PIN string|
+| callback | <code>Callback</code> | (Javascript/ObjC) Callback function |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
 | error | <code>[ABCError](#ABCError)</code> | Error object. Null if no error |
+
+
+
+### checkPassword
+
+```javascript
+abcAccount.checkPassword(password,
+                         (error, passwordCorrect) => {
+    if (error) {
+      reject(funcname)
+    } else {
+      abcAccount = account;
+    }
+})
+```
+
+```objective_c
+BOOL passwordCorrect = [abcAccount checkPassword:password];
+```
+
+Check if a string is the correct password for the current account
+
+| Param | Type | Description |
+| --- | --- | --- |
+| password | <code>string</code> | Account password |
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#ABCError)</code> | (Javascript) Error object. Null if no error |
+| passwordCorrect | <code>Boolean</code> | True if password is correct |
+
+
+
+### enablePINLogin
+
+```javascript
+abcAccount.enablePINLogin(enable,
+                         (error) => {
+    if (error) {
+      // Failed
+    } else {
+      // Yay. Success
+    }
+})
+```
+
+```objective_c
+ABCError *error = [abcAccount enablePINLogin:enable];
+```
+
+Enable or disable PIN login on this account. Set enable = YES to allow PIN login. Enabling PIN login creates a local account decryption key that is split with one have in local device storage and the other half on Airbitz servers. When using loginWithPIN the PIN is sent to Airbitz servers to authenticate the user. If the PIN is correct, the second half of the decryption key is sent back to the device. Combined with the locally saved key, the two are then used to decrypt the local account thereby loggin in the user.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| enable | <code>Boolean</code> | Set true to enable PIN login. False to disable |
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#ABCError)</code> | (Javascript) Error object. Null if no error |
 
 
 

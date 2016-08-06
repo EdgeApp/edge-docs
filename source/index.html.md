@@ -59,6 +59,10 @@ Starting point of Airbitz Core SDK. Used for operations that do not require a lo
 ### makeABCContext
 
 ```javascript
+abc.ABCContext.makeABCContext(apiKey, hbitsKey, callback)
+
+// Example
+
 var abcContext = null
 
 abc.ABCContext.makeABCContext('your-api-key-here', null, function (error, context) {
@@ -81,6 +85,7 @@ Initialize and create an ABCContext object. Required for functionality of ABC SD
 | --- | --- | --- |
 | apiKey | <code>string</code> | Get an API Key from https://developer.airbitz.co |
 | hbitsKey | <code>string</code> | (Optional) Unique key used to encrypt private keys for use as implementation specific "gift cards" that are only redeemable by applications using this implementation.|
+| callback | <code>Callback</code> | (Javascript) Callback function when routine completes|
 
 | Return Param | Type | Description |
 | --- | --- | --- |
@@ -212,7 +217,7 @@ ABCAccount *abcAccount;
 ```
 Login to an Airbitz account with a full password. May optionally send 'otp' key which is required for any accounts that have OTP enabled using ABCAccount.enableOTP. OTP key can be retrieved from a device that has account logged in and OTP enabled using getOTPLocalKey.
 
-If routine returns with error.code == ABCConditionCodeInvalidOTP, then the the account has OTP enabled and needs the OTP key specified in parameter 'otp'. ABCError object may have properties otpResetToken and otpResetDate set which allow the user to call requestOTPReset to disable OTP.
+If routine returns with error.code == ABCConditionCodeInvalidOTP, then the account has OTP enabled and needs the OTP key specified in parameter 'otp'. ABCError object may have properties otpResetToken and otpResetDate set which allow the user to call requestOTPReset to disable OTP.
 
 This routine allows caller to receive back an error.otpResetToken which is used with requestOTPReset to remove OTP from the specified account.
 
@@ -328,7 +333,7 @@ Check if specified username has a password on the account or if it is a PIN-only
 | Param | Type | Description |
 | --- | --- | --- |
 | username | <code>string</code> | Account username |
-| callback | <code>Callback</code> | (Javascript) Callback function when routine completes|
+| callback | <code>Callback</code> | (Javascript) Callback function when routine completes |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
@@ -361,7 +366,7 @@ ABCError *error;
 ABCError *error = [abcContext accountHasPassword:@"myUsername"];
 
 ```
-Check if specified username has a password on the account or if it is a PIN-only account.
+Deletes named account from local device. Account is recoverable if it contains a password. Use accountHasPassword to determine if account has a password. Recommend warning user before executing deleteLocalAccount if accountHasPassword returns FALSE.
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -373,18 +378,16 @@ Check if specified username has a password on the account or if it is a PIN-only
 | error | <code>[ABCError](#ABCError)</code> | Error object. Null if no error |
 | hasPassword | <code>Boolean</code> | True if account has a password |
 
-
-
-
-
 ### pinLoginEnabled
 
 ```javascript
+abcContext.pinLoginEnabled(username, callback)
+
+// Example
+
 abcContext.pinLoginEnabled(username,
                            (error, enabled) => {
-    if (error) {
-      reject(funcname)
-    } else {
+    if (!error) {
       console.log("PIN Login enabled state: " + enabled)
     }
 })
@@ -399,16 +402,92 @@ ABCError *error;
 BOOL enabled = [abcContext pinLoginEnabled:username error:&error];
 ```
 
-Check if a string is the correct password for the current account
+Checks if PIN login is possible for the given username. This checks if there is a local PIN package on the device from a prior login
 
 | Param | Type | Description |
 | --- | --- | --- |
-| username | <code>string</code> | Account username |
+| username | <code>String</code> | Account username |
+| callback | <code>Callback</code> | (Javascript) Callback function when routine completes|
 
 | Return Param | Type | Description |
 | --- | --- | --- |
 | error | <code>[ABCError](#ABCError)</code> | Error object. Null if no error |
 | enabled | <code>Boolean</code> | True if PIN login is enabled |
+
+### listUsernames
+
+```javascript
+
+abcContext.listUsernames(callback)
+
+// Example
+
+abcContext.listUsernames((error, usernames) => {
+    if (!error) {
+      console.log("username 0: " + usernames[0])
+    }
+})
+```
+
+```objective_c
+- (NSArray *) listUsernames:(ABCError **) abcerror;
+
+// Example
+
+NSError *error;
+NSArray *usernames = [abc listUsernames:&error];
+if (!error) {
+  NSLog(@"username 0: %@", usernames[0]);
+}
+```
+
+Get a list of previously logged in usernames on this device
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>Callback</code> | (Javascript) Callback function when routine completes|
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#ABCError)</code> | Error object. Null if no error |
+| usernames | <code>Array</code> | Array |
+
+### usernameAvailable
+
+```javascript
+abcContext.usernameAvailable(username, callback)
+
+// Example
+
+abcContext.usernameAvailable(username,
+                             (error, available) => {
+    if (!error) {
+      console.log("username available = " + available)
+    }
+})
+```
+
+```objective_c
+- (BOOL)pinLoginEnabled:(NSString *)username error:(NSError **)error;
+
+// Example
+
+ABCError *error;
+BOOL enabled = [abcContext pinLoginEnabled:username error:&error];
+```
+
+Checks if PIN login is possible for the given username. This checks if there is a local PIN package on the device from a prior login
+
+| Param | Type | Description |
+| --- | --- | --- |
+| username | <code>String</code> | Account username |
+| callback | <code>Callback</code> | (Javascript) Callback function when routine completes|
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#ABCError)</code> | Error object. Null if no error |
+| enabled | <code>Boolean</code> | True if PIN login is enabled |
+
 
 
 

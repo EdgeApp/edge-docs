@@ -35,17 +35,22 @@ See the following Github repos for your various development languages. Installat
 
 [Java/Android](https://github.com/Airbitz/airbitz-core-java)
 
-For Javascript using React Native, see instructions for [Objective C](https://github.com/Airbitz/airbitz-core-objc)
+For Javascript using React Native, see instructions in the [Objective C](https://github.com/Airbitz/airbitz-core-objc/tree/develop) Develop branch (beta testing phase).
 
 
 ## Include and initialize the SDK
 
 ```javascript
 var abc = require ('./abc.js')
+
+
+// React Native
+var abc = require ('./abc-react.js')
+
 ```
 
-```objective_c
-#import "AirbitzCore.h"
+```objc
+#import "ABCContext.h"
 ```
 
 Include the proper header files and/or libraries for your language.
@@ -73,7 +78,7 @@ abc.ABCContext.makeABCContext('your-api-key-here', null, function (error, contex
 })
 ```
 
-```objective_c
+```objc
 +(ABCContext *) makeABCContext:(NSString *)abcAPIKey hbits:(NSString *)hbitsKey
 
 ABCContext *abcContext = [ABCContext makeABCContext:@"your-api-key-here" hbits:null];
@@ -104,7 +109,6 @@ abcContext.createAccount(username,
                          callback)
 
 // Example
-
 abcContext.createAccount("myUsername", 
                          "myNot5oGoodPassw0rd", 
                          "2946", 
@@ -117,7 +121,7 @@ abcContext.createAccount("myUsername",
     }
 ```
 
-```objective_c
+```objc
 
 -(void) createAccount:(NSString *) username
              password:(NSString *) password
@@ -126,7 +130,6 @@ abcContext.createAccount("myUsername",
              callback:^(ABCError *error, ABCAccount *account)
 
 // Example
-
 ABCAccount *abcAccount;
 
 [abcContext createAccount:@"myUsername"
@@ -193,7 +196,6 @@ abcContext.loginWithPassword("JoeHomey", "My0KPa55WoRd@Airb1t5", null, null,
                  callback:^(ABCError *error, ABCAccount *account);
 
 // Example
-
 ABCAccount *abcAccount;
 
 [abcContext loginWithPassword:@"myUsername"
@@ -256,14 +258,13 @@ abcContext.loginWithPIN("JoeHomey", "2847", null,
 })
 ```
 
-```objective_c
+```objc
 -(void) loginWithPIN:(NSString *) username
             password:(NSString *) password
             delegate:(ABCAccountDelegate) delegate
             callback:^(ABCError *error, ABCAccount *account);
 
 // Example
-
 ABCAccount *abcAccount;
 
 [abcContext loginWithPIN:@"myUsername"
@@ -315,13 +316,12 @@ abcContext.accountHasPassword("JoeHomey", function (error, hasPassword) {
 })
 ```
 
-```objective_c
+```objc
 
 -(BOOL) accountHasPassword:(NSString *) username
                      error:(ABCError *) error;
 
 // Example
-
 ABCError *error;
 
 BOOL hasPassword = [abcContext accountHasPassword:@"myUsername"
@@ -355,12 +355,11 @@ abcContext.deleteLocalAccount("JoeHomey", function (error) {
 })
 ```
 
-```objective_c
+```objc
 
 - (ABCError *) deleteLocalAccount:(NSString *) username;
 
 // Example
-
 ABCError *error;
 
 ABCError *error = [abcContext accountHasPassword:@"myUsername"];
@@ -392,11 +391,10 @@ abcContext.pinLoginEnabled(username,function (error, enabled) {
 })
 ```
 
-```objective_c
+```objc
 - (BOOL)pinLoginEnabled:(NSString *)username error:(NSError **)error;
 
 // Example
-
 ABCError *error;
 BOOL enabled = [abcContext pinLoginEnabled:username error:&error];
 ```
@@ -428,11 +426,10 @@ abcContext.listUsernames(function (error, usernames) {
 })
 ```
 
-```objective_c
+```objc
 - (NSArray *) listUsernames:(ABCError **) abcerror;
 
 // Example
-
 NSError *error;
 NSArray *usernames = [abc listUsernames:&error];
 if (!error) {
@@ -465,11 +462,10 @@ abcContext.usernameAvailable(username,function (error, available) {
 })
 ```
 
-```objective_c
+```objc
 - (BOOL)pinLoginEnabled:(NSString *)username error:(NSError **)error;
 
 // Example
-
 ABCError *error;
 BOOL enabled = [abcContext pinLoginEnabled:username error:&error];
 ```
@@ -500,14 +496,13 @@ abcContext.requestOTPReset("JoeHomey", "ZR2G9d8TYW8DH6", function (error) {
 })
 ```
 
-```objective_c
+```objc
 
 - (void)requestOTPReset:(NSString *)username
                   token:(NSString *)otpResetToken
                callback:(void (^)(ABCError *error)) callback;
 
 // Example
-
 [abc requestOTPReset:@"JoeHomey" token:@"ZR2G9d8TYW8DH6" callback:^(ABCError *error)
 {
     if (!error)
@@ -569,7 +564,6 @@ Logout the currently logged in ABCAccount
 abcAccount.changePassword(password, callback)
 
 // Example
-
 abcAccount.changePassword(password, function(error) {
   if (error) {
     // Oh no
@@ -584,7 +578,6 @@ abcAccount.changePassword(password, function(error) {
               callback:(void (^)(ABCError *error)) callback;
 
 // Example
-
 [abcAccount changePassword:password callback:^(ABCError *error) {
     if (error) {
         // Oh no
@@ -614,7 +607,6 @@ Change the password of the currently logged in ABCAccount
 abcAccount.changePIN(pin, callback)
 
 // Example
-
 abcAccount.changePIN(pin, function(error) {
   if (error) {
     // Oh no
@@ -629,7 +621,6 @@ abcAccount.changePIN(pin, function(error) {
          callback:(void (^)(ABCError *error)) callback;
 
 // Example
-
 [abcAccount changePIN:pin callback:^(ABCError *error) {
     if (error) {
         // Oh no
@@ -658,7 +649,6 @@ Change the PIN of the currently logged in ABCAccount
 abcAccount.checkPassword(password, callback)
 
 // Example
-
 abcAccount.checkPassword(password, function (error, passwordCorrect) {
     if (!error) {
       if (passwordCorrect) {
@@ -668,11 +658,10 @@ abcAccount.checkPassword(password, function (error, passwordCorrect) {
 })
 ```
 
-```objective_c
+```objc
 - (BOOL)checkPassword:(NSString *)password;
 
 // Example
-
 BOOL passwordCorrect = [abcAccount checkPassword:password];
 ```
 
@@ -706,11 +695,10 @@ abcAccount.enablePINLogin(enable, function (error) {
 })
 ```
 
-```objective_c
+```objc
 - (NSError *) enablePINLogin:(BOOL)enable;
 
 // Example
-
 ABCError *error = [abcAccount enablePINLogin:enable];
 ```
 
@@ -742,15 +730,25 @@ abcAccount.setupOTPKey(key, function (error) {
 })
 ```
 
-```objective_c
+```objc
 - (ABCError *) setupOTPKey:(NSString *)key;
 
 // Example
-
 ABCError *error = [abcAccount setupOTPKey:key];
 ```
 
-Associates an OTP key with the account. An OTP key can be retrieved from a previously logged in account using otpLocalKeyGet. The account must have had OTP enabled by using otpEnable()
+Associates an OTP key with the currently logged in account. An OTP key can be retrieved from a previously logged in account using otpLocalKeyGet. The account must have had OTP enabled by using otpEnable().
+
+This method is primarily used to add an OTP key to an account & device that was successfully logged in prior to OTP being enabled. A second device may have enabled OTP which would cause OTP warnings on the first device upon login.
+
+ie. 
+Device A creates account "bob". 
+Device B login to account "bob".
+Device B enables OTP.
+
+Device A can still login but will get OTP token notification warnings and will be unable to make any account changes such as changing password/PIN or creating new wallets.
+Device B can call getOTPLocalKey and Device A can add the OTP key using setupOTPKey
+
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -777,11 +775,10 @@ abcAccount.getOTPLocalKey(key, function (error, key) {
 })
 ```
 
-```objective_c
+```objc
 - (NSError *) getOTPLocalKey:(BOOL)enable;
 
 // Example
-
 ABCError *error;
 NSString *key = [abcAccount getOTPLocalKey:&error];
 ```
@@ -810,17 +807,16 @@ abcAccount.getOTPDetails(function (error, enabled, timeout) {
 })
 ```
 
-```objective_c
+```objc
 - (ABCError *)getOTPDetails:(bool *)enabled
                    timeout:(long *)timeout;
 
 // Example
-
-BOOL on = NO;
+BOOL enabled = NO;
 long timeout = 0;
     
-ABCError *error = [abcAccount getOTPDetails:&on
-                                   timeout:&timeout];
+ABCError *error = [abcAccount getOTPDetails:&enabled
+                                    timeout:&timeout];
 ```
 
 Reads the OTP configuration from the server. Gets information on whether OTP is enabled for the current account, and how long a reset request will take. An OTP reset is a request to disable OTP made through the method ABCContext.requestOTPReset.
@@ -833,7 +829,7 @@ Reads the OTP configuration from the server. Gets information on whether OTP is 
 | --- | --- | --- |
 | error | <code>[ABCError](#ABCError)</code> | (Javascript) Error object. Null if no error |
 | enabled | <code>Boolean</code> | True if OTP is enabled on this accout |
-| timeout | <code>Number</code> | Number seconds required after a reset is requested before OTP is disabled |
+| timeout | <code>Number</code> | Number seconds required after a reset is requested before OTP is disabled (iOS only. Android returns 0) |
 
 
 <a name="ABCAccount.enableOTP"></a>
@@ -853,11 +849,10 @@ abcAccount.enableOTP(timeout, function (error) {
 })
 ```
 
-```objective_c
+```objc
 - (ABCError *)enableOTP:(long)timeout;
 
 // Example
-
 #define OTP_RESET_DELAY (60 * 60 * 24 * 7) // 7 days
 
 ABCError *error;
@@ -892,7 +887,7 @@ abcAccount.disableOTP(function (error) {
 })
 ```
 
-```objective_c
+```objc
 - (ABCError *)disableOTP;
 
 // Example
@@ -926,7 +921,7 @@ abcAccount.cancelOTPResetRequest(function (error) {
 })
 ```
 
-```objective_c
+```objc
 - (ABCError *)cancelOTPResetRequest;
 
 // Example
@@ -944,6 +939,57 @@ Removes the OTP reset request from the server for the currently logged in user. 
 | error | <code>[ABCError](#ABCError)</code> | (Javascript) Error object. Null if no error |
 
 
+### signBitIDRequest
+
+```javascript
+abcAccount.signBitIDRequest(uri, message, callback)
+
+// Example
+
+abcAccount.signBitIDRequest("bitid://airbitz.co/developer?nonce=12345", 
+                            "Hello World", function (error, abcSignature) {
+  if (!error) {
+    console.log("Public address of signature = " + abcSignature.address)
+    console.log("Signature = " + abcSignature.signature)    
+  }
+})
+```
+
+```objc
+- (ABCError *)enableOTP:(long)timeout;
+
+// Example
+ABCBitIDSignature *abcSignature;
+abcSignature = [abcAccount signBitIDRequest:@"bitid://airbitz.co/developer?nonce=12345"
+                                    message:@"Hello World"];
+if (!error) {
+  NSLog(@"Public address of signature = %@", abcSignature.address)
+  NSLog(@"Signature = %@", abcSignature.signature)    
+}
+
+```
+
+Sign an arbitrary message with a BitID URI. The URI determines the key derivation used to sign the message.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| url | <code>String</code> | URI used to derive the private key to do the signature |
+| message | <code>String</code> | Message to sign |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#ABCError)</code> | (Javascript) Error object. Null if no error |
+| abcSignature | <code>[ABCBitIDSignature](#ABCBitIDSignature)</code> | BitID Signature Object |
+
+<a name="ABCBitIDSignature"></a>
+## ABCBitIDSignature
+
+### Class Properties
+| Property | Type | Description |
+| --- | --- | --- |
+| address | <code>String</code> | Public address of private key used to sign |
+| signature | <code>String</code> | Public address of private key used to sign |
 
 <a name="ABCWallet"></a>
 ## ABCWallet
@@ -1791,7 +1837,10 @@ Fetch a configuration value. These are set in the native iOS/Android code, befor
 ```javascript
 Airbitz.ui.title(title)
 
-// Examples
+
+// Example
+
+s
 
 Airbitz.ui.title("Bob's Awesome Plugin");
 ```
@@ -1814,7 +1863,10 @@ Set the title of the current view. This updates the native apps titlebar.
 ```javascript
 Airbitz.ui.showAlert(title, message, options)
 
-// Examples
+
+// Example
+
+s
 
 Airbitz.ui.showAlert("Account creation error", "Error creating account. Please try again later");
 

@@ -35,7 +35,7 @@ See the following Github repos for your various development languages. Installat
 
 [Java/Android](https://github.com/Airbitz/airbitz-core-java)
 
-For Javascript using React Native, see instructions in the [Objective C](https://github.com/Airbitz/airbitz-core-objc/tree/develop) Develop branch (beta testing phase).
+For Javascript using React Native, see instructions in the [Objective C](https://github.com/Airbitz/airbitz-core-objc)
 
 
 ## Include and initialize the SDK

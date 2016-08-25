@@ -73,7 +73,10 @@ First off, lets make sure you have the dependencies installed.
 
 To create a new plugin, you can copy the blank plugin and begin coding.
 
-`cp -a blank yourpluginname`
+```javascript
+cd plugins
+cp -a blank yourpluginname
+```
 
 ### Plugin Files
 
@@ -241,36 +244,9 @@ In order to see your plugin in Airbitz, you must modify the Native app to includ
 
 ## Android
 
-### Edit `mkplugin`
+### Build the App
 
-```objc
-// No content for this language. Select 'Javascript/HTML` above
-```
-```java
-// No content for this language. Select 'Javascript/HTML` above
-```
-
-```javascript
-gulp glidera-android
-gulp foldapp-android
-gulp yourpluginname-android
-cp build/android/glidera/index.html ${CURRENT_DIR}/Airbitz/airbitz/src/main/assets/glidera.html
-cp build/android/foldapp/index.html ${CURRENT_DIR}/Airbitz/airbitz/src/main/assets/foldapp.html
-cp build/android/yourpluginname/index.html ${CURRENT_DIR}/Airbitz/airbitz/src/main/assets/foldapp.html
-```
-##
-
-Follow the README instructions in `airbitz-android-gui` to build the app.
-
-To add your plugin to Android, first modify the `mkplugin` script to include your new plugin.
-
-Look for the lines that begin with `gulp ...` and add a line of the format
-
-`gulp [yourpluginname]-android`
-
-Then find the lines that begin with `cp ...` and add a line of the format
-
-`cp build/android/yourpluginname/index.html ${CURRENT_DIR}/Airbitz/airbitz/src/main/assets/yourpluginname.html`
+Follow the README instructions in `airbitz-android-gui` to make sure you can build the app.
 
 ### Edit `PluginFramework.java`
 
@@ -305,36 +281,9 @@ Last, launch the app, login, navigate to Buy/Sell and launch your plugin.
 
 ## iOS
 
-### Edit `mkplugin`
+### Build the App
 
-```objc
-// No content for this language. Select 'Javascript/HTML` above
-```
-```java
-// No content for this language. Select 'Javascript/HTML` above
-```
-
-```javascript
-gulp glidera-ios
-gulp foldapp-ios
-gulp yourpluginname-ios
-cp build/ios/glidera/index.html ${CURRENT_DIR}/Airbitz/Resources/plugins/glidera.html
-cp build/ios/foldapp/index.html ${CURRENT_DIR}/Airbitz/Resources/plugins/foldapp.html
-cp build/ios/yourpluginname/index.html ${CURRENT_DIR}/Airbitz/Resources/plugins/yourpluginname.html
-```
-
-Follow the README instructions in `airbitz-ios-gui` to build the app.
-
-To add your plugin to iOS, first modify the `mkplugin` script to include your new plugin.
-
-Look for the lines that begin with `gulp ...` and add a line of the format
-
-`gulp [yourpluginname]-ios`
-
-Then find the lines that begin with `cp ...` and add a line of the format
-
-`cp build/ios/[yourpluginname]/index.html ${CURRENT_DIR}/Airbitz/Resources/plugins/yourpluginname.html`
-
+Follow the README instructions in `airbitz-ios-gui` to make sure you can build the app.
 
 ### Edit `Plugins.m`
 
@@ -361,7 +310,11 @@ In Xcode (or your favorite editor) open `Airbitz/Plugins/Plugins.m`. Add your pl
 
 ### Build and Run the Airbitz app
 
-Now you can run `./mkplugin`. Then build and run the code in Xcode. You can then launch the app, login, navigate to Buy/Sell and launch your plugin.
+Now you can run `./mkplugin`. This will pack all the HTML files and javascript into a monolithic yourpluginname.html and copy it from `airbitz-plugins` to `airbitz-ios-gui`.
+
+In Xcode, navigate to Airbitz/Resources/Plugins. Drag the yourpluginname.html file from Finder in Airbitz/Resources/Plugins and into Xcode in the same folder path.
+
+Then build and run the code in Xcode. You can then launch the app, login, navigate to Buy/Sell and launch your plugin.
 
 # Submit Your Plugin
 

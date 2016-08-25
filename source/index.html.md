@@ -64,13 +64,13 @@ Starting point of Airbitz Core SDK. Used for operations that do not require a lo
 ### makeABCContext
 
 ```javascript
-abc.ABCContext.makeABCContext(apiKey, hbitsKey, callback)
+abc.ABCContext.makeABCContext(apiKey, type, hbitsKey, callback)
 
 // Example
 
 var abcContext = null
 
-abc.ABCContext.makeABCContext('your-api-key-here', null, function (error, context) {
+abc.ABCContext.makeABCContext('your-api-key-here', 'account:repo:com.mydomain.myapp', null, function (error, context) {
   if (error) {
   } else {
     abcContext = context
@@ -79,9 +79,9 @@ abc.ABCContext.makeABCContext('your-api-key-here', null, function (error, contex
 ```
 
 ```objc
-+(ABCContext *) makeABCContext:(NSString *)abcAPIKey hbits:(NSString *)hbitsKey
++(ABCContext *) makeABCContext:(NSString *)abcAPIKey type:(NSString *)type hbits:(NSString *)hbitsKey
 
-ABCContext *abcContext = [ABCContext makeABCContext:@"your-api-key-here" hbits:null];
+ABCContext *abcContext = [ABCContext makeABCContext:@"your-api-key-here" type:@"account:repo:com.mydomain.myapp" hbits:null];
 ```
 
 Initialize and create an ABCContext object. Required for functionality of ABC SDK.
@@ -89,6 +89,7 @@ Initialize and create an ABCContext object. Required for functionality of ABC SD
 | Param | Type | Description |
 | --- | --- | --- |
 | apiKey | <code>string</code> | Get an API Key from https://developer.airbitz.co |
+| type | <code>string</code> | Type of account that this application will be accessing. Type is of the format "account:repo:com.domain.app". At this moment, all types must begin with "account:repo:" and developers should add their reverse domain and application afterwards. This 'type' is what allows a singleSignOn login to access the same account object for this particular application. ie. User's using Edge Login (SingleSignOn) in application type "account:repo:com.domain.app" will get a different account repository when logged into an app with type "account:repo:com.domain2.app". |
 | hbitsKey | <code>string</code> | (Optional) Unique key used to encrypt private keys for use as implementation specific "gift cards" that are only redeemable by applications using this implementation.|
 | callback | <code>Callback</code> | (Javascript) Callback function when routine completes|
 

@@ -43,6 +43,11 @@ For Javascript using React Native, see instructions in the [Objective C](https:/
 ```javascript
 var abc = require ('./abc.js')
 
+// Or
+
+<script src="abc.js"></script>
+
+
 
 // React Native
 var abc = require ('./abc-react.js')
@@ -64,13 +69,18 @@ Starting point of Airbitz Core SDK. Used for operations that do not require a lo
 ### makeABCContext
 
 ```javascript
-abc.ABCContext.makeABCContext(apiKey, type, hbitsKey, callback)
+abc.makeABCContext(apiKey, type, hbitsKey, callback)
+ABCContext ctx = abc.makeABCContext(apiKey, type, hbitsKey)
 
 // Example
 
 var abcContext = null
 
-abc.ABCContext.makeABCContext('your-api-key-here', 'account:repo:com.mydomain.myapp', null, function (error, context) {
+abcContext = abc.makeABCContext('your-api-key-here', 'account:repo:com.mydomain.myapp', null)
+
+// With callback (React Native)
+
+abc.makeABCContext('your-api-key-here', 'account:repo:com.mydomain.myapp', null, function (error, context) {
   if (error) {
   } else {
     abcContext = context
@@ -535,7 +545,8 @@ To obtain an otpResetToken, attempt a login into the OTP protected account using
 ### Class Properties
 | Property | Type | Description |
 | --- | --- | --- |
-| username | <code>string</code> | Account username |
+| username | <code>String</code> | Account username |
+| rootKey | <code>Number</code> | (Javascript only) Cryptographic random number key for use as master private key of account. This is specific to a user's account on a specific account type (ie. Augur, Airbitz, Arcade City). This key is inaccessible across users or apps. To make a shareable key, create an ABCWallet first and get the rootKey of the ABCWallet. The ABCAccount rootKey is ideal as a master key to create authentication private keys for central servers. |
 
 
 
@@ -1003,6 +1014,114 @@ Coming Soon...
 Coming Soon...
 
 
+# Airbitz Account Management UI
+
+To ease the implementation of the Airbitz SDK in applications, Airbitz provides a base user interface capable of all the account creation, account login, password & PIN management, and password recovery. This functionality is currently only available in Javascript for HTML apps
+
+The repo [airbitz-core-js-ui](https://github.com/Airbitz/airbitz-core-js-ui) implements a UI layer on top of [airbitz-core-js](https://github.com/Airbitz/airbitz-core-js) to provide web applications the interface required to do all the accounts management in just a small handful of Javascript API calls. All UI operates in an overlay iframe on top of the current HTML view.
+
+Install instructions are in [airbitz-core-js-ui](https://github.com/Airbitz/airbitz-core-js-ui).
+
+## Example webpage
+
+A sample webpage exists in [airbitz-core-js-sample](https://github.com/Airbitz/airbitz-core-js-sample) which makes a simple page with a Login & Register button on the top bar and uses [airbitz-core-js-ui](https://github.com/Airbitz/airbitz-core-js-ui).
+
+## Basic usage
+
+Developers need only make a handful Javascript API calls to manage a users account. The account object returned references the ABCAccount object created by `airbitz-core-js`. Once an account object is obtained, it can be used to pull out a rootKey for use as raw entropy to create cryptographic private keys.
+
+```javascript
+_account.rootKey.toString('base64')
+
+// Logout user
+_account.logout();
+```
+
+
+### makeABCUIContext
+
+```javascript
+    _abcUi = abcui.makeABCUIContext({'apiKey': 'api-key-here',
+                                     'accountType': 'account:repo:com.mydomain.myapp',
+                                     'bundlePath': '/path/to/this/bundle'});
+```
+Initializes the ABCUI library and returns an ABCUIContext object
+
+| Param | Type | Description |
+| --- | --- | --- |
+| apiKey | <code>String</code> | API Key from https://developer.airbitz.co |
+| accountType | <code>String</code> | App account type of form 'account:repo:com.mydomain.myapp' |
+| bundlePath | <code>String</code> | Website path to the airbitz-core-js-ui repo |
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#ABCError)</code> | (Javascript) Error object. Null if no error |
+| account | <code>[ABCAccount](#ABCAccount)</code> | Airbitz account object |
+
+
+
+### openRegisterWindow
+
+```javascript
+_abcUi.openRegisterWindow(function(error, account) {
+  _account = account;
+});
+```
+Launch the registration UI which let's the user create a new account.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#ABCError)</code> | (Javascript) Error object. Null if no error |
+| account | <code>[ABCAccount](#ABCAccount)</code> | Airbitz account object |
+
+![Register UI](https://airbitz.co/go/wp-content/uploads/2016/08/Screen-Shot-2016-08-26-at-12.49.27-PM.png)
+
+### openLoginWindow
+```javascript
+_abcUi.openLoginWindow(function(error, account) {
+  _account = account;
+});
+```
+
+Create an overlay popup where a user can login to a previously created account via password or PIN.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#ABCError)</code> | (Javascript) Error object. Null if no error |
+| account | <code>[ABCAccount](#ABCAccount)</code> | Airbitz account object |
+
+![Login UI](https://airbitz.co/go/wp-content/uploads/2016/08/Screen-Shot-2016-08-26-at-12.50.04-PM.png)
+
+### openManageWindow
+
+```javascript
+_abcUi.openManageWindow(_account, function(error) {
+    
+});
+```
+
+Launch an account management window for changing password, PIN, and recovery questions
+
+| Param | Type | Description |
+| --- | --- | --- |
+| account | <code>[ABCAccount](#ABCAccount)</code> | Airbitz account object to modify |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#ABCError)</code> | (Javascript) Error object. Null if no error |
+
+
+
+![Manage UI](https://airbitz.co/go/wp-content/uploads/2016/08/Screen-Shot-2016-08-26-at-12.50.26-PM.png)
 
 
 # Airbitz Plugin API

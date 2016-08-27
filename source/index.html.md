@@ -1022,13 +1022,11 @@ The repo [airbitz-core-js-ui](https://github.com/Airbitz/airbitz-core-js-ui) imp
 
 Install instructions are in [airbitz-core-js-ui](https://github.com/Airbitz/airbitz-core-js-ui).
 
-## Example webpage
+## Sample webpage
 
 A sample webpage exists in [airbitz-core-js-sample](https://github.com/Airbitz/airbitz-core-js-sample) which makes a simple page with a Login & Register button on the top bar and uses [airbitz-core-js-ui](https://github.com/Airbitz/airbitz-core-js-ui).
 
-## Basic usage
-
-Developers need only make a handful Javascript API calls to manage a users account. The account object returned references the ABCAccount object created by `airbitz-core-js`. Once an account object is obtained, it can be used to pull out a rootKey for use as raw entropy to create cryptographic private keys.
+## Usage
 
 ```javascript
 _account.rootKey.toString('base64')
@@ -1036,6 +1034,8 @@ _account.rootKey.toString('base64')
 // Logout user
 _account.logout();
 ```
+
+Developers need only make a handful Javascript API calls to manage a users account. The account object returned references the ABCAccount object created by `airbitz-core-js`. Once an account object is obtained, it can be used to pull out a rootKey for use as raw entropy to create cryptographic private keys.
 
 
 ### makeABCUIContext

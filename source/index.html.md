@@ -1032,7 +1032,7 @@ A sample webpage exists in [airbitz-core-js-sample](https://github.com/Airbitz/a
 _account.rootKey.toString('base64')
 
 // Logout user
-_account.logout();
+_account.logout()
 ```
 
 Developers need only make a handful Javascript API calls to manage a users account. The account object returned references the ABCAccount object created by `airbitz-core-js`. Once an account object is obtained, it can be used to pull out a rootKey for use as raw entropy to create cryptographic private keys.
@@ -1041,9 +1041,9 @@ Developers need only make a handful Javascript API calls to manage a users accou
 ### makeABCUIContext
 
 ```javascript
-    _abcUi = abcui.makeABCUIContext({'apiKey': 'api-key-here',
-                                     'accountType': 'account:repo:com.mydomain.myapp',
-                                     'bundlePath': '/path/to/this/bundle'});
+    abcUiContext = abcui.makeABCUIContext({'apiKey': 'api-key-here',
+                                           'accountType': 'account:repo:com.mydomain.myapp',
+                                           'bundlePath': '/path/to/this/bundle'})
 ```
 Initializes the ABCUI library and returns an ABCUIContext object
 
@@ -1055,17 +1055,16 @@ Initializes the ABCUI library and returns an ABCUIContext object
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#ABCError)</code> | (Javascript) Error object. Null if no error |
-| account | <code>[ABCAccount](#ABCAccount)</code> | Airbitz account object |
+| abcUiContext | <code>[ABCUIContext](#ABCUIContext)</code> | Airbitz account object |
 
 
 
 ### openRegisterWindow
 
 ```javascript
-_abcUi.openRegisterWindow(function(error, account) {
-  _account = account;
-});
+abcUiContext.openRegisterWindow(function(error, account) {
+  abcAccount = account;
+})
 ```
 Launch the registration UI which let's the user create a new account.
 
@@ -1082,9 +1081,9 @@ Launch the registration UI which let's the user create a new account.
 
 ### openLoginWindow
 ```javascript
-_abcUi.openLoginWindow(function(error, account) {
+abcUiContext.openLoginWindow(function(error, account) {
   _account = account;
-});
+})
 ```
 
 Create an overlay popup where a user can login to a previously created account via password or PIN.
@@ -1103,9 +1102,9 @@ Create an overlay popup where a user can login to a previously created account v
 ### openManageWindow
 
 ```javascript
-_abcUi.openManageWindow(_account, function(error) {
+abcUiContext.openManageWindow(_account, function(error) {
     
-});
+})
 ```
 
 Launch an account management window for changing password, PIN, and recovery questions

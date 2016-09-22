@@ -1028,15 +1028,6 @@ A sample webpage exists in [airbitz-core-js-sample](https://github.com/Airbitz/a
 
 ## Usage
 
-```javascript
-_account.rootKey.toString('base64')
-
-// Logout user
-_account.logout()
-```
-
-Developers need only make a handful Javascript API calls to manage a users account. The account object returned references the ABCAccount object created by `airbitz-core-js`. Once an account object is obtained, it can be used to pull out a rootKey for use as raw entropy to create cryptographic private keys.
-
 
 ### makeABCUIContext
 
@@ -1058,27 +1049,6 @@ Initializes the ABCUI library and returns an ABCUIContext object
 | abcUiContext | <code>[ABCUIContext](#ABCUIContext)</code> | Airbitz account object |
 
 
-
-### openRegisterWindow
-
-```javascript
-abcUiContext.openRegisterWindow(function(error, account) {
-  abcAccount = account;
-})
-```
-Launch the registration UI which let's the user create a new account.
-
-| Param | Type | Description |
-| --- | --- | --- |
-| callback | <code>Callback</code> | (Javascript) Callback function |
-
-| Return Param | Type | Description |
-| --- | --- | --- |
-| error | <code>[ABCError](#ABCError)</code> | (Javascript) Error object. Null if no error |
-| account | <code>[ABCAccount](#ABCAccount)</code> | Airbitz account object |
-
-![Register UI](https://airbitz.co/go/wp-content/uploads/2016/08/Screen-Shot-2016-08-26-at-12.49.27-PM.png)
-
 ### openLoginWindow
 ```javascript
 abcUiContext.openLoginWindow(function(error, account) {
@@ -1086,7 +1056,7 @@ abcUiContext.openLoginWindow(function(error, account) {
 })
 ```
 
-Create an overlay popup where a user can login to a previously created account via password or PIN.
+Create an overlay popup where a user can register a new account or login to a previously created account via password or PIN.
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1121,6 +1091,20 @@ Launch an account management window for changing password, PIN, and recovery que
 
 
 ![Manage UI](https://airbitz.co/go/wp-content/uploads/2016/08/Screen-Shot-2016-08-26-at-12.50.26-PM.png)
+
+### Get a key for crypto raw entropy
+
+```javascript
+_account.repoInfo.dataKey.toString('base64')
+
+// Logout user
+_account.logout()
+```
+
+The account object returned references the ABCAccount object created by `airbitz-core-js`. Once an account object is obtained, it can be used to pull out a dataKey for use as raw entropy to create cryptographic private keys.
+
+> Note: Use of ABCAccount.repoInfo.dataKey is a temporary measure until actual wallet repositories are implemented in the final version of the SDK. Do not use this for production. Final version will require creating an ABCWallet repository and using the rootKey of that repository
+
 
 
 # Airbitz Plugin API

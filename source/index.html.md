@@ -114,22 +114,38 @@ Initialize and create an ABCContext object. Required for functionality of ABC SD
 
 ```javascript
 abcContext.createAccount(username, 
-                         password, 
-                         pin, 
-                         callbacks, 
+                         password,
+                         pin,
+                         ABCAccountCallbacks,
                          callback)
+
+function abcAccountRemotePasswordChange () {}
+function abcAccountLoggedOut () {}
+function abcAccountOTPRequired () {}
+function abcAccountOTPSkew () {}
+function abcAccountAccountChanged () {}
+
+const abcCallbacks = {
+   abcAccountRemotePasswordChange: abcAccountRemotePasswordChange,
+   abcAccountLoggedOut: abcAccountLoggedOut,
+   abcAccountOTPRequired: abcAccountOTPRequired,
+   abcAccountOTPSkew: abcAccountOTPSkew,
+   abcAccountAccountChanged: abcAccountAccountChanged
+}
+   
 
 // Example
 abcContext.createAccount("myUsername", 
-                         "myNot5oGoodPassw0rd", 
-                         "2946", 
-                         callbacks, 
+                         "myNot5oGoodPassw0rd",
+                         "2946",
+                         abcCallbacks,
                          function (error, account) {
     if (error) {
-      reject(funcname)
+      // Error creating account
     } else {
       abcAccount = account;
-    }
+    }                                                                              
+})
 ```
 
 ```objc
@@ -168,7 +184,7 @@ Create and log into a new ABCAccount
 | username | <code>string</code> | Account username |
 | password | <code>string</code> | Account password |
 | pin | <code>string</code> | Account PIN for fast re-login |
-| callbacks | <code>[ABCCallbacks](#ABCCallbacks)</code> | (Javascript) Callback event routines |
+| callbacks | <code>[ABCAccountCallbacks](#ABCAccountCallbacks)</code> | (Javascript) Callback event routines |
 | delegate | <code>[ABCAccountDelegate](#ABCAccountDelegate)</code> | (ObjC) Callback event delegates |
 | callback | <code>Callback</code> | Callback function when routine completes|
 
@@ -186,11 +202,13 @@ Create and log into a new ABCAccount
 abcContext.loginWithPassword(username, password, otp, callbacks, callback)
 
 // Example
-abcContext.loginWithPassword("JoeHomey", "My0KPa55WoRd@Airb1t5", null, null, 
+abcContext.loginWithPassword("JoeHomey", "My0KPa55WoRd@Airb1t5", null, callbacks, 
                              function (error, account) {
     if (error) {
       if (error.code === ABCConditionCodeInvalidOTP) {
         console.log("otpResetToken: " + error.otpResetToken)
+      } else {
+        // login failed.
       }
     } else {
       // Yay. logged in
@@ -241,7 +259,7 @@ The otpResetToken is only returned if the caller has provided the correct userna
 | username | <code>string</code> | Account username |
 | password | <code>string</code> | Account password |
 | otp | <code>string</code> | (Optional) OTP key retrieved from getOTPLocalKey |
-| callbacks | <code>[ABCCallbacks](#ABCCallbacks)</code> | (Javascript) Callback event routines |
+| callbacks | <code>[ABCAccountCallbacks](#ABCAccountCallbacks)</code> | (Javascript) Callback event routines |
 | delegate | <code>[ABCAccountDelegate](#ABCAccountDelegate)</code> | (ObjC) Callback event delegates |
 | callback | <code>Callback</code> | Callback function when routine completes|
 
@@ -300,7 +318,7 @@ Login to an Airbitz account with PIN. Used to sign into devices that have previo
 | --- | --- | --- |
 | username | <code>string</code> | Account username |
 | pin | <code>string</code> | Account PIN for fast re-login |
-| callbacks | <code>[ABCCallbacks](#ABCCallbacks)</code> | (Javascript) Callback event routines |
+| callbacks | <code>[ABCAccountCallbacks](#ABCAccountCallbacks)</code> | (Javascript) Callback event routines |
 | delegate | <code>[ABCAccountDelegate](#ABCAccountDelegate)</code> | (ObjC) Callback event delegates |
 | callback | <code>Callback</code> | Callback function when routine completes|
 
@@ -362,6 +380,7 @@ abcContext.deleteLocalAccount("JoeHomey", function (error) {
     if (error) {
       // Error
     } else {
+      // Success deleting account from local device
     }
 })
 ```
@@ -373,7 +392,7 @@ abcContext.deleteLocalAccount("JoeHomey", function (error) {
 // Example
 ABCError *error;
 
-ABCError *error = [abcContext accountHasPassword:@"myUsername"];
+ABCError *error = [abcContext deleteLocalAccount:@"myUsername"];
 
 ```
 Deletes named account from local device. Account is recoverable if it contains a password. Use accountHasPassword to determine if account has a password. Recommend warning user before executing deleteLocalAccount if accountHasPassword returns FALSE.
@@ -381,7 +400,7 @@ Deletes named account from local device. Account is recoverable if it contains a
 | Param | Type | Description |
 | --- | --- | --- |
 | username | <code>string</code> | Account username |
-| callback | <code>Callback</code> | (Javascript) Callback function when routine completes|
+| callback | <code>Callback</code> | (Javascript) Callback function when routine completes |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
@@ -466,8 +485,8 @@ abcContext.usernameAvailable(username, callback)
 
 // Example
 
-abcContext.usernameAvailable(username,function (error, available) {
-    if (!error) {
+abcContext.usernameAvailable(username, function (error, available) {
+    if (!error && available) {
       console.log("username available = " + available)
     }
 })
@@ -994,6 +1013,130 @@ Sign an arbitrary message with a BitID URI. The URI determines the key derivatio
 | error | <code>[ABCError](#ABCError)</code> | (Javascript) Error object. Null if no error |
 | abcSignature | <code>[ABCBitIDSignature](#ABCBitIDSignature)</code> | BitID Signature Object |
 
+### createWallet
+
+```javascript
+
+abcAccount.createWallet(walletType, abcWalletKeys)
+
+// Example
+
+const abcWalletKeys = {
+  ethereumKey: new Buffer(secureRandom(32)).toString('hex')
+}
+
+
+abcAccount.createWallet("wallet:repo:ethereum",
+                        abcWalletKeys,
+                        function (error, id) {
+                        
+}
+```
+
+Create a new [ABCWallet](ABCWallet) object and add it to the current account. Each wallet object represents key storage for a specific cryptocurrency type or other misc functionality such as BitID or general data storage. Once a wallet is created, the wallet keys cannot be modified. ABCWallet objects may be shared between ABCAccount objects of the same or different users given permission by the user.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| walletType | <code>String</code> | Wallet type corresponding to the one of the following below |
+
+| Wallet Type | Key Name | Description |
+| --- | --- | --- |
+| <code>wallet:repo:bitcoin</code> | <code>bitcoinKey</code> | HD BIP32 bitcoin wallet with base16 private key |
+| <code>wallet:repo:ethereum</code> | <code>ethereumKey</code> | Single address ethereum wallet with base16 private key 
+| <code>wallet:repo:bitcoin-bip44</code> | <code>bitcoinKey-BIP44</code> | HD BIP44 bitcoin wallet with 24 word mnemonic master private key |
+| <code>wallet:repo:com.mydomain.myapp.myDataStoreType</code> | <code>NULL</code> | Generic data store for your app |
+
+Please contact developer@airbitz.co for the addition of new wallet types.
+
+
+### listWalletIds
+
+```javascript
+abcAccount.listWalletIds(callback)
+
+// Example
+
+abcAccount.listWalletIds(function (error, walletIds) {
+  if (!error) {
+    
+  }
+})
+```
+
+
+Get an array list of wallet IDs in the current account
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Callback Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#ABCError)</code> | (Javascript) Error object. Null if no error |
+| walletIds | <code>Array</code> | Array of strings of wallet IDs |
+
+
+### getWallet
+
+```javascript
+abcAccount.getWallet(walletId)
+
+// Example
+
+abcAccount.listWalletIds(function (error, walletIds) {
+  if (!error) {
+    const abcWallet = getWallet(walletIds[0])    
+  }
+})
+```
+
+
+Get an [ABCWallet](ABCWallet) object given a `walletId`
+
+| Param | Type | Description |
+| --- | --- | --- |
+| walletId | <code>String</code> | Wallet ID from listWallets. NULL if no matching wallet |
+
+
+### getFirstWallet
+
+```javascript
+abcAccount.getFirstWallet(walletType)
+
+// Example
+
+abcAccount.listWalletIds(function (error, walletIds) {
+  if (!error) {
+    const abcWallet = getWallet(walletIds[0])    
+  }
+})
+```
+
+
+Get the first [ABCWallet](ABCWallet) object of type `walletType` 
+
+| Param | Type | Description |
+| --- | --- | --- |
+| walletType | <code>String</code> | Wallet type |
+
+
+
+<a name="ABCAccountCallbacks"></a>
+
+## ABCAccountCallbacks (javascript only)
+
+### Object Properties
+| Property | Type | Description |
+| --- | --- | --- |
+| abcAccountRemotePasswordChange | <code>Function</code> | Account password has been changed by a remote device. |
+| abcAccountLoggedOut | <code>Function</code> | Account has been logged out |
+| abcAccountOTPRequired | <code>Function</code> | Account has OTP enabled and this device does not have the correct OTP token |
+| abcAccountOTPSkew | <code>Function</code> | Account has OTP enabled and this device has a time skew with the server |
+| abcAccountAccountChanged | <code>Function</code> | Account dataStore has changed |
+
+
+
+
 <a name="ABCBitIDSignature"></a>
 ## ABCBitIDSignature
 
@@ -1092,18 +1235,6 @@ Launch an account management window for changing password, PIN, and recovery que
 
 ![Manage UI](https://airbitz.co/go/wp-content/uploads/2016/08/Screen-Shot-2016-08-26-at-12.50.26-PM.png)
 
-### Get a key for crypto raw entropy
-
-```javascript
-_account.repoInfo.dataKey.toString('base64')
-
-// Logout user
-_account.logout()
-```
-
-The account object returned references the ABCAccount object created by `airbitz-core-js`. Once an account object is obtained, it can be used to pull out a dataKey for use as raw entropy to create cryptographic private keys.
-
-> Note: Use of ABCAccount.repoInfo.dataKey is a temporary measure until actual wallet repositories are implemented in the final version of the SDK. Do not use this for production. Final version will require creating an ABCWallet repository and using the rootKey of that repository
 
 
 

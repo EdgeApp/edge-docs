@@ -1218,7 +1218,7 @@ const abcError = abcWallet.tx.setupCallbacks(abcWalletTxCallbacks)
 | --- | --- | --- |
 | error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
 
-This is a necessary call before using the ABCWalletTx. `setupCallbacks` causes background tasks to start and notifications of new transactions to start. For quick testing, 
+This is a necessary call before using the ABCWalletTx. `setupCallbacks` causes background tasks to start and notifications of new transactions to start. For testing, abcWalletTxCallbacks can be set to NULL.
 
 ### getBalance
 
@@ -1366,8 +1366,18 @@ Creates an [ABCSpend](#abcspend) object which can be used to add spend outputs f
 ### parseUri
 
 ```javascript
-const abcParsedUri = abcWallet.tx.parseUri("")
+const abcParsedUri = abcWallet.tx.parseUri(uri)
 ```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| uri | <code>String</code> | URI to parse |
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| abcParsedUri | <code>[ABCParsedUri](#abcparseduri)</code> | Object with parsed parameters |
+
+Parses a URI extracting various elements into an [ABCParsedUri](#abcparseduri) object
 
 ### sweepPrivateKey
 
@@ -1568,6 +1578,48 @@ coming soon...
 
 
 Object contains various parts of a parsed URI depending on the source URI. Any of the properties may be NULL.
+
+### getPaymentRequest
+
+```javascript
+
+// Example 
+const abcParsedUri = abcWallet.tx.parseUri("bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.000000&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X")
+
+abcParsedUri.getPaymentRequest(function(error, abcPaymentRequest) {
+  const abcError = abcSpend.addPaymentRequest(abcPaymentRequest)
+  if (!abcError) {
+    abcSpend.signBroadcastAndSave(function(error, abcTransaction) {
+      if (!error) {
+        // Success, transaction sent
+        console.log("Sent transaction with ID = " + abcTransaction.txid)
+      }
+    })
+  }
+})
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Callback Param | Type | Description |
+| --- | --- | --- |
+| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
+| abcPaymentRequest | <code>[ABCPaymentRequest](#abcpaymentrequest)</code> | [ABCPaymentRequest](#abcpaymentrequest) BIP70 payment request |
+
+Communicates over network with BIP70 payment request URL to get exact payment parameters. Add this payment to an [ABCSpend](#abcspend) object using [ABCSpend.addPaymentRequest](#addpaymentrequest).
+
+## ABCPaymentRequest
+
+Object provides basic UI displayable info about a BIP70 payment request.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| domain | <code>String</code> | DNS name of originator of request |
+| amountSatoshi | <code>Int</code> | Amount of request |
+| memo | <code>String</code> | Memo field returned by merchant | 
+| merchant | <code>String</code> | Name of merchat (may be blank) |
 
 
 ## ABCGetTransactionsOptions

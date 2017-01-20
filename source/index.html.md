@@ -1035,6 +1035,7 @@ Create a new [ABCWallet](#abcwallet) object and add it to the current account. E
 | <code>wallet:repo:bitcoin</code> | <code>bitcoinKey</code> | HD BIP32 bitcoin wallet with base16 private key |
 | <code>wallet:repo:ethereum</code> | <code>ethereumKey</code> | Single address ethereum wallet with base16 private key 
 | <code>wallet:repo:bitcoin-bip44</code> | <code>bitcoinKey-BIP44</code> | HD BIP44 bitcoin wallet with 24 word mnemonic master private key |
+| <code>wallet:repo:bitcoin-bip44-multisig</code> | <code>bitcoinKey-BIP44</code> | HD BIP44 bitcoin wallet with 24 word mnemonic master private key and upto 15 of 15 multisig support |
 | <code>wallet:repo:com.mydomain.myapp.myDataStoreType</code> | <code>NULL</code> | Generic data store for your app |
 
 
@@ -1095,6 +1096,66 @@ Get the first [ABCWallet](#abcwallet) object of type `walletType`
 | Return Param | Type | Description |
 | --- | --- | --- |
 | abcWallet | <code>[ABCWallet](#abcwallet)</code> | (Javascript) Error object. Null if no error |
+
+
+### shareWallet (proposal)
+
+```javascript
+abcAccount.shareWallet(abcWallet, abcShareWalletOptions, function(error, shareWalletToken) {
+  if (error == null) {
+    // Send 'shareWalletToken' to other user
+  }
+})
+
+// On other device
+abcAccount.importWallet(shareWalletToken, function(error, abcWallet) {
+  if (error == null) {
+    // Success, wallet imported
+  }
+})
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| abcWallet | <code>[ABCWallet](#abcwallet)</code> | Wallet to share |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Callback Params | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
+| shareWalletToken | <code>String</code> | Token to use with [importWallet](#importWallet) |
+
+Provides a key that can given to another user/app to share a wallet with that account.
+
+### importWallet (proposal)
+
+```javascript
+abcAccount.shareWallet(abcWallet, abcShareWalletOptions, function(error, shareWalletToken) {
+  if (error == null) {
+    // Send 'shareWalletToken' to other user
+  }
+})
+
+// On other device
+abcAccount.importWallet(shareWalletToken, function(error, abcWallet) {
+  if (error == null) {
+    // Success, wallet imported
+  }
+})
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| shareWalletToken | <code>String</code> | Token to use with [importWallet](#importwallet) |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Callback Params | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
+| shareWalletToken | <code>String</code> | Token from [shareWallet](#sharewallet) |
+
+Provides a key that can given to another user/app to share a wallet with that account.
+
 
 
 ## ABCAccountCallbacks 
@@ -1220,6 +1281,23 @@ const abcError = abcWallet.tx.setupCallbacks(abcWalletTxCallbacks)
 | error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
 
 This is a necessary call before using the ABCWalletTx. `setupCallbacks` causes background tasks to start and notifications of new transactions to start. For testing, abcWalletTxCallbacks can be set to NULL.
+
+### setupContract
+
+```javascript
+
+// Example
+var abcSetupContractOptions = [
+  { addMasterPublicKey: "xpub12fe094ab5d830ee9ac0102fbd223e" },
+  { addMasterPublicKey: "xpubef92309571209798ab098ce0912fae" },
+  { addMasterPublicKey: "xpuba39f948e0d0139bc99848cb10a0935" },
+  { numRequiredKeys: 2 }
+]
+
+abcWallet.tx.setupContract(abcSetupContractOptions)
+
+```
+Setup the script/contract for this wallet. This is used to setup basic multisig wallets under currencies like bitcoin and ethereum.
 
 ### getBalance
 

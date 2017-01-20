@@ -26,8 +26,7 @@ To get started, you’ll first need an API key. Get one at our [developer portal
 
 ## Install the SDK
 
-See the following Github repos for your various development languages. Installation instructions are in the README.md files
-
+See the following Github repos for your various development environments. Installation instructions are in the README.md files
 
 [Javascript](https://github.com/Airbitz/airbitz-core-js)
 
@@ -35,22 +34,19 @@ See the following Github repos for your various development languages. Installat
 
 [Java/Android](https://github.com/Airbitz/airbitz-core-java)
 
-For Javascript using React Native, see instructions in the [Objective C](https://github.com/Airbitz/airbitz-core-objc)
+[React Native/Javascript](https://github.com/Airbitz/airbitz-core-react-native)
 
 
 ## Include and initialize the SDK
 
 ```javascript
-var abc = require ('./abc.js')
+var abc = require ('airbitz-core-js')
 
 // Or
-
 <script src="abc.js"></script>
 
-
-
 // React Native
-var abc = require ('./abc-react.js')
+var abc = require ('airbitz-core-react-native')
 
 ```
 
@@ -68,22 +64,17 @@ Starting point of Airbitz Core SDK. Used for operations that do not require a lo
 
 ```javascript
 abc.makeABCContext(apiKey, type, hbitsKey, callback)
-ABCContext ctx = abc.makeABCContext(apiKey, type, hbitsKey)
+const abcContext = abc.makeABCContext(apiKey, type, hbitsKey)
 
 // Example
-
-var abcContext = null
-
-abcContext = abc.makeABCContext('your-api-key-here', 'account:repo:com.mydomain.myapp', null)
-
-// With callback (React Native)
-
-abc.makeABCContext('your-api-key-here', 'account:repo:com.mydomain.myapp', null, function (error, context) {
-  if (error) {
-  } else {
-    abcContext = context
-  }
-})
+const abcContext = abc.makeABCContext('your-api-key-here', 
+                                      'account:repo:com.mydomain.myapp', 
+                                      null)
+                                      
+// React Native version
+const abcContext = abc.makeABCContextRN('your-api-key-here', 
+                                        'account:repo:com.mydomain.myapp', 
+                                         null)                                      
 ```
 
 ```objc
@@ -117,6 +108,8 @@ abcContext.createAccount(username,
                          ABCAccountCallbacks,
                          callback)
 
+// Example
+
 function abcAccountRemotePasswordChange () {}
 function abcAccountLoggedOut () {}
 function abcAccountOTPRequired () {}
@@ -124,15 +117,13 @@ function abcAccountOTPSkew () {}
 function abcAccountAccountChanged () {}
 
 const abcCallbacks = {
-   abcAccountRemotePasswordChange: abcAccountRemotePasswordChange,
-   abcAccountLoggedOut: abcAccountLoggedOut,
-   abcAccountOTPRequired: abcAccountOTPRequired,
-   abcAccountOTPSkew: abcAccountOTPSkew,
-   abcAccountAccountChanged: abcAccountAccountChanged
+   abcAccountRemotePasswordChange,
+   abcAccountLoggedOut,
+   abcAccountOTPRequired,
+   abcAccountOTPSkew,
+   abcAccountAccountChanged
 }
    
-
-// Example
 abcContext.createAccount("myUsername", 
                          "myNot5oGoodPassw0rd",
                          "2946",
@@ -1178,7 +1169,7 @@ var abcTxLibrary = require('airbitz-core-js-bitcoin`)
 var success = abcWallet.addTxFunctionality(abcTxLibrary)
 ```
 
-Adds send/receive transaction capability for a specific currency to a wallet. An [ABCWalletTxLibrary][#abcwallettxlibrary) object must be passed in that exposes the entire [ABCWalletTxLibrary](#abcwallettxlibrary) interface. Airbitz includes support for bitcoin transactions through the [`airbitz-core-js-bitcoin`](https://github.com/Airbitz/airbitz-core-js-bitcoin) repository. Once called, the ABCWallet object will expose the [ABCDataStore](#abcdatastore) interface at `ABCWallet.tx`.
+Adds send/receive transaction capability for a specific currency to a wallet. An [ABCWalletTxLibrary](#abcwallettxlibrary) object must be passed in that exposes the entire [ABCWalletTxLibrary](#abcwallettxlibrary) interface. Airbitz includes support for bitcoin transactions through the [`airbitz-core-js-bitcoin`](https://github.com/Airbitz/airbitz-core-js-bitcoin) repository. Once called, the ABCWallet object will expose the [ABCDataStore](#abcdatastore) interface at [ABCWallet.tx](#abcwallettx).
  
 ## ABCDataStore
 
@@ -1197,6 +1188,37 @@ coming soon...
 | --- | --- | --- |
 | fiatCurrencyCode | <code>String</code> | 3 character fiat currency code |
 | cryptoCurrencyCode | <code>String</code> | 3 character crypto currency code |
+
+### setupCallbacks
+
+```javascript
+// Example
+function abcWalletTxChanged(abcWallet) { }
+function abcWalletTxLoaded(abcWallet) { }
+function abcWalletTxBalanceChanged(abcWallet) { }
+function abcWalletTxNewTransaction(abcTransaction) { }
+function abcWalletTxBlockHeightChanged(abcWallet) { }
+
+var abcWalletTxCallbacks = {
+  abcWalletTxChanged,
+  abcWalletTxLoaded,
+  abcWalletTxBalanceChanged,
+  abcWalletTxNewTransaction,
+  abcWalletTxBlockHeightChanged
+}
+
+const abcError = abcWallet.tx.setupCallbacks(abcWalletTxCallbacks)
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| abcWalletTxCallbacks | <code>[ABCWalletTxCallbacks](#abcwallettxcallbacks)</code> |  |
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
+
+This is a necessary call before using the ABCWalletTx. `setupCallbacks` causes background tasks to start and notifications of new transactions to start. For quick testing, 
 
 ### getBalance
 
@@ -1221,7 +1243,7 @@ Gets the current balance of the wallet denominated in the smallest unit of the c
 ### getTransactions
 
 ```javascript
-abcWallet.tx.getTransactions(ABCGetTransactionsOptions)
+abcWallet.tx.getTransactions(abcGetTransactionsOptions)
 
 // Example
 
@@ -1231,7 +1253,7 @@ var end = new Date();
 var start = new Date();
 start.setDate(start.getDate() - 1);
 
-const query = {
+const abcGetTransactionsOptions = {
   startDate: start,
   endDate: end,
   startIndex: 0,
@@ -1239,7 +1261,7 @@ const query = {
   searchString: 'Mom'
 }
 
-const abcTransactions = abcWallet.tx.getTransactions(query)
+const abcTransactions = abcWallet.tx.getTransactions(abcGetTransactionsOptions)
 
 const abcTransaction = abcTransactions[0]
 ```
@@ -1359,6 +1381,21 @@ coming soon...
 
 coming soon...
 
+## ABCWalletTxCallbacks 
+
+Callback routines that notify application when various changes have occurred in the [ABCWalletTx](#abcwallettx) object. This is only utilized for Javascript. For ObjC, see [ABCAccountDelegate](#abcaccountdelegate).
+
+### Object Properties
+
+| Property | Type | Description |
+| --- | --- | --- |
+| abcWalletTxLoaded(ABCWallet) | <code>Function</code> | Wallet is loaded off disk and transactions can be accessed |
+| abcWalletTxAddressesChecked(ABCWallet) | <code>Function</code> | Wallet has been fully updated with latest transactions from the network |
+| abcWalletTxBalanceChanged(ABCTransaction) | <code>Function</code> | Wallet balance has changed due to transactions already detected from other devices. This may not be called for all transactions that change the balance but it will at least be called on the last updating transaction. Recommend that GUI be refreshed with all visible transactions when this is called.|
+| abcWalletTxNewTransaction(ABCTransaction) | <code>Function</code> | New transaction detected. This may not be called for all transactions that change the balance but it will at least be called on the last updating transaction. Recommend that GUI be refreshed with all visible transactions when this is called.|
+| abcWalletTxBlockHeightChanged(ABCWallet) | <code>Function</code> | Blockchain height changed |
+
+
 ## ABCSpend
 
 ```javascript
@@ -1369,7 +1406,7 @@ abcSpend.addAddress('1PfLSCgMZdzHRKsQDSya6Pin3ugqLKri3n', 150000000)
 abcSpend.signBroadcastAndSave(function(error, abcTransaction) {
   if (!error) {
     // Success, transaction sent
-    console.log("Sent transaction with ID = " + abcTransaction.txId)
+    console.log("Sent transaction with ID = " + abcTransaction.txid)
   }
 })
 ```
@@ -1413,6 +1450,7 @@ abcSpend.addTransfer(destAbcWallet, 150000000, function(error) {
 | --- | --- | --- |
 | destAbcWallet | <code>[ABCWallet](#abcwallet)</code> | Destination [ABCWallet](#abcwallet) for this spend target |
 | amountSatoshi | <code>Int</code> | Amount to send denominated in smallest unit of currency |
+| callback | <code>Callback</code> | (Javascript) Callback function |
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
@@ -1423,12 +1461,20 @@ This routine requests a transfer of funds between two different wallets in the s
 ### addPaymentRequest
 
 ```javascript
-abcSpend.addPaymentRequest(abcPaymentRequest, callback)
+abcSpend.addPaymentRequest(abcPaymentRequest)
 
 // Example 
-abcSpend.addPaymentRequest(abcPaymentRequest, function(error) {
-  if (!error) {
-    // Success, transfer 
+const abcParsedUri = abcWallet.tx.parseUri("bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.000000&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X")
+
+abcParsedUri.getPaymentRequest(function(error, abcPaymentRequest) {
+  const abcError = abcSpend.addPaymentRequest(abcPaymentRequest)
+  if (!abcError) {
+    abcSpend.signBroadcastAndSave(function(error, abcTransaction) {
+      if (!error) {
+        // Success, transaction sent
+        console.log("Sent transaction with ID = " + abcTransaction.txid)
+      }
+    })
   }
 })
 ```
@@ -1437,21 +1483,91 @@ abcSpend.addPaymentRequest(abcPaymentRequest, function(error) {
 | --- | --- | --- |
 | abcPaymentRequest | <code>[ABCPaymentRequest](#abcpaymentrequest)</code> | [ABCPaymentRequest](#abcpaymentrequest) object from a call to [ABCWallet.tx.parseUri](#parseuri) |
 
-| Callback Param | Type | Description |
+| Return Param | Type | Description |
 | --- | --- | --- |
 | abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
 
-Adds a BIP70 payment request to this `ABCSpend` transaction. No amount parameter is provided as the payment request always has the amount included. Generate an ABCPaymentRequest object by calling [ABCWallet.tx.parseURI](#parseuri) then getPaymentRequest. `addPaymentRequest` may only be called once on an `ABCSpend` object. This routine may not be supported on all cryptocurrency types.
+Adds a BIP70 payment request to this `ABCSpend` transaction. No amount parameter is provided as the payment request always has the amount included. Generate an ABCPaymentRequest object by calling [ABCWallet.tx.parseURI](#parseuri) then [ABCParsedUri.getPaymentRequest](#getpaymentrequest). `addPaymentRequest` may only be called once on an `ABCSpend` object. This routine may not be supported on all cryptocurrency types.
 
 ### signBroadcastAndSave
 
+```javascript
+abcSpend.signBroadcastAndSave(callback)
+
+// Example 
+abcSpend.signBroadcastAndSave(function(error, abcTransaction) {
+  if (!error) {
+    // Success, transaction sent
+    console.log("Sent transaction with ID = " + abcTransaction.txid)
+  }
+})
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Callback Param | Type | Description |
+| --- | --- | --- |
+| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
+| abcTransaction | <code>[ABCTransaction](#abctransaction)</code> | [ABCTransaction](#abctransaction) object of sent transaction |
+
+Signs this spend request and broadcasts it to the blockchain.
+
 ### signTx
+
+```javascript
+abcSpend.signTx(callback)
+
+// Example 
+abcSpend.signTx(function(error, abcTransaction) {
+  if (!error) {
+    // Success, transaction signed
+    console.log("Signed transaction with txId = " + abcTransaction.txid)
+  }
+})
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Callback Param | Type | Description |
+| --- | --- | --- |
+| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
+| abcTransaction | <code>[ABCTransaction](#abctransaction)</code> | [ABCTransaction](#abctransaction) object of signed transaction |
+
+Signs this spend request and returns an [ABCTransaction](#abctransaction) object. Does not broadcast this to the blockchain or save it in the local transaction cache.
+
+Call [ABCTransaction.broadcastTx](#broadcasttx) followed by [ABCTransaction.saveTx](#savetx) to broadcast and save the transaction.
 
 ### getFees
 
+coming soon...
+
 ### getMaxSpendable
 
+coming soon...
 
+## ABCParsedUri
+
+| Property | Type | Description |
+| --- | --- | --- |
+| publicAddress | <code>String</code> | Public address from URI |
+| privateKey | <code>String</code> | Private key |
+| bitIDURI | <code>String</code> | Full BitID URI |
+| bitIDDomain | <code>String</code> | Domain name portion of BitID URI |
+| bitIDCallbackURI | <code>String</code> | BitID Callback URI |
+| paymentRequestURL | <code>String</code> | BIP70 Payment Request URL |
+| amountSatoshi | <code>Int</code> | Amount in the currency's smallest denomination (satoshis)
+| metadata | <code>[ABCMetaData](#abcmetadata)</code> | [ABCMetaData](#abcmetadata) object with info extracted from URI |
+| returnURI | <code>String</code> | URI to send user after URI/payment has been processed |
+| bitidPaymentAddress | <code>Bool</code> | True if BitID URI is requesting a payment address (experimental)|
+| bitidKYCProvider | <code>Bool</code> | True if BitID URI would like to provide KYC token (experimental) |
+| bitidKYCRequest | <code>Bool</code> | True if BitID URI is requesting a KYC token (experimental) |
+
+
+Object contains various parts of a parsed URI depending on the source URI. Any of the properties may be NULL.
 
 
 ## ABCGetTransactionsOptions
@@ -1542,7 +1658,73 @@ Non-blockchain transaction meta data associated to an [ABCTransaction](#abctrans
 
 ## ABCTransaction
 
-Coming Soon...
+Object represents a signed transaction that may or may not be broadcast to the blockchain
+
+| Property | Type | Description |
+| --- | --- | --- |
+| abcWallet | <code>[ABCWallet](#abcwallet)</code> | [ABCWallet](#abcwallet) this transaction is from |
+| metaData | <code>[ABCMetaData](#abcmetadata)</code> | [ABCMetaData](#abcmetadata) of this transaction |
+| txid | <code>String</code> | Transaction ID as represented by the wallet's crypto currency. For bitcoin this is base16 |
+| date | <code>Date</code> | Date that transaction was broadcast, detected, or confirmed on the blockchain. If the tx detection date is after the confirmation time, then this is the confirmation time. NULL if transaction has not been broadcast |
+| blockHeight | <code>Int</code> | Block number that included this transaction |
+| amountSatoshi | <code>Int</code> | Amount of fees in denomination of smallest unit of currency |
+| providerFee | <code>Int</code> | Additional app provider fees in denomination of smallest unit of currency (ie. Satoshis) |
+| isReplaceByFee | <code>Bool</code> | True if this transaction is marked as RBF (BIP125). Currency only bitcoin. |
+| isDoubleSpend | <code>Bool</code> | True if this transaction is found to be a double spend attempt |
+| runningBalance | <code>Int</code> | Running balance of entire wallet as of this transaction |
+| cryptoReserved |<code>Object</code> | Crypto currency specific data. (ie. for bitcoin, ABCTransaction.cryptoReserved.inputOutputList) |
+
+
+### broadcastTx
+
+
+```javascript
+abcTransaction.broadcastTx(callback)
+
+// Example 
+abcTransaction.broadcastTx(function(error) {
+  if (!error) {
+    // Success, transaction sent
+    console.log("Sent transaction with ID = " + abcTransaction.txid)
+  }
+})
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Callback Param | Type | Description |
+| --- | --- | --- |
+| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
+
+Broadcasts transaction to the blockchain.
+
+### saveTx
+
+```javascript
+abcTransaction.saveTx(callback)
+
+// Example 
+abcTransaction.saveTx(function(error) {
+  if (!error) {
+    // Success, transaction saved
+    console.log("Saved transaction with ID = " + abcTransaction.txid)
+  }
+})
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Callback Param | Type | Description |
+| --- | --- | --- |
+| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
+
+Saves transaction to local cache. This will cause the transaction to show in calls to [ABCWallet.tx.getTransactions](#gettransactions).
+
+
 
 
 # Airbitz Account Management UI

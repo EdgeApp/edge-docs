@@ -1023,6 +1023,7 @@ Create a new [ABCWallet](#abcwallet) object and add it to the current account. E
 | Param | Type | Description |
 | --- | --- | --- |
 | walletType | <code>String</code> | Wallet type corresponding to the one of the following below |
+| callback | <code>Callback</code> | (Javascript) Callback function |
 
 | Callback Params | Type | Description |
 | --- | --- | --- |

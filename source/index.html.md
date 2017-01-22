@@ -1356,15 +1356,15 @@ Removes the specified folder from the dataStore. All key/value pairs in the fold
 
 ```javascript
 // Example
-function abcWalletTxChanged(abcWallet) { }
 function abcWalletTxLoaded(abcWallet) { }
+function abcWalletTxAddressesChecked(abcWallet) { }
 function abcWalletTxBalanceChanged(abcWallet) { }
 function abcWalletTxNewTransaction(abcTransaction) { }
 function abcWalletTxBlockHeightChanged(abcWallet) { }
 
 var abcWalletTxCallbacks = {
-  abcWalletTxChanged,
   abcWalletTxLoaded,
+  abcWalletTxAddressesChecked,
   abcWalletTxBalanceChanged,
   abcWalletTxNewTransaction,
   abcWalletTxBlockHeightChanged

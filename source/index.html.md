@@ -1956,6 +1956,165 @@ abcTransaction.saveTx(function(error) {
 
 Saves transaction to local cache. This will cause the transaction to show in calls to [ABCWallet.tx.getTransactions](#gettransactions).
 
+## ABCExchangeRateCache
+
+### addSource
+
+```javascript
+const sourceBitstamp = require('airbitz-core-js-bitcoin').exchangeRateSources.bitstamp
+const sourceCoinbase = require('airbitz-core-js-bitcoin').exchangeRateSources.coinbase
+
+const abcExchangeRateCache = new ABCExchangeRateCache()
+abcExchangeRateCache.addSource(sourceBitstamp)
+abcExchangeRateCache.addSource(sourceCoinbase)
+```
+
+Adds an exchange rate source. Initialize with object of type [ABCExchangeRateLibrary](#abcexchangeratelibrary). `airbitz-core-js-bitcoin` includes support for Bitstamp.com, Coinbase.com, BitcoinAverage.com, and BraveNewCoin.com
+
+### convertCurrency
+
+```javascript
+destinationCurrencyAmount = convertCurrency(amount, sourceCurrency, destinationCurrency)
+
+// Example
+const priceofBitcoin = convertCurrency(1, "BTC", "USD")
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| amount | <code>Float</code> | Amount of source currency to convert | 
+| sourceCurrency | <code>String</code> | 3 character currency code of source currency | 
+| destinationCurrency | <code>String</code> | 3 character currency code of destination currency | 
+
+| Return | Type | Description |
+| --- | --- | --- |
+| destinationAmount | <code>Float</code> | Amount of destination currency after conversion | 
+
+Converts one currency value into another using exchange rate cache. Returns 0 if the currency pair cannot be converted due to missing support from exchange rate sources or if sources cannot be reached.
+
+
+# Alternative Currency Plugin
+
+Alternative cryptocurrencies can be easily added to Airbitz by providing the following SDK for import into an ABCWallet
+
+## ABCWalletTxLibrary
+
+This prototype class provides all the necessary API to support a cryptocurrency in Airbitz. 
+
+### abcTxLibInit
+
+```javascript
+const callbacks =
+{
+  abcTxLibCBNewTransaction
+}
+
+abcTxLibInit(abcWallet, options, callbacks, function(error, details) {
+  if (error === null) {
+    console.log(details)
+    
+    "
+    { "currencyCode": "BTC",
+      "denominations": 
+                      [
+                        { "name": "bits", "multiplier": 100,       "symbol": "ƀ" },
+                        { "name": "mBTC", "multiplier": 100000,    "symbol": "mɃ" },
+                        { "name": "BTC",  "multiplier": 100000000, "symbol": "Ƀ" },
+                      ],
+      "symbolImage": "qq/2iuhfiu1/3iufhlq249r8yq34tiuhq4giuhaiwughiuaergih/rg"
+    }
+    "
+  }
+})
+
+```
+
+Initialization of the library effectively creates a cryptocurrency wallet within the [ABCWallet](#abcwallet) object. The TxLib should spin up any background tasks necessary to begin querying the blockchain and field any requests for transactions. `abcTxLibInit` will be called once for every wallet of the same currency. Any global information that the TxLib needs to keep should be kept in the [ABCWallet.abcAccount](#abcaccount)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| wallet | <code>[ABCWallet](#abcwallet)</code> | Parent wallet to initialize this currency in |
+| options | <code>Object</code> | Options for abcTxLibInit |
+| callbacks | <code>[ABCTxLibCallbacks](#abctxlibcallbacks)</code> | Various callbacks when wallet is updated |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Callback Param | Type | Description |
+| --- | --- | --- |
+| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
+| currencyDetails | <code>Object</code> | Details of supported currency |
+
+The `currencyDetails` object includes the following params:
+
+| Param | Type | Description |
+| --- | --- | --- |
+| currencyCode | <code>String</code> | The 3 character code for the currency |
+| denominations | <code>Array</code> | An array of Objects of the possible denominations for this currency | 
+| symbolImage | <code>String</code> |  Base64 encoded png or jpg image of the currency symbol (optional) |
+
+The denominations object includes the following params:
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>String</code> | The human readable string to describe the denomination. |
+| multiplier | <code>Int</code> | The value to multiply the smallest unit of currency to get to the denomination. |
+| symbol | <code>String</code> | The human readable 1-3 character symbol of the currency. ie. "Ƀ" |
+| font | <code>String</code> | (Optional) The font required to display the symbol specified above. If not given, will use the default system font. |
+
+### abcTxLibGetBalance
+
+Get the current balance of this wallet in the currency's smallest denomination (ie. satoshis)
+
+### abcTxLibGetNumTransactions
+
+Get the number of transactions in the wallet
+
+### abcTxLibGetTransactions
+
+```javascript
+const options = { startIndex: 5,
+                  numEnteries: 50 }
+                  
+abcTxLibGetTransactions(options, function(error, transactions) {
+  if (error === null) {
+    console.log(transactions[0].txid) // => "1209befa09ab3efc039abf09490ac34fe09abc938"
+  }
+})
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| options | <code>Object</code> | Options for abcTxLibGetTransactions. If NULL, return all transactions |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Callback Param | Type | Description |
+| --- | --- | --- |
+| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
+| transactions | <code>Array</code> | Array of [ABCTransaction](#abctransaction) objects |
+
+Returns an array of transactions matching the options specified. The [ABCTransaction](#abctransaction) must have the following fields filled out by the TxLib:
+`abcWallet`, `txid`, `date`, `blockHeight`, and `amountSatoshi`. The remaining fields are updated by Airbitz Core. 
+
+The `options` parameter may include the following:
+
+| Param | Type | Description |
+| --- | --- | --- |
+| startIndex | <code>Int</code> | The starting index into the list of transactions. 0 specifies the most recent transactions |
+| numEntries | <code>Int</code> |  The number of entries to return. If there aren't enough transactions to return `numEntries`, then the TxLib should return the maximum possible |
+
+## ABCTxLibCallbacks
+
+### abcTxLibCBNewTransaction
+
+```javascript
+abcTxLibCBNewTransaction(abcWallet, abcTransaction)
+```
+| Param | Type | Description |
+| --- | --- | --- |
+| abcWallet | <code>[ABCWallet](#abcwallet)</code> | Wallet object this transaction came from |
+| abcTransaction | <code>[ABCTransaction](#abctransaction)</code> | Transaction object |
+
+Callback fires when the TxLib detects a new transaction from the blockchain network. The [ABCTransaction](#abctransaction) must have the following fields filled out by the TxLib:
+`abcWallet`, `txid`, `date`, `blockHeight`, and `amountSatoshi`. The remaining fields are updated by Airbitz Core. 
 
 
 

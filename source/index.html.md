@@ -1262,7 +1262,7 @@ abcWallet.dataStore.writeData("userAddress",
 | --- | --- | --- |
 | error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
 
-Writes a string of data to the specified dataStore folder using the given key. `folder` must not include the characters "/". The dataStore object at this point only provides a single depth folder for storing key/value pairs. Keys can be enumerated using the [ABCDataStore.listKeys](#listkeys) method. Data can read back using the [ABCDataStore.readData](#readData) method.
+Writes a string of data to the specified dataStore folder using the given key. `folder` must not include the characters "/". The dataStore object at this point only provides a single depth folder for storing key/value pairs. Keys can be enumerated using the [ABCDataStore.listKeys](#listkeys) method. Data can read back using the [ABCDataStore.readData](#readdata) method.
 
 ### readData
 
@@ -1326,7 +1326,6 @@ abcWallet.dataStore.removeFolder(folder, callback)
 
 // Example
 abcWallet.dataStore.removeFolder("userAddress", 
-                                 "state", 
                                  function(error) {
   if (error === null) {
     // Success. Key/value pair removed
@@ -1344,6 +1343,41 @@ abcWallet.dataStore.removeFolder("userAddress",
 | error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
 
 Removes the specified folder from the dataStore. All key/value pairs in the folder will also be removed.
+
+### listKeys
+
+```javascript
+abcWallet.dataStore.listKeys(folder, callback)
+
+// Example
+abcWallet.dataStore.listKeys("userAddress", 
+                             function(error, keys) {
+  if (error === null) {
+  }    
+})
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| folder | <code>String</code> | Name of folder for data store |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Callback Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
+| keys | <code>Array</code> | Array of strings of keys in folder |
+
+List the keys in the specified folder
+
+# ABC Currency Transactions
+
+```javascript
+var abcTxLibrary = require('airbitz-core-js-bitcoin`)
+
+var success = abcWallet.addTxFunctionality(abcTxLibrary)
+```
+
+AirbitzCore can be extended to allow wallets to have transactional capabilities such as sending and receiving bitcoin and other digital currencies. To add transaction capabilities, import an [ABCWalletTxLibrary](#abcwallettxlibrary) object and call [ABCWallet.addTxFunctionality](#addtxfunctionality). This will add an ABCWalletTx object to the [ABCWallet](#abcwallet) which contains a majority of the transactional routines needed to send/receive funds.
 
 ## ABCWalletTx
 

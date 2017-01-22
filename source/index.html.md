@@ -2353,7 +2353,7 @@ To submit your plugin for inclusion in Airbitz, submit a pull request for the ch
 
 # Plugin API Reference
 
-## ABCWallet object
+## ABCPluginWallet object
 
 ```objc
 // No content for this language. Select 'Javascript/HTML` above

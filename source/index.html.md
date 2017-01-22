@@ -1880,7 +1880,7 @@ Non-blockchain transaction meta data associated to an [ABCTransaction](#abctrans
 | Property | Type | Description |
 | --- | --- | --- |
 | payeeName | <code>String</code> | Name of external recipient or sender of funds |
-| category | <code>String</code> | Transaction category of format "Expense:Food & Dining" |
+| category | <code>String</code> | Transaction category of format "Expense:Food & Dining". Category must be of the form [Category]:[Sub Category] where category is one of "Income", "Expense", "Transfer", or "Exchange". Income refers to incoming funds such as payroll or business sales. Expense is the purchase of goods or services. Transfer is a transfer of funds to/from another wallet or exchange account owned by the user. Exchange is the change of funds from one type of currency to another. If ABCWallet.tx is of type bitcoin, an incoming transaction from the purchase of bitcoin with USD should be categorized as "Exchange:Buy Bitcoin". |
 | notes | <code>String</code> | Misc notes field |
 | amountFiat | <code>Float</code> | Amount of transaction in the wallet's fiat currency at the time of the transaction |
 | bizId | <code>Int</code> | Unique bizId associated to a business listing in the Airbitz Business Directory |

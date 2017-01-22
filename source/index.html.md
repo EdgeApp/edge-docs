@@ -1901,11 +1901,16 @@ Object represents a signed transaction that may or may not be broadcast to the b
 | blockHeight | <code>Int</code> | Block number that included this transaction |
 | amountSatoshi | <code>Int</code> | Amount of fees in denomination of smallest unit of currency |
 | providerFee | <code>Int</code> | Additional app provider fees in denomination of smallest unit of currency (ie. Satoshis) |
-| isReplaceByFee | <code>Bool</code> | True if this transaction is marked as RBF (BIP125). Currency only bitcoin. |
-| isDoubleSpend | <code>Bool</code> | True if this transaction is found to be a double spend attempt |
 | runningBalance | <code>Int</code> | Running balance of entire wallet as of this transaction |
-| cryptoReserved |<code>Object</code> | Crypto currency specific data. (ie. for bitcoin, ABCTransaction.cryptoReserved.inputOutputList) |
+| cryptoReserved |<code>Object</code> | Crypto currency specific data |
 
+`cryptoReserved` has the following parameters for bitcoin wallets
+
+| Property | Type | Description |
+| --- | --- | --- |
+| isReplaceByFee | <code>Bool</code> | True if this transaction is marked as RBF (BIP125) |
+| isDoubleSpend | <code>Bool</code> | True if this transaction is found to be a double spend attempt |
+| inputOutputList | <code>Array</code> | Array of transaction inputs and outputs |
 
 ### broadcastTx
 

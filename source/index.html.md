@@ -1231,18 +1231,119 @@ var abcTxLibrary = require('airbitz-core-js-bitcoin`)
 var success = abcWallet.addTxFunctionality(abcTxLibrary)
 ```
 
-Adds send/receive transaction capability for a specific currency to a wallet. An [ABCWalletTxLibrary](#abcwallettxlibrary) object must be passed in that exposes the entire [ABCWalletTxLibrary](#abcwallettxlibrary) interface. Airbitz includes support for bitcoin transactions through the [`airbitz-core-js-bitcoin`](https://github.com/Airbitz/airbitz-core-js-bitcoin) repository. Once called, the ABCWallet object will expose the [ABCDataStore](#abcdatastore) interface at [ABCWallet.tx](#abcwallettx).
+Adds send/receive transaction capability for a specific currency to a wallet. An [ABCWalletTxLibrary](#abcwallettxlibrary) object must be passed in that exposes the entire [ABCWalletTxLibrary](#abcwallettxlibrary) interface. Airbitz includes support for bitcoin transactions through the [`airbitz-core-js-bitcoin`](https://github.com/Airbitz/airbitz-core-js-bitcoin) repository. Once called, the ABCWallet object will expose the [ABCWalletTx](#abcwallettx) interface at [ABCWallet.tx](#abcwallettx).
  
 ## ABCDataStore
 
 ### writeData
 
-coming soon...
+```javascript
+abcWallet.dataStore.writeData(folder, key, value, callback)
+
+// Example
+abcWallet.dataStore.writeData("userAddress", 
+                              "state", 
+                              "California", 
+                              function(error) {
+  if (error === null) {
+    // Success
+  }    
+})
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| folder | <code>String</code> | Name of folder for data store |
+| key | <code>String</code> | Name of data key |
+| value | <code>String</code> | data value |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Callback Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
+
+Writes a string of data to the specified dataStore folder using the given key. `folder` must not include the characters "/". The dataStore object at this point only provides a single depth folder for storing key/value pairs. Keys can be enumerated using the [ABCDataStore.listKeys](#listkeys) method. Data can read back using the [ABCDataStore.readData](#readData) method.
 
 ### readData
 
-coming soon...
+```javascript
+abcWallet.dataStore.readData(folder, key, callback)
 
+// Example
+abcWallet.dataStore.readData("userAddress", 
+                             "state", 
+                             function(error, value) {
+  if (error === null) {
+    console.log(value)
+  }    
+})
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| folder | <code>String</code> | Name of folder for data store |
+| key | <code>String</code> | Name of data key |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Callback Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
+| value | <code>String</code> | data value |
+
+Reads back a string of data from the specified dataStore folder using the given key. `folder` must not include the characters "/". The dataStore object at this point only provides a single depth folder for storing key/value pairs. Keys can be enumerated using the [ABCDataStore.listKeys](#listkeys) method.
+
+### removeKey
+
+```javascript
+abcWallet.dataStore.removeKey(folder, key, callback)
+
+// Example
+abcWallet.dataStore.removeKey("userAddress", 
+                              "state", 
+                              function(error) {
+  if (error === null) {
+    // Success. Key/value pair removed
+  }    
+})
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| folder | <code>String</code> | Name of folder for data store |
+| key | <code>String</code> | Name of data key |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Callback Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
+
+Removes the specified key/value pair from the dataStore.
+
+### removeFolder
+
+```javascript
+abcWallet.dataStore.removeFolder(folder, callback)
+
+// Example
+abcWallet.dataStore.removeFolder("userAddress", 
+                                 "state", 
+                                 function(error) {
+  if (error === null) {
+    // Success. Key/value pair removed
+  }    
+})
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| folder | <code>String</code> | Name of folder for data store |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Callback Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
+
+Removes the specified folder from the dataStore. All key/value pairs in the folder will also be removed.
 
 ## ABCWalletTx
 

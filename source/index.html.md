@@ -1452,6 +1452,8 @@ This is a necessary call before using the ABCWalletTx. `setupCallbacks` causes b
 
 ### setupContract
 
+(under construction)
+
 ```javascript
 
 // Example
@@ -1490,38 +1492,59 @@ Gets the current balance of the wallet denominated in the smallest unit of the c
 ### getTransactions
 
 ```javascript
-abcWallet.tx.getTransactions(abcGetTransactionsOptions)
+abcWallet.tx.getTransactions(options)
 
 // Example
 
-// Create query that looks in the first 100 transactions limited to the past 2 days that have meta data matching the string "Mom"
+// Create query that looks in the first 100 transactions filtered to the past 2 days that have meta data matching the string "Mom". Then returns the first 10 of those transactions
 
 var end = new Date();
 var start = new Date();
-start.setDate(start.getDate() - 1);
+start.setDate(end.getDate() - 1);
 
-const abcGetTransactionsOptions = {
-  startDate: start,
-  endDate: end,
+const options = {
   startIndex: 0,
   numEntries: 100,
-  searchString: 'Mom'
+  startDate: start,
+  endDate: end,
+  searchString: 'Mom',
+  returnIndex: 0,
+  returnEntries: 10
 }
 
-const abcTransactions = abcWallet.tx.getTransactions(abcGetTransactionsOptions)
+const abcTransactions = abcWallet.tx.getTransactions(options)
 
 const abcTransaction = abcTransactions[0]
 ```
 
 | Param | Type | Description |
 | --- | --- | --- |
-| query | <code>[ABCGetTransactionsOptions](#abcgettransactionsoptions)</code> | [ABCGetTransactionsOptions](#abcgettransactionsoptions) params. May be NULL which will return all transactions |
+| options | <code>Object</code> | May be NULL which will return all transactions |
+
+| Option Params | Type | Description |
+| --- | --- | --- |
+| startIndex | <code>Int</code> | Index into the full list of transactions. If unspecified, no transactions are filtered and search passes on to `startDate`. Index 0 refers to the most recent transaction. |
+| startEntries | <code>Int</code> | Number of entries to return from start of index. `startIndex` must be specified |
+| startDate | <code>Date</code> | Date object, in local time, when to start returning transactions. If unspecified, transactions are not filtered by date and search passes on to `searchString` |
+| endDate | <code>Date</code> | Date object, in local time, when to stop returning transactions. Must be later than `startDate` and `startDate` must be specified |
+| searchString | <code>String</code> | Include only transactions that have metaData that matches `searchString`. (Optional) |
+| returnIndex | <code>Int</code> | Index into the filtered list of transactions. If unspecified, no transactions are filtered and current results are returned.  Index 0 refers to the most recent transaction. |
+| returnEntries | <code>Int</code> | Number of entries to return from index of filtered transactions. `returnEntries` must be specified |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
 | transactions | <code>ABCTransaction</code> | Array of [ABCTransaction](#abctransaction) objects |
 
-Returns a list of transactions in the current wallet. Transactions are returned ordered from newest to oldest.
+Returns a list of transactions in the current wallet. Options allow pruning of the search to a subset of the transactions in addition to string filtering. Options are applied in the following order: 
+
+Note that all indices start with the most recent transaction and work downwards to oldest.
+
+1. `startIndex` and `startEntries` specify the starting index and number of entries from the full, un-filtered list of transactions.
+2. `startDate` and `endDate` are applied to filter all transactions to only within specified dates.
+3. `searchString` is applied to only include string matching transactions
+4. `startIndex` and `numEntries` specify the starting index and number of entries from the Array created from steps 1 through 3. They do NOT refer to the Array of all transactions.
+
+Transactions are returned ordered from newest to oldest.
 
 ### getBlockHeight
 
@@ -2221,7 +2244,7 @@ The `options` parameter may include the following:
 
 | Param | Type | Description |
 | --- | --- | --- |
-| startIndex | <code>Int</code> | The starting index into the list of transactions. 0 specifies the most recent transactions |
+| startIndex | <code>Int</code> | The starting index into the list of transactions. 0 specifies the newest transaction |
 | numEntries | <code>Int</code> |  The number of entries to return. If there aren't enough transactions to return `numEntries`, then the TxLib should return the maximum possible |
 
 ## ABCTxLibCallbacks

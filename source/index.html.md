@@ -2035,13 +2035,17 @@ Saves transaction to local cache. This will cause the transaction to show in cal
 ```javascript
 const sourceBitstamp = require('airbitz-core-js-bitcoin').exchangeRateSources.bitstamp
 const sourceCoinbase = require('airbitz-core-js-bitcoin').exchangeRateSources.coinbase
+const sourceBitcoinAverage = require('airbitz-core-js-bitcoin').exchangeRateSources.bitcoinaverage
+const sourceBraveNewCoin   = require('airbitz-core-js-bitcoin').exchangeRateSources.bravenewcoin
 
 const abcExchangeRateCache = new ABCExchangeRateCache()
 abcExchangeRateCache.addSource(sourceBitstamp)
 abcExchangeRateCache.addSource(sourceCoinbase)
+abcExchangeRateCache.addSource(sourceBitcoinAverage)
+abcExchangeRateCache.addSource(sourceBraveNewCoin)
 ```
 
-Adds an exchange rate source. Initialize with object of type [ABCExchangeRateLibrary](#abcexchangeratelibrary). `airbitz-core-js-bitcoin` includes support for Bitstamp.com, Coinbase.com, BitcoinAverage.com, and BraveNewCoin.com
+Adds an exchange rate source. Initialize with object of type [ABCExchangeRateLib](#abcexchangeratelib). `airbitz-core-js-bitcoin` includes support for Bitstamp.com, Coinbase.com, BitcoinAverage.com, and BraveNewCoin.com
 
 ### convertCurrency
 
@@ -2064,10 +2068,57 @@ const priceofBitcoin = convertCurrency(1, "BTC", "USD")
 
 Converts one currency value into another using exchange rate cache. Returns 0 if the currency pair cannot be converted due to missing support from exchange rate sources or if sources cannot be reached.
 
+## ABCExchangeRateLib
 
-# Alternative Currency Plugin
+Exchange rate info is provided to AirbitzCore via exchange source plugins that provide the following API. Plugins are not expected to spin up background tasks but to instead initiate a server connection immediately upon receiving a call to [getCurrencyPairs](#getcurrencypairs).
 
-Alternative cryptocurrencies can be easily added to Airbitz by providing the following SDK for import into an ABCWallet
+### getName
+
+Returns the name of the exchange rate source in a human friendly String. ie ("Bitstamp")
+
+```javascript
+name = getName()
+```
+
+| Return | Type | Description |
+| --- | --- | --- |
+| name | <code>String</code> | Name of the exchange rate source |
+
+### getCurrencyPairs
+
+```javascript
+getCurrencyPairs(pairs, callback)
+
+// Example
+const pairs = 
+[
+  { source: "BTC", dest: "USD" },
+  { source: "BTC", dest: "EUR" },
+  { source: "LTC", dest: "GBP" } 
+]
+
+getCurrencyPairs(pairs, function(returnPairs) {
+  console.log(returnPairs) 
+})
+
+For a source that cannot convert LTC, the output could be => 
+"
+[
+  { source: "BTC", dest: "USD", value: 890.23 },
+  { source: "BTC", dest: "EUR", value: 870.12 },
+]
+"
+```
+
+Requests the exchange rate from an array of currency pairs. Function should return an array of currency pairs that it is able to provide along with the current exchange rate.
+
+# Currency Plugin API
+
+Cryptocurrency functionality for AirbitzCore is provided by currency API libraries that follow the Currency Plugin API. These libraries can be easily added to Airbitz by providing the following library API for import into an [ABCWallet](#abcwallet). ABC will call into the library [abcTxLibInit](#abctxlibinit) to initialize the library with a set of callbacks. Although an ABCWallet object may get passed into [abcTxLibInit](#abctxlibinit), the [ABCWallet.dataStore](#abcdatastore) may not be initialized in the case of a non logged in wallet. In such a case, only the [ABCWallet.localDataStore](#abcdatastore) object will be available for use.
+
+To add additional currency functionality, create a library that exposes an API that follows the ABCWalletTxLibrary template below.
+
+The repo `airbitz-core-js-bitcoin` exposes this API for bitcoin
 
 ## ABCWalletTxLibrary
 
@@ -2101,7 +2152,7 @@ abcTxLibInit(abcWallet, options, callbacks, function(error, details) {
 
 ```
 
-Initialization of the library effectively creates a cryptocurrency wallet within the [ABCWallet](#abcwallet) object. The TxLib should spin up any background tasks necessary to begin querying the blockchain and field any requests for transactions. `abcTxLibInit` will be called once for every wallet of the same currency. Any global information that the TxLib needs to keep should be kept in the [ABCWallet.abcAccount](#abcaccount)
+Initialization of the library effectively creates a cryptocurrency wallet within the [ABCWallet](#abcwallet) object. The TxLib should spin up any background tasks necessary to begin querying the blockchain and field any requests for transactions. `abcTxLibInit` will be called once for every wallet of the same currency. Any global information that the TxLib needs to keep should be kept in the [ABCWallet.abcAccount](#abcaccount) using the `dataStore` for encrypted, backed-up data, and using the `localDataStore` for unencrypted, device specific data. It is recommended the master public keys be keps in the [ABCWallet](#abcwallet) `localDataStore` so they can be accessed for querying the blockchain while not logged in. Local blockchain cache information can be stored in either the [ABCWallet](#abcwallet) or [ABCWallet.abcAccount](#abcaccount) `localDataStore` depending on whether the implementation chooses to hold a global blockchain cache or per wallet information.
 
 | Param | Type | Description |
 | --- | --- | --- |

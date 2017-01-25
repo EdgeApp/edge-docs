@@ -22,7 +22,7 @@ ABC allows developers to apply client-side data security, encrypted such that on
 
 To get started, you’ll first need an API key. Get one at our [developer portal.](https://developer.airbitz.co)
 
-# API Reference
+# AirbitzCore API Reference
 
 ## Install the SDK
 
@@ -173,6 +173,38 @@ Create and log into a new ABCAccount
 | username | <code>string</code> | Account username |
 | password | <code>string</code> | Account password |
 | pin | <code>string</code> | Account PIN for fast re-login |
+| callbacks | <code>[ABCAccountCallbacks](#abcaccountcallbacks)</code> | (Javascript) Callback event routines |
+| delegate | <code>[ABCAccountDelegate](#abcaccountdelegate)</code> | (ObjC) Callback event delegates |
+| callback | <code>Callback</code> | Callback function when routine completes|
+
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#abcerror)</code> | Error object. Null if no error |
+| account | <code>[ABCAccount](#abcaccount)</code> | Initialized account |
+
+### getLocalAccount
+
+```javascript
+abcContext.getLocalAccount(username, callbacks, callback)
+
+// Example
+abcContext.getLocalAccount("JoeHomey", callbacks, 
+                           function (error, account) {
+    if (error) {
+      // Failed to get account.
+    } else {
+      // Yay. Got local account info
+      console.log("Account name = " + account.username)
+    }
+})
+```
+
+Get local account details for a previously logged in account. This returns an ABCAccount object with a NULL `dataStore` object but with a functioning `localDataStore` object. This is effectively getting the non-encrypted account data which can be accessed without the user logging into the device with a password, PIN, or fingerpint. Any [ABCWallet](#abcwallet) objects in the account will also have NULL `dataStore` objects but with functioning `localDataStore` objects. This is commonly used for background processing the accounts/wallets on a device to do querying of cryptocurrency transactions while the user is not logged in.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| username | <code>string</code> | Account username |
 | callbacks | <code>[ABCAccountCallbacks](#abcaccountcallbacks)</code> | (Javascript) Callback event routines |
 | delegate | <code>[ABCAccountDelegate](#abcaccountdelegate)</code> | (ObjC) Callback event delegates |
 | callback | <code>Callback</code> | Callback function when routine completes|
@@ -1190,7 +1222,8 @@ Callback routines that notify application when various changes have occurred in 
 | walletName | <code>String</code> | Human readable name of wallet |
 | walletType | <code>String</code> | Type of wallet as specified in [createWallet](#createWallet)
 | keys | <code>Object</code> | Object with keys placed at createWallet time |
-| dataStore | <code>[ABCDataStore](#abcdatastore)</code> | [ABCDataStore](#abcdatastore) object |
+| dataStore | <code>[ABCDataStore](#abcdatastore)</code> | [ABCDataStore](#abcdatastore) object. This datastore object is encrypted by default, backed up to the cloud, and synchronized with any device the user logs into. Data modifications are versioned and can be rolled back but this functionality is not yet exposed via API. dataStore object may NULL if parent [ABCAccount](#abcaccount) has not been logged into yet |
+| localDataStore | <code>[ABCDataStore](#abcdatastore)</code> | [ABCDataStore](#abcdatastore) object that only exists on the current device. This data is not encrypted nor backed up. Not to be used for sensitive data but rather as a local cache of network data. Data is not version controlled and has no rollback capability. Common use case will be for local device specific wallet settings, blockchain cache information, and public address cache for use when account/wallet has not yet been decrypted (background processing) |
 | tx | <code>[ABCWalletTx](#abcwallettx)</code> | Optional and may be null. Exposes transactional functionality for this wallet. Requires addTxFunctionality to be called |
  
 ### renameWallet
@@ -1218,7 +1251,7 @@ abcWallet.renameWallet("My Wallet", function (error) {
 
 Returns a list of transactions in the current wallet. Transactions are returned ordered from newest to oldest.
 
-### addTxFunctionality (Javascript)
+### addTxFunctionality
 
 ```javascript
 

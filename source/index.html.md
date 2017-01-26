@@ -1416,20 +1416,22 @@ AirbitzCore can be extended to allow wallets to have transactional capabilities 
 
 | Property | Type | Description |
 | --- | --- | --- |
+| abcWallet | <code>[ABCWallet](#abcwallet)</code> | Parent [ABCWallet](#abcwallet) object |
 | fiatCurrencyCode | <code>String</code> | 3 character fiat currency code |
 | cryptoCurrencyCode | <code>String</code> | 3 character crypto currency code |
+| subWallets | <code>Array</code> | Array of [ABCWalletTx](#abcwallettx) objects representing meta-token subwallets |
 
 ### setupCallbacks
 
 ```javascript
 // Example
-function abcWalletTxLoaded(abcWallet) { }
-function abcWalletTxAddressesChecked(abcWallet) { }
-function abcWalletTxBalanceChanged(abcWallet) { }
+function abcWalletTxLoaded(abcWalletTx) { }
+function abcWalletTxAddressesChecked(abcWalletTx) { }
+function abcWalletTxBalanceChanged(abcWalletTx) { }
 function abcWalletTxNewTransaction(abcTransaction) { }
-function abcWalletTxBlockHeightChanged(abcWallet) { }
+function abcWalletTxBlockHeightChanged(abcWalletTx) { }
 
-var abcWalletTxCallbacks = {
+var callbacks = {
   abcWalletTxLoaded,
   abcWalletTxAddressesChecked,
   abcWalletTxBalanceChanged,
@@ -1437,18 +1439,26 @@ var abcWalletTxCallbacks = {
   abcWalletTxBlockHeightChanged
 }
 
-const abcError = abcWallet.tx.setupCallbacks(abcWalletTxCallbacks)
+const abcError = abcWallet.tx.setupCallbacks(callbacks)
 ```
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcWalletTxCallbacks | <code>[ABCWalletTxCallbacks](#abcwallettxcallbacks)</code> |  |
+| callbacks | <code>Object</code> | Object with callback functions |
+
+| Callback name | Type | Description |
+| --- | --- | --- |
+| abcWalletTxLoaded(ABCWalletTx) | <code>Function</code> | Wallet is loaded off disk and transactions can be accessed |
+| abcWalletTxAddressesChecked(ABCWalletTx) | <code>Function</code> | Wallet has been fully updated with latest transactions from the network |
+| abcWalletTxBalanceChanged(ABCTransaction) | <code>Function</code> | Wallet balance has changed due to transactions already detected from other devices. This may not be called for all transactions that change the balance but it will at least be called on the last updating transaction. Recommend that GUI be refreshed with all visible transactions when this is called.|
+| abcWalletTxNewTransaction(ABCTransaction) | <code>Function</code> | New transaction detected. This may not be called for all transactions that change the balance but it will at least be called on the last updating transaction. Recommend that GUI be refreshed with all visible transactions when this is called.|
+| abcWalletTxBlockHeightChanged(ABCWalletTx) | <code>Function</code> | Blockchain height changed. This is unused for sub wallets |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
 | error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
 
-This is a necessary call before using the ABCWalletTx. `setupCallbacks` causes background tasks to start and notifications of new transactions to start. For testing, abcWalletTxCallbacks can be set to NULL.
+This is a necessary call before using the ABCWalletTx. `setupCallbacks` causes background tasks to start and notifications of new transactions to start. For testing, callbacks can be set to NULL.
 
 ### setupContract
 
@@ -1563,7 +1573,7 @@ const height = abcWallet.tx.getBlockHeight()
 | --- | --- | --- |
 | height | <code>Int</code> | Block height of current wallet |
 
-Gets the current blockchain height of the wallet's cryptocurrency.
+Gets the current blockchain height of the wallet's cryptocurrency. Not used for subwallets
 
 ### createNewReceiveAddress
 
@@ -1660,21 +1670,6 @@ coming soon...
 ### exportTransactionsToQBO
 
 coming soon...
-
-## ABCWalletTxCallbacks 
-
-Callback routines that notify application when various changes have occurred in the [ABCWalletTx](#abcwallettx) object. This is only utilized for Javascript. For ObjC, see [ABCAccountDelegate](#abcaccountdelegate).
-
-### Object Properties
-
-| Property | Type | Description |
-| --- | --- | --- |
-| abcWalletTxLoaded(ABCWallet) | <code>Function</code> | Wallet is loaded off disk and transactions can be accessed |
-| abcWalletTxAddressesChecked(ABCWallet) | <code>Function</code> | Wallet has been fully updated with latest transactions from the network |
-| abcWalletTxBalanceChanged(ABCTransaction) | <code>Function</code> | Wallet balance has changed due to transactions already detected from other devices. This may not be called for all transactions that change the balance but it will at least be called on the last updating transaction. Recommend that GUI be refreshed with all visible transactions when this is called.|
-| abcWalletTxNewTransaction(ABCTransaction) | <code>Function</code> | New transaction detected. This may not be called for all transactions that change the balance but it will at least be called on the last updating transaction. Recommend that GUI be refreshed with all visible transactions when this is called.|
-| abcWalletTxBlockHeightChanged(ABCWallet) | <code>Function</code> | Blockchain height changed |
-
 
 ## ABCSpend
 
@@ -1984,7 +1979,7 @@ Object represents a signed transaction that may or may not be broadcast to the b
 
 | Property | Type | Description |
 | --- | --- | --- |
-| abcWallet | <code>[ABCWallet](#abcwallet)</code> | [ABCWallet](#abcwallet) this transaction is from |
+| abcWalletTx | <code>[ABCWalletTx](#abcwallettx)</code> | [ABCWalletTx](#abcwallettx) this transaction is from |
 | metaData | <code>[ABCMetaData](#abcmetadata)</code> | [ABCMetaData](#abcmetadata) of this transaction |
 | txid | <code>String</code> | Transaction ID as represented by the wallet's crypto currency. For bitcoin this is base16 |
 | date | <code>Date</code> | Date that transaction was broadcast, detected, or confirmed on the blockchain. If the tx detection date is after the confirmation time, then this is the confirmation time. NULL if transaction has not been broadcast |
@@ -2003,7 +1998,6 @@ Object represents a signed transaction that may or may not be broadcast to the b
 | inputOutputList | <code>Array</code> | Array of transaction inputs and outputs |
 
 ### broadcastTx
-
 
 ```javascript
 abcTransaction.broadcastTx(callback)

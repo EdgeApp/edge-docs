@@ -2141,35 +2141,86 @@ The repo `airbitz-core-js-bitcoin` exposes this API for bitcoin
 
 This prototype class provides all the necessary API to support a cryptocurrency in Airbitz. 
 
+### abcTxLibGetInfo
+
+```javascript
+const details = abcTxLibGetInfo()
+
+console.log(details)
+    
+"
+{ currencyCode: "BTC",
+  denominations: 
+                  [
+                    { name: "bits", multiplier: 100,       symbol: "ƀ" },
+                    { name: "mBTC", multiplier: 100000,    symbol: "mɃ" },
+                    { name: "BTC",  multiplier: 100000000, symbol: "Ƀ" },
+                  ],
+  symbolImage: "qq/2iuhfiu1/3iufhlq249r8yq34tiuhq4giuhaiwughiuaergih/rg"
+  metaTokens:
+  [
+    { currencyCode: "XCP",
+      denominations: [
+                      { name: "XCP",  multiplier: 1 }
+                     ],
+      symbolImage: "fe/3fthfiu1/3iufhlq249r8yq34tiuhqggiuhaiwughiuaergih/ef"
+    },
+    { currencyCode: "TATIANACOIN",
+      denominations: [
+                      { name: "TATIANACOIN",  multiplier: 1 }
+                     ],
+      symbolImage: "qe/3fthfi2fg1/3iufhlq249r8yq34tiuhqggiuhaiwughiuaergih/ef"
+    },    
+}
+"
+```
+| Return Param | Type | Description |
+| --- | --- | --- |
+| details | <code>Object</code> | Details of supported currency |
+
+The `details` object includes the following params:
+
+| Param | Type | Description |
+| --- | --- | --- |
+| currencyCode | <code>String</code> | The 3 character code for the currency |
+| denominations | <code>Array</code> | An array of Objects of the possible denominations for this currency | 
+| symbolImage | <code>String</code> | Base64 encoded png or jpg image of the currency symbol (optional) |
+| metaTokens | <code>Object</code> | Array of objects describing the supported metatokens |
+
+The `denominations` object includes the following params:
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>String</code> | The human readable string to describe the denomination. |
+| multiplier | <code>Int</code> | The value to multiply the smallest unit of currency to get to the denomination. |
+| symbol | <code>String</code> | The human readable 1-3 character symbol of the currency. ie. "Ƀ" |
+| font | <code>String</code> | (Optional) The font required to display the symbol specified above. If not given, will use the default system font. |
+
+Get details of the crypto currency supported by this library
+
 ### abcTxLibInit
 
 ```javascript
+// Example
+
+function abcTxLibCBNewTransaction(abcTransaction)
+
 const callbacks =
 {
   abcTxLibCBNewTransaction
 }
 
-abcTxLibInit(abcWallet, options, callbacks, function(error, details) {
+const options = 
+{
+  enableTokens = [ "XCP, "TATIANACOIN" ]
+}
+
+abcTxLibInit(abcWallet, options, callbacks, function(error) {
   if (error === null) {
-    console.log(details)
-    
-    "
-    { "currencyCode": "BTC",
-      "denominations": 
-                      [
-                        { "name": "bits", "multiplier": 100,       "symbol": "ƀ" },
-                        { "name": "mBTC", "multiplier": 100000,    "symbol": "mɃ" },
-                        { "name": "BTC",  "multiplier": 100000000, "symbol": "Ƀ" },
-                      ],
-      "symbolImage": "qq/2iuhfiu1/3iufhlq249r8yq34tiuhq4giuhaiwughiuaergih/rg"
-    }
-    "
+    // Success
   }
 })
-
 ```
-
-Initialization of the library effectively creates a cryptocurrency wallet within the [ABCWallet](#abcwallet) object. The TxLib should spin up any background tasks necessary to begin querying the blockchain and field any requests for transactions. `abcTxLibInit` will be called once for every wallet of the same currency. Any global information that the TxLib needs to keep should be kept in the [ABCWallet.abcAccount](#abcaccount) using the `dataStore` for encrypted, backed-up data, and using the `localDataStore` for unencrypted, device specific data. It is recommended the master public keys be keps in the [ABCWallet](#abcwallet) `localDataStore` so they can be accessed for querying the blockchain while not logged in. Local blockchain cache information can be stored in either the [ABCWallet](#abcwallet) or [ABCWallet.abcAccount](#abcaccount) `localDataStore` depending on whether the implementation chooses to hold a global blockchain cache or per wallet information.
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -2181,24 +2232,42 @@ Initialization of the library effectively creates a cryptocurrency wallet within
 | Callback Param | Type | Description |
 | --- | --- | --- |
 | abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
-| currencyDetails | <code>Object</code> | Details of supported currency |
 
-The `currencyDetails` object includes the following params:
+Initialization of the library effectively creates a cryptocurrency wallet within the [ABCWallet](#abcwallet) object. The TxLib should spin up any background tasks necessary to begin querying the blockchain and field any requests for transactions. `abcTxLibInit` will be called once for every wallet of the same or different currency. 
+
+Any global information that the TxLib needs to keep should be kept in the [ABCWallet.abcAccount](#abcaccount) using the `dataStore` for encrypted, backed-up data, and using the `localDataStore` for unencrypted, device specific data. 
+
+It is recommended the master public keys be keps in the [ABCWallet](#abcwallet) `localDataStore` so they can be accessed for querying the blockchain while not logged in. Local blockchain cache information can be stored in either the [ABCWallet](#abcwallet) or [ABCWallet.abcAccount](#abcaccount) `localDataStore` depending on whether the implementation chooses to hold a global blockchain cache or per wallet information.
+
+### abcTxLibEnableTokens
+
+(Under Construction)
+
+```javascript
+// Example
+
+const tokens = 
+{
+  enableTokens = [ "XCP, "TATIANACOIN" ]
+}
+
+abcTxLibEnableTokens(abcWalletTx, tokens, function(error) {
+  if (error === NULL) {
+    // Success
+  }
+})
+```
 
 | Param | Type | Description |
 | --- | --- | --- |
-| currencyCode | <code>String</code> | The 3 character code for the currency |
-| denominations | <code>Array</code> | An array of Objects of the possible denominations for this currency | 
-| symbolImage | <code>String</code> |  Base64 encoded png or jpg image of the currency symbol (optional) |
+| abcWalletTx | <code>[ABCWalletTx](#abcwalletTx)</code> | Parent ABCWalletTx to use |
+| tokens | <code>Array</code> | Array of strings specifying the currency codes of tokens to enable in this wallet |
 
-The denominations object includes the following params:
-
-| Param | Type | Description |
+| Callback Param | Type | Description |
 | --- | --- | --- |
-| name | <code>String</code> | The human readable string to describe the denomination. |
-| multiplier | <code>Int</code> | The value to multiply the smallest unit of currency to get to the denomination. |
-| symbol | <code>String</code> | The human readable 1-3 character symbol of the currency. ie. "Ƀ" |
-| font | <code>String</code> | (Optional) The font required to display the symbol specified above. If not given, will use the default system font. |
+| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
+
+Enable support for meta tokens (ie. counterparty, colored coin, ethereum ERC20). Library should begin checking the blockchain for the specified tokens and triggering the callbacks specified in abcTxLibInit.
 
 ### abcTxLibGetBalance
 
@@ -2246,16 +2315,14 @@ The `options` parameter may include the following:
 ### abcTxLibCBNewTransaction
 
 ```javascript
-abcTxLibCBNewTransaction(abcWallet, abcTransaction)
+abcTxLibCBNewTransaction(abcTransaction)
 ```
 | Param | Type | Description |
 | --- | --- | --- |
-| abcWallet | <code>[ABCWallet](#abcwallet)</code> | Wallet object this transaction came from |
 | abcTransaction | <code>[ABCTransaction](#abctransaction)</code> | Transaction object |
 
 Callback fires when the TxLib detects a new transaction from the blockchain network. The [ABCTransaction](#abctransaction) must have the following fields filled out by the TxLib:
-`abcWallet`, `txid`, `date`, `blockHeight`, and `amountSatoshi`. The remaining fields are updated by Airbitz Core. 
-
+`abcWalletTx`, `txid`, `date`, `blockHeight`, and `amountSatoshi`. The remaining fields are updated by Airbitz Core. 
 
 
 # Airbitz Account Management UI

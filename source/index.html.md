@@ -2271,9 +2271,37 @@ Enable support for meta tokens (ie. counterparty, colored coin, ethereum ERC20).
 
 ### abcTxLibGetBalance
 
+```javascript
+// Example
+
+const balance = abcTxLibGetBalance(abcWalletTx)
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| abcWalletTx | <code>[ABCWalletTx](#abcwalletTx)</code> | Parent ABCWalletTx to use |
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| balance | <code>Int</code> | Balance in the smallest unit of the currency |
+
 Get the current balance of this wallet in the currency's smallest denomination (ie. satoshis)
 
 ### abcTxLibGetNumTransactions
+
+```javascript
+// Example
+
+const numTransactions = abcTxLibGetNumTransactions(abcWalletTx)
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| abcWalletTx | <code>[ABCWalletTx](#abcwalletTx)</code> | Parent ABCWalletTx to use |
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| numTransactions | <code>Int</code> | Number of transactions in wallet |
 
 Get the number of transactions in the wallet
 
@@ -2283,7 +2311,7 @@ Get the number of transactions in the wallet
 const options = { startIndex: 5,
                   numEnteries: 50 }
                   
-abcTxLibGetTransactions(options, function(error, transactions) {
+abcTxLibGetTransactions(abcWalletTx, options, function(error, transactions) {
   if (error === null) {
     console.log(transactions[0].txid) // => "1209befa09ab3efc039abf09490ac34fe09abc938"
   }
@@ -2292,6 +2320,7 @@ abcTxLibGetTransactions(options, function(error, transactions) {
 
 | Param | Type | Description |
 | --- | --- | --- |
+| abcWalletTx | <code>[ABCWalletTx](#abcwallettx)</code> | Parent [ABCWalletTx](#abcwallettx) for the transactions |
 | options | <code>Object</code> | Options for abcTxLibGetTransactions. If NULL, return all transactions |
 | callback | <code>Callback</code> | (Javascript) Callback function |
 

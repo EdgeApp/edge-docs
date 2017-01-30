@@ -1255,17 +1255,50 @@ Returns a list of transactions in the current wallet. Transactions are returned 
 
 ```javascript
 
-abcWallet.addTxFunctionality(ABCWalletTxLibrary)
+abcWallet.addTxFunctionality(ABCWalletTxLibrary, callbacks, callback)
 
 // Example
 
-var abcTxLibrary = require('airbitz-core-js-bitcoin`)
+var abcWalletTxLibrary = require('airbitz-core-js-bitcoin`)
 
-var success = abcWallet.addTxFunctionality(abcTxLibrary)
+function abcWalletTxAddressesChecked(abcWalletTx, progressRatio) { }
+function abcWalletTxBalanceChanged(abcWalletTx) { }
+function abcWalletTxNewTransaction(abcTransaction) { }
+function abcWalletTxBlockHeightChanged(abcWalletTx) { }
+
+var callbacks = {
+  abcWalletTxAddressesChecked,
+  abcWalletTxBalanceChanged,
+  abcWalletTxNewTransaction,
+  abcWalletTxBlockHeightChanged
+}
+
+abcWallet.addTxFunctionality(abcWalletTxLibrary, callbacks, function (error) {
+  if (error === null) {
+    // Success
+  }
+})
 ```
 
-Adds send/receive transaction capability for a specific currency to a wallet. An [ABCWalletTxLibrary](#abcwallettxlibrary) object must be passed in that exposes the entire [ABCWalletTxLibrary](#abcwallettxlibrary) interface. Airbitz includes support for bitcoin transactions through the [`airbitz-core-js-bitcoin`](https://github.com/Airbitz/airbitz-core-js-bitcoin) repository. Once called, the ABCWallet object will expose the [ABCWalletTx](#abcwallettx) interface at [ABCWallet.tx](#abcwallettx).
- 
+| Param | Type | Description |
+| --- | --- | --- |
+| abcWalletTxLibrary | <code>[ABCWalletTxLibrary](#abcwallettxlibrary)</code> | Object that exposes the [ABCWalletTxLibrary](#abcwallettxlibrary) functions |
+| callbacks | <code>Object</code> | Object with callback functions |
+| callback | <code>Function</code> | (Javascript) Callback function |
+
+| Callback name | Type | Description |
+| --- | --- | --- |
+| abcWalletTxAddressesChecked(ABCWalletTx, progressRatio) | <code>Function</code> | Wallet has been fully updated with latest transactions from the network |
+| abcWalletTxBalanceChanged(ABCTransaction) | <code>Function</code> | Wallet balance has changed due to transactions already detected from other devices. This may not be called for all transactions that change the balance but it will at least be called on the last updating transaction. Recommend that GUI be refreshed with all visible transactions when this is called.|
+| abcWalletTxNewTransaction(ABCTransaction) | <code>Function</code> | New transaction detected. This may not be called for all transactions that change the balance but it will at least be called on the last updating transaction. Recommend that GUI be refreshed with all visible transactions when this is called.|
+| abcWalletTxBlockHeightChanged(ABCWalletTx) | <code>Function</code> | Blockchain height changed. This is unused for sub wallets |
+
+| Callback Params | Type | Description |
+| --- | --- | --- |
+| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
+
+Adds send/receive transaction capability for a specific currency to a wallet. An [ABCWalletTxLibrary](#abcwallettxlibrary) object must be passed in that exposes the entire [ABCWalletTxLibrary](#abcwallettxlibrary) interface. Airbitz includes support for bitcoin transactions through the [`airbitz-core-js-bitcoin`](https://github.com/Airbitz/airbitz-core-js-bitcoin) repository. Once called, the ABCWallet object will expose the [ABCWalletTx](#abcwallettx) interface at [ABCWallet.tx](#abcwallettx). Once the callback returns, ABCWallet.tx will be accessible with previously saved transactions and dataStores.
+
 ## ABCDataStore
 
 ### writeData
@@ -1420,45 +1453,6 @@ AirbitzCore can be extended to allow wallets to have transactional capabilities 
 | fiatCurrencyCode | <code>String</code> | 3 character fiat currency code |
 | cryptoCurrencyCode | <code>String</code> | 3 character crypto currency code |
 | subWallets | <code>Array</code> | Array of [ABCWalletTx](#abcwallettx) objects representing meta-token subwallets |
-
-### setupCallbacks
-
-```javascript
-// Example
-function abcWalletTxLoaded(abcWalletTx) { }
-function abcWalletTxAddressesChecked(abcWalletTx) { }
-function abcWalletTxBalanceChanged(abcWalletTx) { }
-function abcWalletTxNewTransaction(abcTransaction) { }
-function abcWalletTxBlockHeightChanged(abcWalletTx) { }
-
-var callbacks = {
-  abcWalletTxLoaded,
-  abcWalletTxAddressesChecked,
-  abcWalletTxBalanceChanged,
-  abcWalletTxNewTransaction,
-  abcWalletTxBlockHeightChanged
-}
-
-const abcError = abcWallet.tx.setupCallbacks(callbacks)
-```
-
-| Param | Type | Description |
-| --- | --- | --- |
-| callbacks | <code>Object</code> | Object with callback functions |
-
-| Callback name | Type | Description |
-| --- | --- | --- |
-| abcWalletTxLoaded(ABCWalletTx) | <code>Function</code> | Wallet is loaded off disk and transactions can be accessed |
-| abcWalletTxAddressesChecked(ABCWalletTx) | <code>Function</code> | Wallet has been fully updated with latest transactions from the network |
-| abcWalletTxBalanceChanged(ABCTransaction) | <code>Function</code> | Wallet balance has changed due to transactions already detected from other devices. This may not be called for all transactions that change the balance but it will at least be called on the last updating transaction. Recommend that GUI be refreshed with all visible transactions when this is called.|
-| abcWalletTxNewTransaction(ABCTransaction) | <code>Function</code> | New transaction detected. This may not be called for all transactions that change the balance but it will at least be called on the last updating transaction. Recommend that GUI be refreshed with all visible transactions when this is called.|
-| abcWalletTxBlockHeightChanged(ABCWalletTx) | <code>Function</code> | Blockchain height changed. This is unused for sub wallets |
-
-| Return Param | Type | Description |
-| --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
-
-This is a necessary call before using the ABCWalletTx. `setupCallbacks` causes background tasks to start and notifications of new transactions to start. For testing, callbacks can be set to NULL.
 
 ### setupContract
 

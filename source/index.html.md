@@ -1322,7 +1322,7 @@ abcWallet.dataStore.writeData("userAddress",
 | folder | <code>String</code> | Name of folder for data store |
 | key | <code>String</code> | Name of data key |
 | value | <code>String</code> | data value |
-| callback | <code>Callback</code> | (Javascript) Callback function |
+| callback | <code>Function</code> | (Javascript) Callback function |
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
@@ -1829,7 +1829,7 @@ coming soon...
 | bitIDCallbackURI | <code>String</code> | BitID Callback URI |
 | paymentRequestURL | <code>String</code> | BIP70 Payment Request URL |
 | amountSatoshi | <code>Int</code> | Amount in the currency's smallest denomination (satoshis)
-| metadata | <code>[ABCMetaData](#abcmetadata)</code> | [ABCMetaData](#abcmetadata) object with info extracted from URI |
+| metadata | <code>[ABCMetadata](#abcmetadata)</code> | [ABCMetadata](#abcmetadata) object with info extracted from URI |
 | returnURI | <code>String</code> | URI to send user after URI/payment has been processed |
 | bitidPaymentAddress | <code>Bool</code> | True if BitID URI is requesting a payment address (experimental)|
 | bitidKYCProvider | <code>Bool</code> | True if BitID URI would like to provide KYC token (experimental) |
@@ -1910,7 +1910,7 @@ The following properties may be set to modify the `uri` and update the metadata 
 | Property | Type | Description |
 | --- | --- | --- |
 | amountSatoshi | <code>Int</code> | Amount of request denominated in the smallest unit of this wallet's currency (ie. bitcoin satoshis) |
-| metaData | <code>ABCMetaData</code> | [ABCMetaData](#abcmetadata) object corresponding to this address. Any transactions receiving funds into this address will automaticall have this metadata in the [ABCTransaction](#abctransaction) object.
+| metaData | <code>ABCMetadata</code> | [ABCMetadata](#abcmetadata) object corresponding to this address. Any transactions receiving funds into this address will automaticall have this metadata in the [ABCTransaction](#abctransaction) object.
 
 Any modification to `amountSatoshi` or `metaData` above requires a call to [ABCReceiveAddress. updateReceiveAddress()](#updatereceiveaddress) before reading back `addressUri` or `qrCode`. `publicAddress` is static and can always be read.
 
@@ -1952,7 +1952,7 @@ abcReceiveAddress.finalizeReceiveAddress(function (error) {
 
 Finalizes this `receiveAddress` so that any future calls to [ABCWalletTx.createNewReceiveAddress](#createnewreceiveaddress) will no longer return this address.
 
-## ABCMetaData
+## ABCMetadata
 
 Non-blockchain transaction meta data associated to an [ABCTransaction](#abctransaction) or to an [ABCReceiveAddress](#abcreceiveaddress)
 
@@ -1974,16 +1974,17 @@ Object represents a signed transaction that may or may not be broadcast to the b
 | Property | Type | Description |
 | --- | --- | --- |
 | abcWalletTx | <code>[ABCWalletTx](#abcwallettx)</code> | [ABCWalletTx](#abcwallettx) this transaction is from |
-| metaData | <code>[ABCMetaData](#abcmetadata)</code> | [ABCMetaData](#abcmetadata) of this transaction |
+| metadata | <code>[ABCMetadata](#abcmetadata)</code> | [ABCMetadata](#abcmetadata) of this transaction |
 | txid | <code>String</code> | Transaction ID as represented by the wallet's crypto currency. For bitcoin this is base16 |
 | date | <code>Date</code> | Date that transaction was broadcast, detected, or confirmed on the blockchain. If the tx detection date is after the confirmation time, then this is the confirmation time. NULL if transaction has not been broadcast |
 | blockHeight | <code>Int</code> | Block number that included this transaction |
 | amountSatoshi | <code>Int</code> | Amount of fees in denomination of smallest unit of currency |
 | providerFee | <code>Int</code> | Additional app provider fees in denomination of smallest unit of currency (ie. Satoshis) |
+| networkFee | <code>Int</code> | Fee paid to network (mining fee) in denomination of smallest unit of currency (ie. Satoshis) |
 | runningBalance | <code>Int</code> | Running balance of entire wallet as of this transaction |
-| cryptoReserved |<code>Object</code> | Crypto currency specific data |
+| otherParams |<code>Object</code> | Crypto currency specific data |
 
-`cryptoReserved` has the following parameters for bitcoin wallets
+`otherParams` has the following parameters for bitcoin wallets
 
 | Property | Type | Description |
 | --- | --- | --- |

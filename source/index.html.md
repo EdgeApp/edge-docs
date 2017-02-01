@@ -1627,19 +1627,122 @@ Returns an ABCReceiveAddress object with the specific public address. Public add
 ### makeSpend
 
 ```javascript
-const abcSpend = abcWallet.tx.makeSpend(abcSpendInfo)
+// Example to spend to two bitcoin addresses
+const abcSpendInfo = {
+  networkFeeOption: 'high',
+  metadata: {
+    payeeName: 'Tyra CPA',
+    category: 'Expense:Professional Services'
+  },
+  spendTargets: [
+    { 
+      publicAddress: '12xZEQL72YnGEbtW7bA4FPA1BUEHkxQoWN',
+      amountSatoshi: 210000000 // 2.1 BTC
+    },
+    { 
+      publicAddress: '1FSxyn9AbBMwGusKAFqvyS63763tM8KiA2',
+      amountSatoshi: 34000000 // 0.34 BTC
+    }    
+  ]
+}
 
+const abcSpend = abcWallet.tx.makeSpend(abcSpendInfo)
+abcSpend.signBroadcastAndSave(function(error, abcTransaction) {
+  if (!error) {
+    // Success, transaction sent
+    console.log("Sent transaction with ID = " + abcTransaction.txid)
+  }
+})
+
+// Example to spend to a BIP70 payment request
+const abcParsedUri = abcWallet.tx.parseUri("bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.000000&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X")
+
+abcParsedUri.getPaymentRequest(function(error, paymentRequest) {
+  abcSpendInfo = {
+    networkFeeOption: 'high',
+    metadata: {
+      payeeName: 'Tyra CPA',
+      category: 'Expense:Professional Services'
+    },
+    spendTargets: [
+      { 
+        paymentRequest
+      }
+    ]
+  }
+
+  const abcSpend = abcWallet.tx.makeSpend(abcSpendInfo)
+  abcSpend.signBroadcastAndSave(function(error, abcTransaction) {
+    if (!error) {
+      // Success, transaction sent
+      console.log("Sent transaction with ID = " + abcTransaction.txid)
+    }
+  })
+}
+
+// Example wallet to wallet transfer
+const walletIds = abcAccount.listWalletIds()
+const srcWallet = abcAccount.getWallet(walletId[0]) // Add check for null and correct wallet type
+const destWallet = abcAccount.getWallet(walletId[1]) // Add check for null and correct wallet type
+
+const abcSpendInfo = {
+  networkFeeOption: 'high',
+  metadata: {
+    payeeName: 'Transfer to College Fund',
+    category: 'Transfer:Wallet:College Fund'
+  },
+  spendTargets: [
+    { 
+      destWallet,
+      amountSatoshi: 210000000 // 2.1 BTC
+    }
+  ]
+}
+
+const abcSpend = srcWallet.tx.makeSpend(abcSpendInfo)
+abcSpend.signBroadcastAndSave(function(error, abcTransaction) {
+  if (!error) {
+    // Success, transaction sent
+    console.log("Sent transaction with ID = " + abcTransaction.txid)
+  }
+})
 ```
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcSpendInfo | <code>ABCSpendInfo</code> | Various parameters for a spend operation including output addresses, amounts, or payment protocol payment objects (BIP70) |
+| abcSpendInfo | <code>[ABCSpendInfo](#abcspendinfo)</code> | [ABCSpendInfo](#abcspendinfo) object with various parameters for a spend operation including output addresses, amounts, or payment protocol payment objects (BIP70) |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| abcSpend | <code>[ABCSpend](#abcspend)</code> | [ABCSpend](#abcspend) object |
+| abcTransaction | <code>[ABCTransaction](#abctransaction)</code> | Unsigned [ABCTransaction](#abctransaction) object |
 
-Creates an [ABCSpend](#abcspend) object which can be then be signed and broadcast to the network. See [ABCSpend](#abcspend) for full example usage.
+Creates an unsigned [ABCTransaction](#abctransaction) object which can be then be signed and broadcast to the network. Complete the spend by calling [ABCTransaction.signBroadcastAndSave](#signbroadcastandsave). Estimated fees can be determined by reading back [ABCTransaction.networkFee](#abctransaction)
+
+### getMaxSpendable
+
+```javascript
+// Example
+const abcSpendInfo = {
+  networkFeeOption: 'standard',
+  metadata: {
+    payeeName: 'Tyra CPA',
+    category: 'Expense:Professional Services',
+  },
+  spendTargets: [
+    { 
+      publicAddress: '12xZEQL72YnGEbtW7bA4FPA1BUEHkxQoWN',
+    }
+  ]
+}
+
+abcWallet.tx.getMaxSpendable(abcSpendInfo, function(error, maxAmountSatoshi) {
+  if (error === null) {
+    console.log(maxAmountSatoshi)
+  }
+})
+```
+
+Get the maximum amount spendable from this wallet given the parameters of an [ABCSpendInfo](#abcspendinfo) object. The [ABCSpendInfo.spendTargets](#abcspendtarget) amountSatoshi values are ignored when calculating the max spendable amount.
 
 ### parseUri
 
@@ -1673,97 +1776,28 @@ coming soon...
 
 coming soon...
 
-## ABCSpend
+## ABCSpendInfo
 
 ```javascript
-// Example to spend to two bitcoin addresses
-abcSpendInfo = {
-  networkFeeOption = 'high',
-  metadata = {
-    payeeName = 'Tyra CPA',
-    category = 'Expense:Professional Services',
-  },
-  spendTargets = [
-    { 
-      publicAddress = '',
-      amountSatoshi = 210000000, // 2.1 BTC
-    },
-    { 
-      publicAddress = '',
-      amountSatoshi = 34000000, // 0.34 BTC
-    },    
-  ]
-}
-
-const abcSpend = abcWallet.tx.makeSpend(abcSpendInfo)
-abcSpend.signBroadcastAndSave(function(error, abcTransaction) {
-  if (!error) {
-    // Success, transaction sent
-    console.log("Sent transaction with ID = " + abcTransaction.txid)
-  }
-})
-
-// Example to spend to a BIP70 payment request
-const abcParsedUri = abcWallet.tx.parseUri("bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.000000&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X")
-
-abcParsedUri.getPaymentRequest(function(error, paymentRequest) {
-  abcSpendInfo = {
-    networkFeeOption = 'high',
-    metadata = {
-      payeeName = 'Tyra CPA',
-      category = 'Expense:Professional Services',
-    },
-    spendTargets = [
-      { 
-        paymentRequest
-      }
-    ]
-  }
-
-  const abcSpend = abcWallet.tx.makeSpend(abcSpendInfo)
-  abcSpend.signBroadcastAndSave(function(error, abcTransaction) {
-    if (!error) {
-      // Success, transaction sent
-      console.log("Sent transaction with ID = " + abcTransaction.txid)
-    }
-  })
-}
-
-// Example wallet to wallet transfer
+// Example spend info to transfer from wallet to wallet
 const walletIds = abcAccount.listWalletIds()
 const srcWallet = abcAccount.getWallet(walletId[0]) // Add check for null and correct wallet type
 const destWallet = abcAccount.getWallet(walletId[1]) // Add check for null and correct wallet type
 
 abcSpendInfo = {
-  networkFeeOption = 'high',
-  metadata = {
-    payeeName = 'Transfer to College Fund',
-    category = 'Transfer:Wallet:College Fund',
+  networkFeeOption: 'high',
+  metadata:  {
+    payeeName: 'Transfer to College Fund',
+    category: 'Transfer:Wallet:College Fund',
   },
-  spendTargets = [
+  spendTargets: [
     { 
       destWallet,
-      amountSatoshi = 210000000, // 2.1 BTC
+      amountSatoshi: 210000000, // 2.1 BTC
     },
   ]
 }
-
-const abcSpend = srcWallet.tx.makeSpend(abcSpendInfo)
-abcSpend.signBroadcastAndSave(function(error, abcTransaction) {
-  if (!error) {
-    // Success, transaction sent
-    console.log("Sent transaction with ID = " + abcTransaction.txid)
-  }
-})
-
-
 ```
-
-ABCSpend is used to send a transaction from an [ABCWallet](#abcwallet). Generate an ABCSpend object using [ABCWalletTx.makeSpend](#makespend). Use [signBroadcastAndSave](#signbroadcastandsave) to send the transaction to the blockchain. This spend may also be signed without broadcast by calling [signTx](#signtx).
-
-
-
-## ABCSpendInfo
 
 Parameters
 
@@ -1778,6 +1812,22 @@ Parameter object used for creating an [ABCSpend](#abcspend) object.
 
 ## ABCSpendTarget
 
+```javascript
+// Example spend target with a public addresses
+const spendTarget = 
+  { 
+    publicAddress: '',
+    amountSatoshi: 210000000 // 2.1 BTC
+  }    
+
+// Example to spend to a BIP70 payment request
+const abcParsedUri = abcWallet.tx.parseUri("bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.000000&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X")
+
+abcParsedUri.getPaymentRequest(function(error, paymentRequest) {
+    spendTarget = { paymentRequest }
+})
+```
+
 Parameters
 
 | Param | Type | Description |
@@ -1787,67 +1837,6 @@ Parameters
 | destWallet | <code>[ABCWallet](#abcwallet)</code> | Destination wallet to transfer funds to. Must also set `amountSatoshi`. Must not set both `publicAddress` and `destWallet` |
 | destMetadata | <code>[ABCMetadata](#abcmetadata)</code> | [ABCMetadata](#ABCMetadata) object with which will tag the transaction in the destination wallet. Must only be used when `destWallet` is set. |
 | paymentRequest | <code>[ABCPaymentRequest](#abcpaymentrequest)</code> | [ABCPaymentRequest](#abcpaymentrequest) object obtained from a call to [getPaymentRequest](#getpaymentrequest). Must not set either `publicAddress`, `amountSatoshi`, `destWallet`, or `destMetadata` if setting this parameter |
-
-
-### signBroadcastAndSave
-
-```javascript
-abcSpend.signBroadcastAndSave(callback)
-
-// Example 
-abcSpend.signBroadcastAndSave(function(error, abcTransaction) {
-  if (!error) {
-    // Success, transaction sent
-    console.log("Sent transaction with ID = " + abcTransaction.txid)
-  }
-})
-```
-
-| Param | Type | Description |
-| --- | --- | --- |
-| callback | <code>Callback</code> | (Javascript) Callback function |
-
-| Callback Param | Type | Description |
-| --- | --- | --- |
-| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
-| abcTransaction | <code>[ABCTransaction](#abctransaction)</code> | [ABCTransaction](#abctransaction) object of sent transaction |
-
-Signs this spend request and broadcasts it to the blockchain.
-
-### signTx
-
-```javascript
-abcSpend.signTx(callback)
-
-// Example 
-abcSpend.signTx(function(error, abcTransaction) {
-  if (!error) {
-    // Success, transaction signed
-    console.log("Signed transaction with txId = " + abcTransaction.txid)
-  }
-})
-```
-
-| Param | Type | Description |
-| --- | --- | --- |
-| callback | <code>Callback</code> | (Javascript) Callback function |
-
-| Callback Param | Type | Description |
-| --- | --- | --- |
-| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
-| abcTransaction | <code>[ABCTransaction](#abctransaction)</code> | [ABCTransaction](#abctransaction) object of signed transaction |
-
-Signs this spend request and returns an [ABCTransaction](#abctransaction) object. Does not broadcast this to the blockchain or save it in the local transaction cache.
-
-Call [ABCTransaction.broadcastTx](#broadcasttx) followed by [ABCTransaction.saveTx](#savetx) to broadcast and save the transaction.
-
-### getFees
-
-coming soon...
-
-### getMaxSpendable
-
-coming soon...
 
 ## ABCParsedUri
 
@@ -1998,13 +1987,13 @@ Non-blockchain transaction meta data associated to an [ABCTransaction](#abctrans
 
 ## ABCTransaction
 
-Object represents a signed transaction that may or may not be broadcast to the blockchain
+Object represents a signed or unsigned transaction that may or may not be broadcast to the blockchain.
 
 | Property | Type | Description |
 | --- | --- | --- |
 | abcWalletTx | <code>[ABCWalletTx](#abcwallettx)</code> | [ABCWalletTx](#abcwallettx) this transaction is from |
 | metadata | <code>[ABCMetadata](#abcmetadata)</code> | [ABCMetadata](#abcmetadata) of this transaction |
-| txid | <code>String</code> | Transaction ID as represented by the wallet's crypto currency. For bitcoin this is base16 |
+| txid | <code>String</code> | Transaction ID as represented by the wallet's crypto currency. For bitcoin this is base16. This parameter is NULL until [signTx](#signtx) is called. |
 | date | <code>Date</code> | Date that transaction was broadcast, detected, or confirmed on the blockchain. If the tx detection date is after the confirmation time, then this is the confirmation time. NULL if transaction has not been broadcast |
 | blockHeight | <code>Int</code> | Block number that included this transaction |
 | amountSatoshi | <code>Int</code> | Amount of fees in denomination of smallest unit of currency |
@@ -2020,6 +2009,32 @@ Object represents a signed transaction that may or may not be broadcast to the b
 | isReplaceByFee | <code>Bool</code> | True if this transaction is marked as RBF (BIP125) |
 | isDoubleSpend | <code>Bool</code> | True if this transaction is found to be a double spend attempt |
 | inputOutputList | <code>Array</code> | Array of transaction inputs and outputs |
+
+### signTx
+
+```javascript
+abcTransaction.signTx(callback)
+
+// Example 
+abcTransaction.signTx(function(error) {
+  if (!error) {
+    // Success, transaction signed
+    console.log("Signed transaction with txId = " + abcTransaction.txid)
+  }
+})
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Callback Param | Type | Description |
+| --- | --- | --- |
+| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
+
+Signs this [ABCTransaction](#abctransaction) object. Does not broadcast this to the blockchain or save it in the local transaction cache. [ABCTransaction](#abctransaction).txid is null until this routine is called.
+
+Call [ABCTransaction.broadcastTx](#broadcasttx) followed by [ABCTransaction.saveTx](#savetx) to broadcast and save the transaction.
 
 ### broadcastTx
 
@@ -2068,6 +2083,30 @@ abcTransaction.saveTx(function(error) {
 | abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
 
 Saves transaction to local cache. This will cause the transaction to show in calls to [ABCWallet.tx.getTransactions](#gettransactions).
+
+### signBroadcastAndSave
+
+```javascript
+abcTransaction.signBroadcastAndSave(callback)
+
+// Example 
+abcTransaction.signBroadcastAndSave(function(error) {
+  if (!error) {
+    // Success, transaction sent
+    console.log("Sent transaction with ID = " + abcTransaction.txid)
+  }
+})
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Callback Param | Type | Description |
+| --- | --- | --- |
+| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
+
+Convenience routine to do `signTx`, `broadcastTx`, then `saveTx` in one call. 
 
 ## ABCExchangeRateCache
 

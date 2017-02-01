@@ -1569,13 +1569,13 @@ const height = abcWallet.tx.getBlockHeight()
 
 Gets the current blockchain height of the wallet's cryptocurrency. Not used for subwallets
 
-### createNewReceiveAddress
+### makeReceiveAddress
 
 ```javascript
-const abcReceiveAddress = abcWallet.tx.createNewReceiveAddress(callback)
+const abcReceiveAddress = abcWallet.tx.makeReceiveAddress(callback)
 
 // Example
-const abcReceiveAddress = abcWallet.tx.createNewReceiveAddress(function (error, abcReceiveAddress) {
+const abcReceiveAddress = abcWallet.tx.makeReceiveAddress(function (error, abcReceiveAddress) {
   if (!error) {
     // Success
   }
@@ -1618,29 +1618,31 @@ const abcReceiveAddress = abcWallet.tx.getReceiveAddress('1FVBrmeuEeAxbNcj2EL4v2
 
 Returns an ABCReceiveAddress object with the specific public address.
 
-### createNewSpend
+### makeSpend
 
 ```javascript
-abcWallet.tx.createNewSpend()
+const abcSpend = abcWallet.tx.makeSpend(abcSpendInfo)
 
-// Example
-const abcSpend = abcWallet.tx.createNewSpend()
 ```
 
 | Param | Type | Description |
 | --- | --- | --- |
-| void | <code>Void</code> | none |
+| abcSpendInfo | <code>ABCSpendInfo</code> | Various parameters for a spend operation including output addresses, amounts, or payment protocol payment objects (BIP70) |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
 | abcSpend | <code>[ABCSpend](#abcspend)</code> | [ABCSpend](#abcspend) object |
 
-Creates an [ABCSpend](#abcspend) object which can be used to add spend outputs for a transaction and eventually send the transaction to the network.
+Creates an [ABCSpend](#abcspend) object which can be then be signed and broadcast to the network. See [ABCSpend](#abcspend) for full example usage.
 
 ### parseUri
 
 ```javascript
-const abcParsedUri = abcWallet.tx.parseUri(uri)
+const abcParsedUri = abcWallet.tx.parseUri("bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.2345&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X")
+
+console.log(abcParsedUri.publicAddress) // -> 1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs
+console.log(abcParsedUri.amountSatoshi) // -> 123456700
+console.log(abcParsedUri.paymentRequestURL) // -> https://bitpay.com/i/7TEzdBg6rvsDVtWjNQ3C3X
 ```
 
 | Param | Type | Description |
@@ -1668,95 +1670,118 @@ coming soon...
 ## ABCSpend
 
 ```javascript
-// Example
+// Example to spend to two bitcoin addresses
+abcSpendInfo = {
+  networkFeeOption = 'high',
+  metadata = {
+    payeeName = 'Tyra CPA',
+    category = 'Expense:Professional Services',
+  },
+  spendTargets = [
+    { 
+      publicAddress = '',
+      amountSatoshi = 210000000, // 2.1 BTC
+    },
+    { 
+      publicAddress = '',
+      amountSatoshi = 34000000, // 0.34 BTC
+    },    
+  ]
+}
 
-const abcSpend = abcWallet.tx.createNewSpend()
-abcSpend.addAddress('1PfLSCgMZdzHRKsQDSya6Pin3ugqLKri3n', 150000000)
+const abcSpend = abcWallet.tx.makeSpend(abcSpendInfo)
 abcSpend.signBroadcastAndSave(function(error, abcTransaction) {
   if (!error) {
     // Success, transaction sent
     console.log("Sent transaction with ID = " + abcTransaction.txid)
   }
 })
-```
 
-ABCSpend is used to build a Spend from the [ABCWallet](#abcwallet) that generated this ABCSpend object. Caller can add multiple spend targets by calling [addAddress](#addaddress) repeated times. Use [signBroadcastAndSave](#signbroadcastandsave) to send the transaction to the blockchain. This spend may also be signed without broadcast by calling [signTx](#signtx).
-
-### addAddress
-
-```javascript
-const abcError = abcSpend.addAddress(publicAddress, amountSatoshi)
-
-// Example 
-abcSpend.addAddress('1PfLSCgMZdzHRKsQDSya6Pin3ugqLKri3n', 150000000)
-```
-
-| Param | Type | Description |
-| --- | --- | --- |
-| publicAddress | <code>String</code> | Destination address for this spend target |
-| amountSatoshi | <code>Int</code> | Amount to send denominated in smallest unit of currency |
-
-| Return Param | Type | Description |
-| --- | --- | --- |
-| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
-
-Add an address to the output of an ABCSpend. `addAddress` may be called multiple times to send to multiple addresses.
-
-### addTransfer
-
-```javascript
-abcSpend.addTransfer(destAbcWallet, amountSatoshi, callback)
-
-// Example 
-abcSpend.addTransfer(destAbcWallet, 150000000, function(error) {
-  if (!error) {
-    // Success, transfer 
-  }
-})
-```
-
-| Param | Type | Description |
-| --- | --- | --- |
-| destAbcWallet | <code>[ABCWallet](#abcwallet)</code> | Destination [ABCWallet](#abcwallet) for this spend target |
-| amountSatoshi | <code>Int</code> | Amount to send denominated in smallest unit of currency |
-| callback | <code>Callback</code> | (Javascript) Callback function |
-
-| Callback Param | Type | Description |
-| --- | --- | --- |
-| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
-
-This routine requests a transfer of funds between two different wallets in the same [ABCAccount](#abcaccount). The ABCWallet.tx.cryptoCurrencyCode of both the source and destination wallet must match. Future implementation will allow cross currency transfers utilizing services such as ShapeShift. `addTransfer` may only be called once on an `ABCSpend` object.
-
-### addPaymentRequest
-
-```javascript
-abcSpend.addPaymentRequest(abcPaymentRequest)
-
-// Example 
+// Example to spend to a BIP70 payment request
 const abcParsedUri = abcWallet.tx.parseUri("bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.000000&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X")
 
-abcParsedUri.getPaymentRequest(function(error, abcPaymentRequest) {
-  const abcError = abcSpend.addPaymentRequest(abcPaymentRequest)
-  if (!abcError) {
-    abcSpend.signBroadcastAndSave(function(error, abcTransaction) {
-      if (!error) {
-        // Success, transaction sent
-        console.log("Sent transaction with ID = " + abcTransaction.txid)
+abcParsedUri.getPaymentRequest(function(error, paymentRequest) {
+  abcSpendInfo = {
+    networkFeeOption = 'high',
+    metadata = {
+      payeeName = 'Tyra CPA',
+      category = 'Expense:Professional Services',
+    },
+    spendTargets = [
+      { 
+        paymentRequest
       }
-    })
+    ]
+  }
+
+  const abcSpend = abcWallet.tx.makeSpend(abcSpendInfo)
+  abcSpend.signBroadcastAndSave(function(error, abcTransaction) {
+    if (!error) {
+      // Success, transaction sent
+      console.log("Sent transaction with ID = " + abcTransaction.txid)
+    }
+  })
+}
+
+// Example wallet to wallet transfer
+const walletIds = abcAccount.listWalletIds()
+const srcWallet = abcAccount.getWallet(walletId[0]) // Add check for null and correct wallet type
+const destWallet = abcAccount.getWallet(walletId[1]) // Add check for null and correct wallet type
+
+abcSpendInfo = {
+  networkFeeOption = 'high',
+  metadata = {
+    payeeName = 'Transfer to College Fund',
+    category = 'Transfer:Wallet:College Fund',
+  },
+  spendTargets = [
+    { 
+      destWallet,
+      amountSatoshi = 210000000, // 2.1 BTC
+    },
+  ]
+}
+
+const abcSpend = srcWallet.tx.makeSpend(abcSpendInfo)
+abcSpend.signBroadcastAndSave(function(error, abcTransaction) {
+  if (!error) {
+    // Success, transaction sent
+    console.log("Sent transaction with ID = " + abcTransaction.txid)
   }
 })
+
+
 ```
+
+ABCSpend is used to send a transaction from an [ABCWallet](#abcwallet). Generate an ABCSpend object using [ABCWalletTx.makeSpend](#makespend). Use [signBroadcastAndSave](#signbroadcastandsave) to send the transaction to the blockchain. This spend may also be signed without broadcast by calling [signTx](#signtx).
+
+
+
+## ABCSpendInfo
+
+Parameters
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcPaymentRequest | <code>[ABCPaymentRequest](#abcpaymentrequest)</code> | [ABCPaymentRequest](#abcpaymentrequest) object from a call to [ABCWallet.tx.parseUri](#parseuri) |
+| spendTargets | <code>Array</code> | Array of [ABCSpendTarget](#abcspendtarget) objects |
+| networkFeeOption | <code>String</code> | Adjusts network fee amount. Must be either "low", "standard", "high", or "custom". If unspecified, the default is "standard" |
+| customNetworkFee | <code>Int</code> | Amount of network fee if `networkFeeOption` if set to `custom`. Should be specified as smallest denomination of currency. ie Satoshis |
+| metadata | <code>[ABCMetadata](#ABCMetadata)</code> | [ABCMetadata](#ABCMetadata) object. Outgoing transaction will have the specified metadata copied to the [ABCTransaction](#abctransaction) object |
 
-| Return Param | Type | Description |
+Parameter object used for creating an [ABCSpend](#abcspend) object.
+
+## ABCSpendTarget
+
+Parameters
+
+| Param | Type | Description |
 | --- | --- | --- |
-| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
+| publicAddress | <code>String</code> | Public address in the format of the current wallet's currency. This requires the `amountSatoshi` field to be set. Must not set both `publicAddress` and `destWallet` |
+| amountSatoshi | <code>Int</code> | Amount to send in the smallest denomination of the source wallet's currency. ie Satoshis |
+| destWallet | <code>[ABCWallet](#abcwallet)</code> | Destination wallet to transfer funds to. Must also set `amountSatoshi`. Must not set both `publicAddress` and `destWallet` |
+| destMetadata | <code>[ABCMetadata](#abcmetadata)</code> | [ABCMetadata](#ABCMetadata) object with which will tag the transaction in the destination wallet. Must only be used when `destWallet` is set. |
+| paymentRequest | <code>[ABCPaymentRequest](#abcpaymentrequest)</code> | [ABCPaymentRequest](#abcpaymentrequest) object obtained from a call to [getPaymentRequest](#getpaymentrequest). Must not set either `publicAddress`, `amountSatoshi`, `destWallet`, or `destMetadata` if setting this parameter |
 
-Adds a BIP70 payment request to this `ABCSpend` transaction. No amount parameter is provided as the payment request always has the amount included. Generate an ABCPaymentRequest object by calling [ABCWallet.tx.parseURI](#parseuri) then [ABCParsedUri.getPaymentRequest](#getpaymentrequest). `addPaymentRequest` may only be called once on an `ABCSpend` object. This routine may not be supported on all cryptocurrency types.
 
 ### signBroadcastAndSave
 
@@ -1881,8 +1906,6 @@ Object provides basic UI displayable info about a BIP70 payment request.
 | merchant | <code>String</code> | Name of merchat (may be blank) |
 
 
-## ABCGetTransactionsOptions
-
 ## ABCReceiveAddress
 
 ### Class Properties
@@ -1890,7 +1913,7 @@ Object provides basic UI displayable info about a BIP70 payment request.
 ```javascript
 // Example
 
-abcWallet.tx.createNewReceiveAddress(function(error, abcReceiveAddress) {
+abcWallet.tx.makeReceiveAddress(function(error, abcReceiveAddress) {
   if (!error) {
     console.log("My bitcoin address: " + abcReceiveAddress.publicAddress)
     abcReceiveAddress.amountSatoshi = 150000000 // 1.5 BTC 
@@ -1950,7 +1973,7 @@ abcReceiveAddress.finalizeReceiveAddress(function (error) {
 })
 ```
 
-Finalizes this `receiveAddress` so that any future calls to [ABCWalletTx.createNewReceiveAddress](#createnewreceiveaddress) will no longer return this address.
+Finalizes this `receiveAddress` so that any future calls to [ABCWalletTx.makeReceiveAddress](#makereceiveaddress) will no longer return this address.
 
 ## ABCMetadata
 

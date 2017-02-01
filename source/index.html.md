@@ -37,7 +37,6 @@ The `airbitz-plugins` repo has a build system to help ease the creation of the f
 
 Clone the repos [airbitz-plugins](https://github.com/Airbitz/airbitz-plugins), [airbitz-ios-gui](https://github.com/Airbitz/airbitz-ios-gui), and [airbitz-android-gui](https://github.com/Airbitz/airbitz-android-gui) to the same level directory.
 
-#### Update 2016-08-07: For compatibility with the next Airbitz release, use the `develop` branch of each of the above repos.
 
 ### NPM
 ```objc

@@ -2526,7 +2526,6 @@ The `airbitz-plugins` repo has a build system to help ease the creation of the f
 
 Clone the repos [airbitz-plugins](https://github.com/Airbitz/airbitz-plugins), [airbitz-ios-gui](https://github.com/Airbitz/airbitz-ios-gui), and [airbitz-android-gui](https://github.com/Airbitz/airbitz-android-gui) to the same level directory.
 
-#### Update 2016-08-07: For compatibility with the next Airbitz release, use the `develop` branch of each of the above repos.
 
 ### NPM
 ```objc
@@ -2683,9 +2682,9 @@ $(function() {
 });
 ```
 
-The next important part of your plugin is the javascript. As we can see from the `index.html`, we are using `abc.js`, `jquery-2.1.3.min.js`, `qrcode.min.js` and finally `script.js`. `script.js` is the plugin's code that implements the core business logic and application functionality
+The next important part of your plugin is the javascript. As we can see from the `index.html`, this sample is using `abc.js`, `jquery-2.1.3.min.js`, `qrcode.min.js` and finally `script.js`. `abc.js` is the only required javascript file. `script.js` is the plugin's code that implements the core business logic and application functionality. You are welcome to use any other filename other than `script.js` but just need to include it in your `index.html` file.
 
-The `script.js` calls into the Airbitz core in a few ways. First it calls `Airbitz.ui.title` to change the page title. Next is sets up a wallet listener using `Airbitz.core.setupWalletChangeListener`, so when the user changes their selected wallet, our code knows about it. Lastly, it requests the current wallet using `Airbitz.ui.getSelectedWallet`. You can view the sample code here.
+The `script.js` calls into the Airbitz core in a few ways. First it calls `Airbitz.ui.title` to change the top header title in the Airbitz app. Next is sets up a wallet listener using `Airbitz.core.setupWalletChangeListener`, so when the user changes their selected wallet, our code knows about it. Lastly, it requests the current wallet using `Airbitz.ui.getSelectedWallet`. You can view the sample code here.
 
 ### updateUI()
 
@@ -2699,7 +2698,7 @@ The `script.js` calls into the Airbitz core in a few ways. First it calls `Airbi
 ```javascript
 function updateUi(wallet) {
   $('#walletName').text(wallet.name);
-  Airbitz.core.receiveRequestCreate(wallet, {
+  Airbitz.core.createReceiveRequest(wallet, {
     label: "Blank App Request",
     category: "Income:Plugin",
     notes: "Income generated from a plugin",
@@ -3012,8 +3011,8 @@ Finalizing a request marks the address as used and it will not be used for futur
 Airbitz.core.createSpendRequest(wallet, address, amount, options)
 
 // Example
-
-Airbitz.core.createSpendRequest(wallet, "", {
+// Send 1.23 BTC to address 12xZEQL72YnGEbtW7bA4FPA1BUEHkxQoWN
+Airbitz.core.createSpendRequest(wallet, "12xZEQL72YnGEbtW7bA4FPA1BUEHkxQoWN", 123000000, {
     label: "Roger Mark",
     category: "Income:Consulting",
     notes: "Web development project from 2016-04",
@@ -3052,6 +3051,7 @@ The optional metadata given in 'options' such as 'label', 'category', and 'notes
 | --- | --- | --- |
 | wallet | <code>ABCWallet</code> | Wallet to create a receive request/address from |
 | address | <code>String</code> | Bitcoin address or BIP21 URI |
+| amount | <code>Int</code> | Amount to send in satoshis |
 | options | <code>Object</code> | JS Object of options for receive request |
 
 | Response | Type | Description |
@@ -3081,7 +3081,9 @@ Airbitz.core.createSpendRequest2(wallet, address, amount, address2, amount2, opt
 
 // Example
 
-Airbitz.core.createSpendRequest2(wallet, "", {
+Airbitz.core.createSpendRequest2(wallet, 
+                                 "12xZEQL72YnGEbtW7bA4FPA1BUEHkxQoWN", 123000000, 
+                                 "1FSxyn9AbBMwGusKAFqvyS63763tM8KiA2", 312000000, {
     label: "Roger Mark",
     category: "Income:Consulting",
     notes: "Web development project from 2016-04",
@@ -3118,6 +3120,9 @@ Request that the user spends to two different addresses with two different amoun
 | --- | --- | --- |
 | wallet | <code>ABCWallet</code> | Wallet to create a receive request/address from |
 | address | <code>String</code> | Bitcoin address or BIP21 URI |
+| amount | <code>Int</code> | Amount to send in satoshis |
+| address2 | <code>String</code> | Bitcoin address or BIP21 URI |
+| amount2 | <code>Int</code> | Amount to send in satoshis |
 | options | <code>Object</code> | JS Object of options for receive request |
 
 | Response | Type | Description |

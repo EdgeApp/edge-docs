@@ -1572,10 +1572,10 @@ Gets the current blockchain height of the wallet's cryptocurrency. Not used for 
 ### makeReceiveAddress
 
 ```javascript
-const abcReceiveAddress = abcWallet.tx.makeReceiveAddress(callback)
+const abcReceiveAddress = abcWallet.tx.makeReceiveAddress(options, callback)
 
 // Example
-const abcReceiveAddress = abcWallet.tx.makeReceiveAddress(function (error, abcReceiveAddress) {
+const abcReceiveAddress = abcWallet.tx.makeReceiveAddress(null, function (error, abcReceiveAddress) {
   if (!error) {
     // Success
   }
@@ -1584,14 +1584,20 @@ const abcReceiveAddress = abcWallet.tx.makeReceiveAddress(function (error, abcRe
 
 | Param | Type | Description |
 | --- | --- | --- |
+| options |  <code>Object</code> | Options object. See below
 | callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Options Param | Type | Description |
+| --- | --- | --- |
+| tag | <code>String</code> | (Optional) Arbitrary tag for this specific address request type. Future calls to makeReceiveAddress with the same tag will return the same address as the previous call unless that address has received funds. Useful for specifying a "display" address which is shown on screen but never used for email or SMS requests. Calling [saveReceiveAddress](#savereceiveaddress) will cause this address to longer be returned regardless of whether it has received funds. |
+
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
 | error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
 | abcReceiveAddress | <code>ABCReceiveAddress</code> | [ABCReceiveAddress](#abcreceiveaddress) |
 
-Returns an ABCReceiveAddress object with an unused public address.
+Returns an [ABCReceiveAddress](#abcreceiveaddress) object with an unused public address.
 
 ### getReceiveAddress
 
@@ -1616,7 +1622,7 @@ const abcReceiveAddress = abcWallet.tx.getReceiveAddress('1FVBrmeuEeAxbNcj2EL4v2
 | error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
 | abcReceiveAddress | <code>ABCReceiveAddress</code> | [ABCReceiveAddress](#abcreceiveaddress) |
 
-Returns an ABCReceiveAddress object with the specific public address.
+Returns an ABCReceiveAddress object with the specific public address. Public address must have been created from a previous call to [makeReceiveAddress](#makereceiveaddress).
 
 ### makeSpend
 
@@ -1960,20 +1966,20 @@ Updates the internal database of `metaData` corresponding to this `receiveAddres
 
 Also updates `ABCReceiveAddress.addressUri` and `ABCReceiveAddress.qrCode` to reflect any changes to `amountSatoshi`, `metaData.label`, `metaData.payeeName`, `metaData.category`, `metaData.notes`.
 
-### finalizeReceiveAddress
+### saveReceiveAddress
 
 ```javascript
-abcReceiveAddress.finalizeReceiveAddress(callback)
+abcReceiveAddress.saveReceiveAddress(callback)
 
 // Example
-abcReceiveAddress.finalizeReceiveAddress(function (error) {
+abcReceiveAddress.saveReceiveAddress(function (error) {
   if (!error) {
     // Success
   }
 })
 ```
 
-Finalizes this `receiveAddress` so that any future calls to [ABCWalletTx.makeReceiveAddress](#makereceiveaddress) will no longer return this address.
+Saves this `receiveAddress` so that any future calls to [ABCWalletTx.makeReceiveAddress](#makereceiveaddress) will no longer return this address. Funds can still be received on this address. Use [ABCWalletTx.getAddress](#getaddress) to get back this object in the future.
 
 ## ABCMetadata
 

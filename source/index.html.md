@@ -1259,7 +1259,7 @@ abcWallet.addTxFunctionality(ABCWalletTxLibrary, callbacks, callback)
 
 // Example
 
-var abcWalletTxLibrary = require('airbitz-core-js-bitcoin`)
+var abcWalletTxLibrary = require('airbitz-core-js-bitcoin`).txLib
 
 function abcWalletTxAddressesChecked(abcWalletTx, progressRatio) { }
 function abcWalletTxBalanceChanged(abcWalletTx) { }
@@ -1438,7 +1438,7 @@ List the keys in the specified folder
 # ABC Currency Transactions
 
 ```javascript
-var abcTxLibrary = require('airbitz-core-js-bitcoin`)
+var abcTxLibrary = require('airbitz-core-js-bitcoin`).txLib
 
 var success = abcWallet.addTxFunctionality(abcTxLibrary)
 ```

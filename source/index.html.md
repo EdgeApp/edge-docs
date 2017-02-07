@@ -1447,12 +1447,14 @@ AirbitzCore can be extended to allow wallets to have transactional capabilities 
 
 ## ABCWalletTx
 
+Each ABCWalletTx represents a single or HD cryptocurrency wallet tied to one specific blockchain such as bitcoin or ethereum. Various methods and fields in ABCWalletTx are arrays or accept an index which selects which token system in the wallet is being referenced. 
+
 | Property | Type | Description |
 | --- | --- | --- |
 | abcWallet | <code>[ABCWallet](#abcwallet)</code> | Parent [ABCWallet](#abcwallet) object |
 | fiatCurrencyCode | <code>String</code> | 3 character fiat currency code |
-| cryptoCurrencyCode | <code>String</code> | 3 character crypto currency code |
-| subWallets | <code>Array</code> | Array of [ABCWalletTx](#abcwallettx) objects representing meta-token subwallets |
+| cryptoCurrencyCodes | <code>Array</code> | Array of Strings of crypto currency code. ie "BTC" |
+| primaryCryptoCurrencyCode | <code>String</code> | String of primary crypto currency code. ie "BTC". Other codes in `cryptoCurrencyCodes` will reference meta-tokens of this currency's blockchain. |
 
 ### setupContract
 
@@ -1476,20 +1478,20 @@ Setup the script/contract for this wallet. This is used to setup basic multisig 
 ### getBalance
 
 ```javascript
-abcWallet.tx.getBalance()
+abcWallet.tx.getBalance(currencyCode)
 
 // Example
 
-const balance = abcWallet.tx.getBalance()
+const balance = abcWallet.tx.getBalance("BTC")
 ```
 
 | Param | Type | Description |
 | --- | --- | --- |
-| void | <code>Void</code> |  |
+| currencyCode | <code>String</code> | Selects which currency to return a balance for. If NULL, returns the balance of the primary currency of the wallet's blockchain. ie. "BTC" or "ETH" |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| balance | <code>Int</code> | Wallet balance in smallest unit of currency |
+| balance | <code>Int</code> | Wallet balance in smallest unit of currency. ie Satoshis |
 
 Gets the current balance of the wallet denominated in the smallest unit of the currency. ie. Unit of satoshis for the currency bitcoin.
 
@@ -1507,6 +1509,7 @@ var start = new Date();
 start.setDate(end.getDate() - 1);
 
 const options = {
+  currencyCode: "BTC",
   startIndex: 0,
   numEntries: 100,
   startDate: start,
@@ -1567,7 +1570,7 @@ const height = abcWallet.tx.getBlockHeight()
 | --- | --- | --- |
 | height | <code>Int</code> | Block height of current wallet |
 
-Gets the current blockchain height of the wallet's cryptocurrency. Not used for subwallets
+Gets the current blockchain height of the wallet's cryptocurrency. This is expected to be the same value for all meta-tokens in this wallet and hence does not require a currencyCode index.
 
 ### makeReceiveAddress
 
@@ -1589,6 +1592,7 @@ const abcReceiveAddress = abcWallet.tx.makeReceiveAddress(null, function (error,
 
 | Options Param | Type | Description |
 | --- | --- | --- |
+| currencyCode | <code>String</code> | (Optional) Chooses the currency or meta-token to generate an address for. If not specified, uses the primary currency of this wallet |
 | tag | <code>String</code> | (Optional) Arbitrary tag for this specific address request type. Future calls to makeReceiveAddress with the same tag will return the same address as the previous call unless that address has received funds. Useful for specifying a "display" address which is shown on screen but never used for email or SMS requests. Calling [saveReceiveAddress](#savereceiveaddress) will cause this address to longer be returned regardless of whether it has received funds. |
 
 
@@ -1602,10 +1606,12 @@ Returns an [ABCReceiveAddress](#abcreceiveaddress) object with an unused public 
 ### getReceiveAddress
 
 ```javascript
-const abcReceiveAddress = abcWallet.tx.getReceiveAddress(callback)
+const abcReceiveAddress = abcWallet.tx.getReceiveAddress(options, callback)
 
 // Example
-const abcReceiveAddress = abcWallet.tx.getReceiveAddress('1FVBrmeuEeAxbNcj2EL4v2XsfBDbv7A9aE', function (error, abcReceiveAddress) {
+const options = { currencyCode: "BTC" }
+
+const abcReceiveAddress = abcWallet.tx.getReceiveAddress(options, '1FVBrmeuEeAxbNcj2EL4v2XsfBDbv7A9aE', function (error, abcReceiveAddress) {
   if (!error) {
     // Success
   }
@@ -1615,7 +1621,12 @@ const abcReceiveAddress = abcWallet.tx.getReceiveAddress('1FVBrmeuEeAxbNcj2EL4v2
 
 | Param | Type | Description |
 | --- | --- | --- |
+| options |  <code>Object</code> | Options object. See below
 | callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Options Param | Type | Description |
+| --- | --- | --- |
+| currencyCode | <code>String</code> | (Optional) Chooses the currency or meta-token to generate an address for. If not specified, uses the primary currency of this wallet |
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
@@ -1640,8 +1651,9 @@ const abcSpendInfo = {
       amountSatoshi: 210000000 // 2.1 BTC
     },
     { 
+      currencyCode: 'LTBCOIN'
       publicAddress: '1FSxyn9AbBMwGusKAFqvyS63763tM8KiA2',
-      amountSatoshi: 34000000 // 0.34 BTC
+      amountSatoshi: 120 // 120 LTBCOIN
     }    
   ]
 }
@@ -1742,7 +1754,7 @@ abcWallet.tx.getMaxSpendable(abcSpendInfo, function(error, maxAmountSatoshi) {
 })
 ```
 
-Get the maximum amount spendable from this wallet given the parameters of an [ABCSpendInfo](#abcspendinfo) object. The [ABCSpendInfo.spendTargets](#abcspendtarget) amountSatoshi values are ignored when calculating the max spendable amount.
+Get the maximum amount spendable from this wallet given the parameters of an [ABCSpendInfo](#abcspendinfo) object. The [ABCSpendInfo.spendTargets](#abcspendtarget) amountSatoshi values are ignored when calculating the max spendable amount. This only ever returns the max spendable of the primary currency of the wallet. Any meta-tokens of the wallet will always have a max spendable equal to the number of meta-tokens in the wallet determined by [getBalance](#getbalance).
 
 ### parseUri
 
@@ -1816,7 +1828,8 @@ Parameter object used for creating an [ABCSpend](#abcspend) object.
 // Example spend target with a public addresses
 const spendTarget = 
   { 
-    publicAddress: '',
+    currencyCode: 'BTC',
+    publicAddress: '1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs',
     amountSatoshi: 210000000 // 2.1 BTC
   }    
 
@@ -1832,6 +1845,7 @@ Parameters
 
 | Param | Type | Description |
 | --- | --- | --- |
+| currencyCode | <code>String</code> | (Optional) Chooses the currency or meta-token to generate an address for. If not specified, uses the primary currency of this wallet |
 | publicAddress | <code>String</code> | Public address in the format of the current wallet's currency. This requires the `amountSatoshi` field to be set. Must not set both `publicAddress` and `destWallet` |
 | amountSatoshi | <code>Int</code> | Amount to send in the smallest denomination of the source wallet's currency. ie Satoshis |
 | destWallet | <code>[ABCWallet](#abcwallet)</code> | Destination wallet to transfer funds to. Must also set `amountSatoshi`. Must not set both `publicAddress` and `destWallet` |
@@ -2194,9 +2208,11 @@ Requests the exchange rate from an array of currency pairs. Function should retu
 
 # Currency Plugin API
 
-Cryptocurrency functionality for AirbitzCore is provided by currency API libraries that follow the Currency Plugin API. These libraries can be easily added to Airbitz by providing the following library API for import into an [ABCWallet](#abcwallet). ABC will call into the library [abcTxLibInit](#abctxlibinit) to initialize the library with a set of callbacks. Although an ABCWallet object may get passed into [abcTxLibInit](#abctxlibinit), the [ABCWallet.dataStore](#abcdatastore) may not be initialized in the case of a non logged in wallet. In such a case, only the [ABCWallet.localDataStore](#abcdatastore) object will be available for use.
+Cryptocurrency functionality for AirbitzCore is provided by currency API libraries that follow the Currency Plugin API. These libraries can be easily added to Airbitz by providing the following library API for import into an [ABCWallet](#abcwallet). ABC will call into the library [abcTxLibInit](#abctxlibinit) to initialize the library with a set of callbacks. 
 
 To add additional currency functionality, create a library that exposes an API that follows the ABCWalletTxLibrary template below.
+
+[ABCDatastore](#abcdatastore) objects will get passed into [abcTxLibInit](#abctxlibinit), the [walletDataStore](#abcdatastore) allows the txLib to store wallet specific data such as a blockchain cache. If the implementation chooses to hold a global cache of data, use the [accountDataStore](#abcdatastore) object. Both data store objects are local data stores which are not encrypted, revision controlled, or backed up.
 
 The repo `airbitz-core-js-bitcoin` exposes this API for bitcoin
 
@@ -2278,7 +2294,7 @@ const options =
   enableTokens = [ "XCP, "TATIANACOIN" ]
 }
 
-abcTxLibInit(abcWallet, options, callbacks, function(error) {
+abcTxLibInit(accountDataStore, walletDataStore, callbacks, function(error) {
   if (error === null) {
     // Success
   }
@@ -2287,7 +2303,8 @@ abcTxLibInit(abcWallet, options, callbacks, function(error) {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| wallet | <code>[ABCWallet](#abcwallet)</code> | Parent wallet to initialize this currency in |
+| accountDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for account wide data |
+| walletDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for wallet specific data |
 | options | <code>Object</code> | Options for abcTxLibInit |
 | callbacks | <code>[ABCTxLibCallbacks](#abctxlibcallbacks)</code> | Various callbacks when wallet is updated |
 | callback | <code>Callback</code> | (Javascript) Callback function |
@@ -2308,13 +2325,12 @@ It is recommended the master public keys be keps in the [ABCWallet](#abcwallet) 
 
 ```javascript
 // Example
-
 const tokens = 
 {
   enableTokens = [ "XCP, "TATIANACOIN" ]
 }
 
-abcTxLibEnableTokens(abcWalletTx, tokens, function(error) {
+abcTxLibEnableTokens(accountDataStore, walletDataStore, tokens, function(error) {
   if (error === NULL) {
     // Success
   }
@@ -2323,7 +2339,8 @@ abcTxLibEnableTokens(abcWalletTx, tokens, function(error) {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcWalletTx | <code>[ABCWalletTx](#abcwalletTx)</code> | Parent ABCWalletTx to use |
+| accountDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for account wide data |
+| walletDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for wallet specific data |
 | tokens | <code>Array</code> | Array of strings specifying the currency codes of tokens to enable in this wallet |
 
 | Callback Param | Type | Description |
@@ -2337,12 +2354,13 @@ Enable support for meta tokens (ie. counterparty, colored coin, ethereum ERC20).
 ```javascript
 // Example
 
-const balance = abcTxLibGetBalance(abcWalletTx)
+const balance = abcTxLibGetBalance(accountDataStore, walletDataStore)
 ```
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcWalletTx | <code>[ABCWalletTx](#abcwalletTx)</code> | Parent ABCWalletTx to use |
+| accountDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for account wide data |
+| walletDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for wallet specific data |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
@@ -2355,12 +2373,13 @@ Get the current balance of this wallet in the currency's smallest denomination (
 ```javascript
 // Example
 
-const numTransactions = abcTxLibGetNumTransactions(abcWalletTx)
+const numTransactions = abcTxLibGetNumTransactions(accountDataStore, walletDataStore)
 ```
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcWalletTx | <code>[ABCWalletTx](#abcwalletTx)</code> | Parent ABCWalletTx to use |
+| accountDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for account wide data |
+| walletDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for wallet specific data |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
@@ -2374,7 +2393,7 @@ Get the number of transactions in the wallet
 const options = { startIndex: 5,
                   numEnteries: 50 }
                   
-abcTxLibGetTransactions(abcWalletTx, options, function(error, transactions) {
+abcTxLibGetTransactions(accountDataStore, walletDataStore, options, function(error, transactions) {
   if (error === null) {
     console.log(transactions[0].txid) // => "1209befa09ab3efc039abf09490ac34fe09abc938"
   }
@@ -2417,7 +2436,7 @@ Callback fires when the TxLib detects a new transaction from the blockchain netw
 `abcWalletTx`, `txid`, `date`, `blockHeight`, and `amountSatoshi`. The remaining fields are updated by Airbitz Core. 
 
 
-# Airbitz Account Management UI
+# Account Management UI
 
 To ease the implementation of the Airbitz SDK in applications, Airbitz provides a base user interface capable of all the account creation, account login, password & PIN management, and password recovery. This functionality is currently only available in Javascript for HTML apps
 
@@ -2505,10 +2524,9 @@ Launch an account management window for changing password, PIN, and recovery que
 
 
 
-# Airbitz Plugin API
+# Wallet Plugin API
 
-
-Airbitz plugins are a way to include additional functionality into the Airbitz Bitcoin Wallet. They are currently used to buy and sell bitcoin through Glidera, and purchase discounted Starbucks and Target cards through Foldapp.
+Airbitz plugins are a way to include additional functionality into the Airbitz Mobile Bitcoin Wallet on iOS and Android. They are currently used to buy and sell bitcoin through Glidera, and purchase discounted Starbucks and Target cards through Foldapp.
 
 The plugin API provides a subset of the entire Airbitz SDK which allows the plugin to access the currently logged in user's wallet to request sends and receives.
 

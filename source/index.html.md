@@ -1815,6 +1815,7 @@ Parameters
 
 | Param | Type | Description |
 | --- | --- | --- |
+| currencyCode | <code>String</code> | (Optional) Chooses the currency or meta-token to spend from. If not specified, uses the primary currency of this wallet |
 | spendTargets | <code>Array</code> | Array of [ABCSpendTarget](#abcspendtarget) objects |
 | networkFeeOption | <code>String</code> | Adjusts network fee amount. Must be either "low", "standard", "high", or "custom". If unspecified, the default is "standard" |
 | customNetworkFee | <code>Int</code> | Amount of network fee if `networkFeeOption` if set to `custom`. Should be specified as smallest denomination of currency. ie Satoshis |

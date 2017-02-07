@@ -1846,7 +1846,7 @@ Parameters
 
 | Param | Type | Description |
 | --- | --- | --- |
-| currencyCode | <code>String</code> | (Optional) Chooses the currency or meta-token to generate an address for. If not specified, uses the primary currency of this wallet |
+| currencyCode | <code>String</code> | (Optional) Chooses the currency or meta-token type for the destination receiving address or wallet. If not specified, uses the primary currency of this wallet |
 | publicAddress | <code>String</code> | Public address in the format of the current wallet's currency. This requires the `amountSatoshi` field to be set. Must not set both `publicAddress` and `destWallet` |
 | amountSatoshi | <code>Int</code> | Amount to send in the smallest denomination of the source wallet's currency. ie Satoshis |
 | destWallet | <code>[ABCWallet](#abcwallet)</code> | Destination wallet to transfer funds to. Must also set `amountSatoshi`. Must not set both `publicAddress` and `destWallet` |

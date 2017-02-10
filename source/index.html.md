@@ -987,6 +987,26 @@ Removes the OTP reset request from the server for the currently logged in user. 
 | error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
 
 
+### parseUri
+
+```javascript
+const abcParsedUri = abcAccount.parseUri("bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.2345&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X")
+
+console.log(abcParsedUri.publicAddress) // -> 1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs
+console.log(abcParsedUri.amountSatoshi) // -> 123456700
+console.log(abcParsedUri.paymentProtocolURL) // -> https://bitpay.com/i/7TEzdBg6rvsDVtWjNQ3C3X
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| uri | <code>String</code> | URI to parse |
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| abcParsedUri | <code>[ABCParsedUri](#abcparseduri)</code> | Object with parsed parameters |
+
+Parses a URI extracting various elements into an [ABCParsedUri](#abcparseduri) object
+
 ### signBitIDRequest
 
 ```javascript
@@ -1263,13 +1283,15 @@ var abcWalletTxLibrary = require('airbitz-core-js-bitcoin`).txLib
 
 function abcWalletTxAddressesChecked(abcWalletTx, progressRatio) { }
 function abcWalletTxBalanceChanged(abcWalletTx) { }
-function abcWalletTxNewTransaction(abcTransaction) { }
+function abcWalletTxTransactionsChanged(Array) { }
+function abcWalletTxNewTransactions(Array) { }
 function abcWalletTxBlockHeightChanged(abcWalletTx) { }
 
 var callbacks = {
   abcWalletTxAddressesChecked,
   abcWalletTxBalanceChanged,
-  abcWalletTxNewTransaction,
+  abcWalletTxTransactionsChanged,
+  abcWalletTxNewTransactions,
   abcWalletTxBlockHeightChanged
 }
 
@@ -1289,8 +1311,9 @@ abcWallet.addTxFunctionality(abcWalletTxLibrary, callbacks, function (error) {
 | Callback name | Type | Description |
 | --- | --- | --- |
 | abcWalletTxAddressesChecked(ABCWalletTx, progressRatio) | <code>Function</code> | Wallet has been fully updated with latest transactions from the network |
-| abcWalletTxBalanceChanged(ABCTransaction) | <code>Function</code> | Wallet balance has changed due to transactions already detected from other devices. This may not be called for all transactions that change the balance but it will at least be called on the last updating transaction. Recommend that GUI be refreshed with all visible transactions when this is called.|
-| abcWalletTxNewTransaction(ABCTransaction) | <code>Function</code> | New transaction detected. This may not be called for all transactions that change the balance but it will at least be called on the last updating transaction. Recommend that GUI be refreshed with all visible transactions when this is called.|
+| abcWalletTxBalanceChanged(ABCWalletTx) | <code>Function</code> | Wallet balance has changed due to transactions already detected from other devices, from new transactions, or from dropped transactions |
+| abcWalletTxNewTransactions(Array) | <code>Function</code> | Array of new ABCTransaction objects. These are new funds that the GUI should show as a notificatino to the user |
+| abcWalletTxTransactionsChanged(Array) | <code>Function</code> | Array of ABCTransaction objects. These transactions are either previously recognized funds from a new device that have now synced to this device, or updates to previously seen transactions such as a change in the block number this transaction was confirmed in. |
 | abcWalletTxBlockHeightChanged(ABCWalletTx) | <code>Function</code> | Blockchain height changed. This is unused for sub wallets |
 
 | Callback Params | Type | Description |
@@ -1498,7 +1521,7 @@ Gets the current balance of the wallet denominated in the smallest unit of the c
 ### getTransactions
 
 ```javascript
-abcWallet.tx.getTransactions(options)
+abcWallet.tx.getTransactions(options, callback)
 
 // Example
 
@@ -1519,9 +1542,10 @@ const options = {
   returnEntries: 10
 }
 
-const abcTransactions = abcWallet.tx.getTransactions(options)
+const abcTransactions = abcWallet.tx.getTransactions(options, function(error, abcTransactions) {
+  const abcTransaction = abcTransactions[0]
+})
 
-const abcTransaction = abcTransactions[0]
 ```
 
 | Param | Type | Description |
@@ -1540,6 +1564,7 @@ const abcTransaction = abcTransactions[0]
 
 | Return Param | Type | Description |
 | --- | --- | --- |
+| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
 | transactions | <code>ABCTransaction</code> | Array of [ABCTransaction](#abctransaction) objects |
 
 Returns a list of transactions in the current wallet. Options allow pruning of the search to a subset of the transactions in addition to string filtering. Options are applied in the following order: 
@@ -1572,46 +1597,43 @@ const height = abcWallet.tx.getBlockHeight()
 
 Gets the current blockchain height of the wallet's cryptocurrency. This is expected to be the same value for all meta-tokens in this wallet and hence does not require a currencyCode index.
 
-### makeReceiveAddress
-
-```javascript
-const abcReceiveAddress = abcWallet.tx.makeReceiveAddress(options, callback)
-
-// Example
-const abcReceiveAddress = abcWallet.tx.makeReceiveAddress(null, function (error, abcReceiveAddress) {
-  if (!error) {
-    // Success
-  }
-})
-```
-
-| Param | Type | Description |
-| --- | --- | --- |
-| options |  <code>Object</code> | Options object. See below
-| callback | <code>Callback</code> | (Javascript) Callback function |
-
-| Options Param | Type | Description |
-| --- | --- | --- |
-| currencyCode | <code>String</code> | (Optional) Chooses the currency or meta-token to generate an address for. If not specified, uses the primary currency of this wallet |
-| tag | <code>String</code> | (Optional) Arbitrary tag for this specific address request type. Future calls to makeReceiveAddress with the same tag will return the same address as the previous call unless that address has received funds. Useful for specifying a "display" address which is shown on screen but never used for email or SMS requests. Calling [saveReceiveAddress](#savereceiveaddress) will cause this address to longer be returned regardless of whether it has received funds. |
-
-
-| Callback Param | Type | Description |
-| --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
-| abcReceiveAddress | <code>ABCReceiveAddress</code> | [ABCReceiveAddress](#abcreceiveaddress) |
-
-Returns an [ABCReceiveAddress](#abcreceiveaddress) object with an unused public address.
-
 ### getReceiveAddress
 
 ```javascript
-const abcReceiveAddress = abcWallet.tx.getReceiveAddress(options, callback)
+abcWallet.tx.getReceiveAddress(options, callback)
 
-// Example
-const options = { currencyCode: "BTC" }
+// Example to simply return an unused address
+const abcReceiveAddress = abcWallet.tx.getReceiveAddress(null, function (error, abcReceiveAddress) {
+  if (!error) {
+    // Success
+  }
+})
 
-const abcReceiveAddress = abcWallet.tx.getReceiveAddress(options, '1FVBrmeuEeAxbNcj2EL4v2XsfBDbv7A9aE', function (error, abcReceiveAddress) {
+// Example to return an unused address with the tag "QRCODE"
+const abcReceiveAddress = abcWallet.tx.getReceiveAddress({'addressTag': 'QRCODE'}, function (error, abcReceiveAddress) {
+  if (!error) {
+    // Success
+  }
+})
+
+// Example to return an unused address with the tag "QRCODE" and for the currency "REP"
+const options = {
+  'addressTag': 'QRCODE',
+  'currencyCode': 'REP'
+}
+const abcReceiveAddress = abcWallet.tx.getReceiveAddress(options, function (error, abcReceiveAddress) {
+  if (!error) {
+    // Success
+  }
+})
+
+// Example to get an ABCRequestAddress object for BTC currency and previous publicAddress '1FVBrmeuEeAxbNcj2EL4v2XsfBDbv7A9aE'
+const options = { 
+  currencyCode: "BTC",
+  publicAddress: '1FVBrmeuEeAxbNcj2EL4v2XsfBDbv7A9aE'
+}
+
+const abcReceiveAddress = abcWallet.tx.getReceiveAddress(options, , function (error, abcReceiveAddress) {
   if (!error) {
     // Success
   }
@@ -1626,14 +1648,76 @@ const abcReceiveAddress = abcWallet.tx.getReceiveAddress(options, '1FVBrmeuEeAxb
 
 | Options Param | Type | Description |
 | --- | --- | --- |
-| currencyCode | <code>String</code> | (Optional) Chooses the currency or meta-token to generate an address for. If not specified, uses the primary currency of this wallet |
+| currencyCode | <code>String</code> | (Optional) Chooses the currency or meta-token to get an address for. If not specified, uses the primary currency of this wallet |
+| publicAddress | <code>String</code> | (Optional) Get an ABCReceiveAddress object using a previously returned public address. If `publicAddress` is set, `addressTag` must be null or unspecified |
+| addressTag | <code>String</code> | (Optional) Arbitrary tag for this specific address request type. Future calls to getReceiveAddress with the same tag will return the same address as the previous call with the same tag unless that address has received funds. Useful for specifying a "display" address which is shown on screen but never used for email or SMS requests. Calling [lockReceiveAddress](#lockreceiveaddress) will cause this address to no longer be returned regardless of whether it has received funds. If `addressTag` is set, `publicAddress` must be null or unspecified |
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
 | error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
 | abcReceiveAddress | <code>ABCReceiveAddress</code> | [ABCReceiveAddress](#abcreceiveaddress) |
 
-Returns an ABCReceiveAddress object with the specific public address. Public address must have been created from a previous call to [makeReceiveAddress](#makereceiveaddress).
+Returns an [ABCReceiveAddress](#abcreceiveaddress) object. This routine is used to generate a new public address or return a previously request address object.  The `metadata` object 
+
+### saveReceiveAddress
+
+```javascript
+abcWallet.tx.saveReceiveAddress(abcReceiveAddress, callback)
+
+// Example
+
+abcWallet.tx.saveReceiveAddress(abcReceiveAddress, function (error) {
+  if (!error) {
+    // Success
+    console.log("My bitcoin address: " + abcReceiveAddress.publicAddress)
+    abcReceiveAddress.amountSatoshi = 150000000 // 1.5 BTC 
+    abcReceiveAddress.metaData.payeeName = "Johnny Be Good"
+    abcReceiveAddress.metaData.category = "Income:Rent"
+    abcReceiveAddress.saveReceiveAddres(function(error) {
+      // Meta data for this address has been saved
+    })
+  }
+})
+
+```
+
+Updates the internal database of `metaData` corresponding to this `receiveAddress`. Any transactions that are received in this address are automatically tagged with the `metaData` from this `receiveAddress`.
+
+### lockReceiveAddress
+
+```javascript
+abcWallet.tx.lockReceiveAddress(callback)
+
+// Example
+abcWallet.tx.lockReceiveAddress(function (error) {
+  if (!error) {
+    // Success
+  }
+})
+```
+
+Locks this `receiveAddress` so that any future calls to [ABCWalletTx.getReceiveAddress](#getreceiveaddress), without the `publicAddress` specified, will no longer return this address. Funds can still be received on this address. Use [ABCWalletTx.getReceiveAddress](#getreceiveaddress) with `publicAddress` specified to get back this object in the future.
+
+### makeAddressQrCode
+
+```javascript
+const qrCode = makeAddressQrCode(abcReceiveAddress)
+```
+
+| Return | Type | Description |
+| --- | --- | --- |
+| qrCode | <code>String</code> | Base64 encoded image of addressUri |
+
+### makeAddressUri
+
+```javascript
+const qrCode = makeAddressUri(abcReceiveAddress)
+```
+
+| Return | Type | Description |
+| --- | --- | --- |
+| addressUri | <code>String</code> | BIP21 or equivalent URI that encodes public address and optionally requested amount, name of requestor, and category of requested funds |
+
 
 ### makeSpend
 
@@ -1669,18 +1753,14 @@ abcSpend.signBroadcastAndSave(function(error, abcTransaction) {
 // Example to spend to a BIP70 payment request
 const abcParsedUri = abcWallet.tx.parseUri("bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.000000&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X")
 
-abcParsedUri.getPaymentRequest(function(error, paymentRequest) {
+abcParsedUri.getPaymentProtocolInfo(function(error, spendTarget) {
   abcSpendInfo = {
     networkFeeOption: 'high',
     metadata: {
       payeeName: 'Tyra CPA',
       category: 'Expense:Professional Services'
     },
-    spendTargets: [
-      { 
-        paymentRequest
-      }
-    ]
+    spendTargets: [ spendTarget ]
   }
 
   const abcSpend = abcWallet.tx.makeSpend(abcSpendInfo)
@@ -1756,26 +1836,6 @@ abcWallet.tx.getMaxSpendable(abcSpendInfo, function(error, maxAmountSatoshi) {
 
 Get the maximum amount spendable from this wallet given the parameters of an [ABCSpendInfo](#abcspendinfo) object. The [ABCSpendInfo.spendTargets](#abcspendtarget) amountSatoshi values are ignored when calculating the max spendable amount. This only ever returns the max spendable of the primary currency of the wallet. Any meta-tokens of the wallet will always have a max spendable equal to the number of meta-tokens in the wallet determined by [getBalance](#getbalance).
 
-### parseUri
-
-```javascript
-const abcParsedUri = abcWallet.tx.parseUri("bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.2345&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X")
-
-console.log(abcParsedUri.publicAddress) // -> 1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs
-console.log(abcParsedUri.amountSatoshi) // -> 123456700
-console.log(abcParsedUri.paymentRequestURL) // -> https://bitpay.com/i/7TEzdBg6rvsDVtWjNQ3C3X
-```
-
-| Param | Type | Description |
-| --- | --- | --- |
-| uri | <code>String</code> | URI to parse |
-
-| Return Param | Type | Description |
-| --- | --- | --- |
-| abcParsedUri | <code>[ABCParsedUri](#abcparseduri)</code> | Object with parsed parameters |
-
-Parses a URI extracting various elements into an [ABCParsedUri](#abcparseduri) object
-
 ### sweepPrivateKey
 
 coming soon...
@@ -1816,9 +1876,10 @@ Parameters
 | Param | Type | Description |
 | --- | --- | --- |
 | currencyCode | <code>String</code> | (Optional) Chooses the currency or meta-token to spend from. If not specified, uses the primary currency of this wallet |
+| noUnconfirmed | <code>Boolean</code> | (Optional) If set to TRUE, this will not spend from any unconfirmed funds. Default is FALSE | 
 | spendTargets | <code>Array</code> | Array of [ABCSpendTarget](#abcspendtarget) objects |
 | networkFeeOption | <code>String</code> | Adjusts network fee amount. Must be either "low", "standard", "high", or "custom". If unspecified, the default is "standard" |
-| customNetworkFee | <code>Int</code> | Amount of network fee if `networkFeeOption` if set to `custom`. Should be specified as smallest denomination of currency. ie Satoshis |
+| customNetworkFee | <code>Int</code> | Amount of per byte network fee if `networkFeeOption` is set to `custom`. Should be specified as smallest denomination of currency. ie Satoshis |
 | metadata | <code>[ABCMetadata](#ABCMetadata)</code> | [ABCMetadata](#ABCMetadata) object. Outgoing transaction will have the specified metadata copied to the [ABCTransaction](#abctransaction) object |
 
 Parameter object used for creating an [ABCSpend](#abcspend) object.
@@ -1837,9 +1898,24 @@ const spendTarget =
 // Example to spend to a BIP70 payment request
 const abcParsedUri = abcWallet.tx.parseUri("bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.000000&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X")
 
-abcParsedUri.getPaymentRequest(function(error, paymentRequest) {
-    spendTarget = { paymentRequest }
-})
+abcParsedUri.getPaymentProtocolInfo(function(error, paymentProtocolInfo) {
+  abcSpendInfo = {
+    networkFeeOption: 'high',
+    metadata: {
+      payeeName: paymentProtocolInfo.merchant,
+      category: 'Expense:Professional Services'
+    },
+    spendTargets: [ paymentProtocolInfo.spendTarget ]
+  }
+
+  const abcSpend = abcWallet.tx.makeSpend(abcSpendInfo)
+  abcSpend.signBroadcastAndSave(function(error, abcTransaction) {
+    if (!error) {
+      // Success, transaction sent
+      console.log("Sent transaction with ID = " + abcTransaction.txid)
+    }
+  })
+}
 ```
 
 Parameters
@@ -1851,7 +1927,7 @@ Parameters
 | amountSatoshi | <code>Int</code> | Amount to send in the smallest denomination of the source wallet's currency. ie Satoshis |
 | destWallet | <code>[ABCWallet](#abcwallet)</code> | Destination wallet to transfer funds to. Must also set `amountSatoshi`. Must not set both `publicAddress` and `destWallet` |
 | destMetadata | <code>[ABCMetadata](#abcmetadata)</code> | [ABCMetadata](#ABCMetadata) object with which will tag the transaction in the destination wallet. Must only be used when `destWallet` is set. |
-| paymentRequest | <code>[ABCPaymentRequest](#abcpaymentrequest)</code> | [ABCPaymentRequest](#abcpaymentrequest) object obtained from a call to [getPaymentRequest](#getpaymentrequest). Must not set either `publicAddress`, `amountSatoshi`, `destWallet`, or `destMetadata` if setting this parameter |
+
 
 ## ABCParsedUri
 
@@ -1862,7 +1938,7 @@ Parameters
 | bitIDURI | <code>String</code> | Full BitID URI |
 | bitIDDomain | <code>String</code> | Domain name portion of BitID URI |
 | bitIDCallbackURI | <code>String</code> | BitID Callback URI |
-| paymentRequestURL | <code>String</code> | BIP70 Payment Request URL |
+| paymentProtocolURL | <code>String</code> | BIP70 Payment Request URL |
 | amountSatoshi | <code>Int</code> | Amount in the currency's smallest denomination (satoshis)
 | metadata | <code>[ABCMetadata](#abcmetadata)</code> | [ABCMetadata](#abcmetadata) object with info extracted from URI |
 | returnURI | <code>String</code> | URI to send user after URI/payment has been processed |
@@ -1873,24 +1949,31 @@ Parameters
 
 Object contains various parts of a parsed URI depending on the source URI. Any of the properties may be NULL.
 
-### getPaymentRequest
+### getPaymentProtocolInfo
 
 ```javascript
 
 // Example 
 const abcParsedUri = abcWallet.tx.parseUri("bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.000000&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X")
 
-abcParsedUri.getPaymentRequest(function(error, abcPaymentRequest) {
-  const abcError = abcSpend.addPaymentRequest(abcPaymentRequest)
-  if (!abcError) {
-    abcSpend.signBroadcastAndSave(function(error, abcTransaction) {
-      if (!error) {
-        // Success, transaction sent
-        console.log("Sent transaction with ID = " + abcTransaction.txid)
-      }
-    })
+abcParsedUri.getPaymentProtocolInfo(function(error, paymentProtocolInfo) {
+  abcSpendInfo = {
+    networkFeeOption: 'high',
+    metadata: {
+      payeeName: paymentProtocolInfo.merchant,
+      category: 'Expense:Professional Services'
+    },
+    spendTargets: [ paymentProtocolInfo.spendTarget ]
   }
-})
+
+  const abcSpend = abcWallet.tx.makeSpend(abcSpendInfo)
+  abcSpend.signBroadcastAndSave(function(error, abcTransaction) {
+    if (!error) {
+      // Success, transaction sent
+      console.log("Sent transaction with ID = " + abcTransaction.txid)
+    }
+  })
+}
 ```
 
 | Param | Type | Description |
@@ -1900,13 +1983,13 @@ abcParsedUri.getPaymentRequest(function(error, abcPaymentRequest) {
 | Callback Param | Type | Description |
 | --- | --- | --- |
 | abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
-| abcPaymentRequest | <code>[ABCPaymentRequest](#abcpaymentrequest)</code> | [ABCPaymentRequest](#abcpaymentrequest) BIP70 payment request |
+| abcSpendTarget | <code>[ABCSpendTarget](#abcspendtarget)</code> | [ABCSpendTarget](#abcspendtarget) with BIP70 payment request for use in an [ABCSpendInfo](#abcspendinfo) |
 
-Communicates over network with BIP70 payment request URL to get exact payment parameters. Add this payment to an [ABCSpend](#abcspend) object using [ABCSpend.addPaymentRequest](#addpaymentrequest).
+Communicates over network with BIP70 payment request URL to get exact payment parameters. This returns a [ABCPaymentProtocolInfo](#abcpaymentprotocolinfo) which contains a custom, non-editable [ABCSpendTarget](#abcspendtarget) that can simply be placed into an [ABCSpendInfo](#abcspendinfo) object to send the transaction.
 
-## ABCPaymentRequest
+## ABCPaymentProtocolInfo
 
-Object provides basic UI displayable info about a BIP70 payment request.
+Object provides basic UI displayable info about a BIP70 payment request. Also includes an [ABCSpendTarget](#abcspendtarget) for use in an [ABCSpendInfo](#abcspendinfo) to send the transaction.
 
 | Property | Type | Description |
 | --- | --- | --- |
@@ -1914,76 +1997,15 @@ Object provides basic UI displayable info about a BIP70 payment request.
 | amountSatoshi | <code>Int</code> | Amount of request |
 | memo | <code>String</code> | Memo field returned by merchant | 
 | merchant | <code>String</code> | Name of merchat (may be blank) |
-
+| abcSpendTarget | <code>[ABCSpendTarget](#abcspendtarget)</code> | [ABCSpendTarget](#abcspendtarget) object that can be used in an [ABCSpendInfo](#abcspendinfo) |
 
 ## ABCReceiveAddress
 
-### Class Properties
-
-```javascript
-// Example
-
-abcWallet.tx.makeReceiveAddress(function(error, abcReceiveAddress) {
-  if (!error) {
-    console.log("My bitcoin address: " + abcReceiveAddress.publicAddress)
-    abcReceiveAddress.amountSatoshi = 150000000 // 1.5 BTC 
-    abcReceiveAddress.metaData.payeeName = "Johnny Be Good"
-    abcReceiveAddress.metaData.category = "Income:Rent"
-    abcReceiveAddress.updateReceiveAddres(function(error) {
-      if (!error) {
-        console.log("Send funds to this URI: " + abcReceiveAddress.addressUri)
-      }
-    })
-  }
-})
-```
-
-The following properties may be set to modify the `uri` and update the metadata associated with this address.
-
 | Property | Type | Description |
 | --- | --- | --- |
+| publicAddress | <code>String</code> | Raw public address in native format of wallet currency type. (ie. base58 for bitcoin, base16 for ethereum) |
 | amountSatoshi | <code>Int</code> | Amount of request denominated in the smallest unit of this wallet's currency (ie. bitcoin satoshis) |
-| metaData | <code>ABCMetadata</code> | [ABCMetadata](#abcmetadata) object corresponding to this address. Any transactions receiving funds into this address will automaticall have this metadata in the [ABCTransaction](#abctransaction) object.
-
-Any modification to `amountSatoshi` or `metaData` above requires a call to [ABCReceiveAddress. updateReceiveAddress()](#updatereceiveaddress) before reading back `addressUri` or `qrCode`. `publicAddress` is static and can always be read.
-
-| Property | Type | Description |
-| --- | --- | --- |
-| publicAddress | <code>String</code> | Raw public address is native format of wallet currency type. (ie. base58 for bitcoin, base16 for ethereum) |
-| addressUri | <code>String</code> | BIP21 or equivalent URI that encodes public address and optionally requested amount, name of requestor, and category of requested funds |
-| qrCode | <code>String</code> | Base64 encoded image of addressUri |
-
-### updateReceiveAddress
-
-```javascript
-abcReceiveAddress.updateReceiveAddress(callback)
-
-// Example
-abcReceiveAddress.updateReceiveAddress(function (error) {
-  if (!error) {
-    // Success
-  }
-})
-```
-
-Updates the internal database of `metaData` corresponding to this `receiveAddress`. Any transactions that are received in this address are automatically tagged with the `metaData` from this `receiveAddress`.
-
-Also updates `ABCReceiveAddress.addressUri` and `ABCReceiveAddress.qrCode` to reflect any changes to `amountSatoshi`, `metaData.label`, `metaData.payeeName`, `metaData.category`, `metaData.notes`.
-
-### saveReceiveAddress
-
-```javascript
-abcReceiveAddress.saveReceiveAddress(callback)
-
-// Example
-abcReceiveAddress.saveReceiveAddress(function (error) {
-  if (!error) {
-    // Success
-  }
-})
-```
-
-Saves this `receiveAddress` so that any future calls to [ABCWalletTx.makeReceiveAddress](#makereceiveaddress) will no longer return this address. Funds can still be received on this address. Use [ABCWalletTx.getAddress](#getaddress) to get back this object in the future.
+| metaData | <code>ABCMetadata</code> | [ABCMetadata](#abcmetadata) object corresponding to this address. Any transactions receiving funds into this address will automatically have this metadata in the [ABCTransaction](#abctransaction) object.
 
 ## ABCMetadata
 
@@ -2283,11 +2305,11 @@ Get details of the crypto currency supported by this library
 ```javascript
 // Example
 
-function abcTxLibCBNewTransaction(abcTransaction)
+function abcTxLibCBTransactionsChanged(abcTransactions) { }
 
 const callbacks =
 {
-  abcTxLibCBNewTransaction
+  abcTxLibCBTransactionsChanged
 }
 
 const options = 
@@ -2424,16 +2446,16 @@ The `options` parameter may include the following:
 
 ## ABCTxLibCallbacks
 
-### abcTxLibCBNewTransaction
+### abcTxLibCBTransactionsChanged
 
 ```javascript
-abcTxLibCBNewTransaction(abcTransaction)
+abcTxLibCBTransactionsChanged(abcTransactions)
 ```
 | Param | Type | Description |
 | --- | --- | --- |
-| abcTransaction | <code>[ABCTransaction](#abctransaction)</code> | Transaction object |
+| abcTransactions | <code>Array</code> | Array of [ABCTransaction](#abctransaction) objects which are new or have changed. Changes may include the block height when this transaction was confirmed |
 
-Callback fires when the TxLib detects a new transaction from the blockchain network. The [ABCTransaction](#abctransaction) must have the following fields filled out by the TxLib:
+Callback fires when the TxLib detects new or updated transactions from the blockchain network. The [ABCTransaction](#abctransaction) objects must have the following fields filled out by the TxLib:
 `abcWalletTx`, `txid`, `date`, `blockHeight`, and `amountSatoshi`. The remaining fields are updated by Airbitz Core. 
 
 

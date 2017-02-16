@@ -2314,10 +2314,12 @@ const callbacks =
 
 const options = 
 {
-  enableTokens = [ "XCP, "TATIANACOIN" ]
+  accountDataStore,
+  walletDataStore,
+  masterPrivateKey
 }
 
-abcTxLibInit(accountDataStore, walletDataStore, callbacks, function(error) {
+abcTxLibInit(options, callbacks, function(error) {
   if (error === null) {
     // Success
   }
@@ -2326,11 +2328,17 @@ abcTxLibInit(accountDataStore, walletDataStore, callbacks, function(error) {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| accountDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for account wide data |
-| walletDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for wallet specific data |
 | options | <code>Object</code> | Options for abcTxLibInit |
 | callbacks | <code>[ABCTxLibCallbacks](#abctxlibcallbacks)</code> | Various callbacks when wallet is updated |
 | callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Options | Type | Description |
+| --- | --- | --- |
+| accountDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for account wide data |
+| walletDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for wallet specific data |
+| masterPrivateKey | <code>String</code> | Master private key for wallet in format specific to the wallet type. ie. `wallet:repo:bitcoin-bip44` would have a `masterPrivateKey` in the format of a bip39 12-24 word mnemonic. This parameter may be unspecified, in which case, the TxLibrary should have cached a `masterPublicKey` in `localDataStore` |
+| masterPublicKey | <code>String</code> | Master public key for wallet in format specific to the wallet type. ie. `wallet:repo:bitcoin-bip44` would have a `masterPublicKey` in the format of a base58 string starting with "xpub" such as "xpub661MyMwAqRbcFtXgS5sYJABqqG9YLmC4Q1Rdap9gSE8NqtwybGhePY2gZ29ESFjqJoCu1Rupje8YtGqsefD265TMg7usUDFdp6W1EGMcet8". This parameter may be unspecified, in which case, the TxLibrary should have cached a `masterPublicKey` in `localDataStore` |
+
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
@@ -2444,6 +2452,57 @@ The `options` parameter may include the following:
 | startIndex | <code>Int</code> | The starting index into the list of transactions. 0 specifies the newest transaction |
 | numEntries | <code>Int</code> |  The number of entries to return. If there aren't enough transactions to return `numEntries`, then the TxLib should return the maximum possible |
 
+### abcTxLibGetAddress
+
+```javascript
+abcTxLibGetAddress(index, function(error, address) {
+
+})
+```
+
+### abcTxLibGetAddressFunds
+```javascript
+abcTxLibGetAddressFunds(address, function(error, amountSatoshi) {
+
+})
+```
+
+### abcTxLibGetAddressIndexFunds
+```javascript
+abcTxLibGetAddressFunds(index, function(error, amountSatoshi) {
+
+})
+```
+
+### abcTxLibMakeSpend
+```javascript
+abcTxLibMakeSpend(abcSpendInfo, function(error, abcTransaction) {
+  
+})
+```
+
+### abcTxLibSignTx
+```javascript
+abcTxLibSignTx(abcTransaction, function(error) {
+  
+})
+```
+
+
+### abcTxLibBroadcastTx
+```javascript
+abcTxLibSignTx(abcTransaction, function(error) {
+  
+})
+```
+
+### abcTxLibSaveTx
+```javascript
+abcTxLibSaveTx(abcTransaction, function(error) {
+  
+})
+```
+
 ## ABCTxLibCallbacks
 
 ### abcTxLibCBTransactionsChanged
@@ -2457,6 +2516,7 @@ abcTxLibCBTransactionsChanged(abcTransactions)
 
 Callback fires when the TxLib detects new or updated transactions from the blockchain network. The [ABCTransaction](#abctransaction) objects must have the following fields filled out by the TxLib:
 `abcWalletTx`, `txid`, `date`, `blockHeight`, and `amountSatoshi`. The remaining fields are updated by Airbitz Core. 
+
 
 
 # Account Management UI

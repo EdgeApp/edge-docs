@@ -1285,7 +1285,7 @@ function abcWalletTxAddressesChecked(abcWalletTx, progressRatio) { }
 function abcWalletTxBalanceChanged(abcWalletTx) { }
 function abcWalletTxTransactionsChanged(Array) { }
 function abcWalletTxNewTransactions(Array) { }
-function abcWalletTxBlockHeightChanged(abcWalletTx) { }
+function abcWalletTxBlockHeightChanged(abcWalletTx, height) { }
 
 var callbacks = {
   abcWalletTxAddressesChecked,
@@ -1314,7 +1314,7 @@ abcWallet.addTxFunctionality(abcWalletTxLibrary, callbacks, function (error) {
 | abcWalletTxBalanceChanged(ABCWalletTx) | <code>Function</code> | Wallet balance has changed due to transactions already detected from other devices, from new transactions, or from dropped transactions |
 | abcWalletTxNewTransactions(Array) | <code>Function</code> | Array of new ABCTransaction objects. These are new funds that the GUI should show as a notificatino to the user |
 | abcWalletTxTransactionsChanged(Array) | <code>Function</code> | Array of ABCTransaction objects. These transactions are either previously recognized funds from a new device that have now synced to this device, or updates to previously seen transactions such as a change in the block number this transaction was confirmed in. |
-| abcWalletTxBlockHeightChanged(ABCWalletTx) | <code>Function</code> | Blockchain height changed. This is unused for sub wallets |
+| abcWalletTxBlockHeightChanged(ABCWalletTx, height) | <code>Function</code> | Blockchain height changed. This is unused for sub wallets |
 
 | Callback Params | Type | Description |
 | --- | --- | --- |
@@ -1666,14 +1666,14 @@ abcWallet.tx.saveReceiveAddress(abcReceiveAddress, callback)
 
 // Example
 
-abcWallet.tx.saveReceiveAddress(abcReceiveAddress, function (error) {
+abcWallet.tx.getReceiveAddress(null, function (error) {
   if (!error) {
     // Success
     console.log("My bitcoin address: " + abcReceiveAddress.publicAddress)
     abcReceiveAddress.amountSatoshi = 150000000 // 1.5 BTC 
     abcReceiveAddress.metaData.payeeName = "Johnny Be Good"
     abcReceiveAddress.metaData.category = "Income:Rent"
-    abcReceiveAddress.saveReceiveAddres(function(error) {
+    abcReceiveAddress.saveReceiveAddress(function(error) {
       // Meta data for this address has been saved
     })
   }
@@ -1742,8 +1742,8 @@ const abcSpendInfo = {
   ]
 }
 
-const abcSpend = abcWallet.tx.makeSpend(abcSpendInfo)
-abcSpend.signBroadcastAndSave(function(error, abcTransaction) {
+const abcTransaction = abcWallet.tx.makeSpend(abcSpendInfo)
+abcWallet.tx.signBroadcastAndSave(abcTransaction, function(error, abcTransaction) {
   if (!error) {
     // Success, transaction sent
     console.log("Sent transaction with ID = " + abcTransaction.txid)
@@ -1751,9 +1751,9 @@ abcSpend.signBroadcastAndSave(function(error, abcTransaction) {
 })
 
 // Example to spend to a BIP70 payment request
-const abcParsedUri = abcWallet.tx.parseUri("bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.000000&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X")
+const abcParsedUri = abcAccount.parseUri("bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.000000&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X")
 
-abcParsedUri.getPaymentProtocolInfo(function(error, spendTarget) {
+abcWallet.tx.getPaymentProtocolInfo(abcParsedUri.paymentProtocolURL, function(error, spendTarget) {
   abcSpendInfo = {
     networkFeeOption: 'high',
     metadata: {
@@ -1763,8 +1763,8 @@ abcParsedUri.getPaymentProtocolInfo(function(error, spendTarget) {
     spendTargets: [ spendTarget ]
   }
 
-  const abcSpend = abcWallet.tx.makeSpend(abcSpendInfo)
-  abcSpend.signBroadcastAndSave(function(error, abcTransaction) {
+  const abcTransaction = abcWallet.tx.makeSpend(abcSpendInfo)
+  abcWallet.tx.signBroadcastAndSave(abcTransaction, function(error, abcTransaction) {
     if (!error) {
       // Success, transaction sent
       console.log("Sent transaction with ID = " + abcTransaction.txid)
@@ -1791,8 +1791,8 @@ const abcSpendInfo = {
   ]
 }
 
-const abcSpend = srcWallet.tx.makeSpend(abcSpendInfo)
-abcSpend.signBroadcastAndSave(function(error, abcTransaction) {
+const abcTransaction = srcWallet.tx.makeSpend(abcSpendInfo)
+srcWallet.tx.signBroadcastAndSave(abcTransaction, function(error, abcTransaction) {
   if (!error) {
     // Success, transaction sent
     console.log("Sent transaction with ID = " + abcTransaction.txid)
@@ -1809,6 +1809,148 @@ abcSpend.signBroadcastAndSave(function(error, abcTransaction) {
 | abcTransaction | <code>[ABCTransaction](#abctransaction)</code> | Unsigned [ABCTransaction](#abctransaction) object |
 
 Creates an unsigned [ABCTransaction](#abctransaction) object which can be then be signed and broadcast to the network. Complete the spend by calling [ABCTransaction.signBroadcastAndSave](#signbroadcastandsave). Estimated fees can be determined by reading back [ABCTransaction.networkFee](#abctransaction)
+
+### signTx
+
+```javascript
+abcWallet.tx.signTx(abcTransaction, callback)
+
+// Example 
+abcWallet.tx.signTx(abcTransaction, function(error) {
+  if (!error) {
+    // Success, transaction signed
+    console.log("Signed transaction with txId = " + abcTransaction.txid)
+  }
+})
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| abcTransaction | <code>[ABCTransaction](#abctransaction)</code> | Unsigned [ABCTransaction](#abctransaction) object |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Callback Param | Type | Description |
+| --- | --- | --- |
+| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
+
+Signs this [ABCTransaction](#abctransaction) object. Does not broadcast this to the blockchain or save it in the local transaction cache. [ABCTransaction](#abctransaction).txid is null until this routine is called.
+
+Call [ABCTransaction.broadcastTx](#broadcasttx) followed by [ABCTransaction.saveTx](#savetx) to broadcast and save the transaction.
+
+### broadcastTx
+
+```javascript
+abcWallet.tx.broadcastTx(abcTransaction, callback)
+
+// Example 
+abcWallet.tx.broadcastTx(abcTransaction, function(error) {
+  if (!error) {
+    // Success, transaction sent
+    console.log("Sent transaction with ID = " + abcTransaction.txid)
+  }
+})
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| abcTransaction | <code>[ABCTransaction](#abctransaction)</code> | Signed [ABCTransaction](#abctransaction) object |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Callback Param | Type | Description |
+| --- | --- | --- |
+| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
+
+Broadcasts transaction to the blockchain.
+
+### saveTx
+
+```javascript
+abcWallet.tx.saveTx(abcTransaction, callback)
+
+// Example 
+abcWallet.tx.saveTx(abcTransaction, function(error) {
+  if (!error) {
+    // Success, transaction saved
+    console.log("Saved transaction with ID = " + abcTransaction.txid)
+  }
+})
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| abcTransaction | <code>[ABCTransaction](#abctransaction)</code> | Signed [ABCTransaction](#abctransaction) object |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Callback Param | Type | Description |
+| --- | --- | --- |
+| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
+
+Saves transaction to local cache. This will cause the transaction to show in calls to [ABCWallet.tx.getTransactions](#gettransactions).
+
+### signBroadcastAndSave
+
+```javascript
+abcWallet.tx.signBroadcastAndSave(abcTransaction, callback)
+
+// Example 
+abcWallet.tx.signBroadcastAndSave(abcTransaction, function(error) {
+  if (!error) {
+    // Success, transaction sent
+    console.log("Sent transaction with ID = " + abcTransaction.txid)
+  }
+})
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| abcTransaction | <code>[ABCTransaction](#abctransaction)</code> | Unsigned [ABCTransaction](#abctransaction) object |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Callback Param | Type | Description |
+| --- | --- | --- |
+| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
+
+Convenience routine to do `signTx`, `broadcastTx`, then `saveTx` in one call. 
+
+### getPaymentProtocolInfo
+
+```javascript
+
+// Example 
+const abcParsedUri = abcAccount.parseUri("bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.000000&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X")
+
+abcWallet.tx.getPaymentProtocolInfo(abcParsedUri.paymentProtocolURL, function(error, paymentProtocolInfo) {
+  abcSpendInfo = {
+    networkFeeOption: 'high',
+    metadata: {
+      payeeName: paymentProtocolInfo.merchant,
+      category: 'Expense:Professional Services'
+    },
+    spendTargets: [ paymentProtocolInfo.spendTarget ]
+  }
+
+  const abcTransaction = abcWallet.tx.makeSpend(abcSpendInfo)
+  abcWallet.tx.signBroadcastAndSave(abcTransaction, function(error, abcTransaction) {
+    if (!error) {
+      // Success, transaction sent
+      console.log("Sent transaction with ID = " + abcTransaction.txid)
+    }
+  })
+}
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| paymentProtocolURL | <code>String</code> | Payment protocol URL |
+| callback | <code>Callback</code> | (Javascript) Callback function |
+
+| Callback Param | Type | Description |
+| --- | --- | --- |
+| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
+| abcPaymentProtocolInfo | <code>[ABCPaymentProtocolInfo](#abcpaymentprotocolinfo)</code> | [ABCPaymentProtocolInfo](#abcpaymentprotocolinfo) object |
+
+Communicates over network with BIP70 payment request URL to get exact payment parameters. This returns a [ABCPaymentProtocolInfo](#abcpaymentprotocolinfo) which contains a custom, non-editable [ABCSpendTarget](#abcspendtarget) that can simply be placed into an [ABCSpendInfo](#abcspendinfo) object to send the transaction.
+
 
 ### getMaxSpendable
 
@@ -1896,9 +2038,9 @@ const spendTarget =
   }    
 
 // Example to spend to a BIP70 payment request
-const abcParsedUri = abcWallet.tx.parseUri("bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.000000&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X")
+const abcParsedUri = abcAccount.parseUri("bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.000000&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X")
 
-abcParsedUri.getPaymentProtocolInfo(function(error, paymentProtocolInfo) {
+abcWallet.tx.getPaymentProtocolInfo(abcParsedUri.paymentProtocolURL, function(error, paymentProtocolInfo) {
   abcSpendInfo = {
     networkFeeOption: 'high',
     metadata: {
@@ -1948,44 +2090,6 @@ Parameters
 
 
 Object contains various parts of a parsed URI depending on the source URI. Any of the properties may be NULL.
-
-### getPaymentProtocolInfo
-
-```javascript
-
-// Example 
-const abcParsedUri = abcWallet.tx.parseUri("bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.000000&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X")
-
-abcParsedUri.getPaymentProtocolInfo(function(error, paymentProtocolInfo) {
-  abcSpendInfo = {
-    networkFeeOption: 'high',
-    metadata: {
-      payeeName: paymentProtocolInfo.merchant,
-      category: 'Expense:Professional Services'
-    },
-    spendTargets: [ paymentProtocolInfo.spendTarget ]
-  }
-
-  const abcSpend = abcWallet.tx.makeSpend(abcSpendInfo)
-  abcSpend.signBroadcastAndSave(function(error, abcTransaction) {
-    if (!error) {
-      // Success, transaction sent
-      console.log("Sent transaction with ID = " + abcTransaction.txid)
-    }
-  })
-}
-```
-
-| Param | Type | Description |
-| --- | --- | --- |
-| callback | <code>Callback</code> | (Javascript) Callback function |
-
-| Callback Param | Type | Description |
-| --- | --- | --- |
-| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
-| abcSpendTarget | <code>[ABCSpendTarget](#abcspendtarget)</code> | [ABCSpendTarget](#abcspendtarget) with BIP70 payment request for use in an [ABCSpendInfo](#abcspendinfo) |
-
-Communicates over network with BIP70 payment request URL to get exact payment parameters. This returns a [ABCPaymentProtocolInfo](#abcpaymentprotocolinfo) which contains a custom, non-editable [ABCSpendTarget](#abcspendtarget) that can simply be placed into an [ABCSpendInfo](#abcspendinfo) object to send the transaction.
 
 ## ABCPaymentProtocolInfo
 
@@ -2037,7 +2141,9 @@ Object represents a signed or unsigned transaction that may or may not be broadc
 | providerFee | <code>Int</code> | Additional app provider fees in denomination of smallest unit of currency (ie. Satoshis) |
 | networkFee | <code>Int</code> | Fee paid to network (mining fee) in denomination of smallest unit of currency (ie. Satoshis) |
 | runningBalance | <code>Int</code> | Running balance of entire wallet as of this transaction |
+| signedTx |<code>Array</code> | Buffer of signed transaction data with signature. NULL if transaction is unsigned |
 | otherParams |<code>Object</code> | Crypto currency specific data |
+
 
 `otherParams` has the following parameters for bitcoin wallets
 
@@ -2046,104 +2152,6 @@ Object represents a signed or unsigned transaction that may or may not be broadc
 | isReplaceByFee | <code>Bool</code> | True if this transaction is marked as RBF (BIP125) |
 | isDoubleSpend | <code>Bool</code> | True if this transaction is found to be a double spend attempt |
 | inputOutputList | <code>Array</code> | Array of transaction inputs and outputs |
-
-### signTx
-
-```javascript
-abcTransaction.signTx(callback)
-
-// Example 
-abcTransaction.signTx(function(error) {
-  if (!error) {
-    // Success, transaction signed
-    console.log("Signed transaction with txId = " + abcTransaction.txid)
-  }
-})
-```
-
-| Param | Type | Description |
-| --- | --- | --- |
-| callback | <code>Callback</code> | (Javascript) Callback function |
-
-| Callback Param | Type | Description |
-| --- | --- | --- |
-| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
-
-Signs this [ABCTransaction](#abctransaction) object. Does not broadcast this to the blockchain or save it in the local transaction cache. [ABCTransaction](#abctransaction).txid is null until this routine is called.
-
-Call [ABCTransaction.broadcastTx](#broadcasttx) followed by [ABCTransaction.saveTx](#savetx) to broadcast and save the transaction.
-
-### broadcastTx
-
-```javascript
-abcTransaction.broadcastTx(callback)
-
-// Example 
-abcTransaction.broadcastTx(function(error) {
-  if (!error) {
-    // Success, transaction sent
-    console.log("Sent transaction with ID = " + abcTransaction.txid)
-  }
-})
-```
-
-| Param | Type | Description |
-| --- | --- | --- |
-| callback | <code>Callback</code> | (Javascript) Callback function |
-
-| Callback Param | Type | Description |
-| --- | --- | --- |
-| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
-
-Broadcasts transaction to the blockchain.
-
-### saveTx
-
-```javascript
-abcTransaction.saveTx(callback)
-
-// Example 
-abcTransaction.saveTx(function(error) {
-  if (!error) {
-    // Success, transaction saved
-    console.log("Saved transaction with ID = " + abcTransaction.txid)
-  }
-})
-```
-
-| Param | Type | Description |
-| --- | --- | --- |
-| callback | <code>Callback</code> | (Javascript) Callback function |
-
-| Callback Param | Type | Description |
-| --- | --- | --- |
-| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
-
-Saves transaction to local cache. This will cause the transaction to show in calls to [ABCWallet.tx.getTransactions](#gettransactions).
-
-### signBroadcastAndSave
-
-```javascript
-abcTransaction.signBroadcastAndSave(callback)
-
-// Example 
-abcTransaction.signBroadcastAndSave(function(error) {
-  if (!error) {
-    // Success, transaction sent
-    console.log("Sent transaction with ID = " + abcTransaction.txid)
-  }
-})
-```
-
-| Param | Type | Description |
-| --- | --- | --- |
-| callback | <code>Callback</code> | (Javascript) Callback function |
-
-| Callback Param | Type | Description |
-| --- | --- | --- |
-| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
-
-Convenience routine to do `signTx`, `broadcastTx`, then `saveTx` in one call. 
 
 ## ABCExchangeRateCache
 
@@ -2385,13 +2393,18 @@ Enable support for meta tokens (ie. counterparty, colored coin, ethereum ERC20).
 ```javascript
 // Example
 
-const balance = abcTxLibGetBalance(accountDataStore, walletDataStore)
+const balance = abcTxLibGetBalance(accountDataStore, walletDataStore, options)
 ```
 
 | Param | Type | Description |
 | --- | --- | --- |
 | accountDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for account wide data |
 | walletDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for wallet specific data |
+| options | <code>Object</code> | Options parameters below |
+
+| Option Params | Type | Description |
+| --- | --- | --- |
+| currencyCode | <code>String</code> | Currency code to use. ie "REP", "LTBCOIN". If not specified, uses the wallet's primary currency. ie. "BTC", or "ETH" |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
@@ -2404,13 +2417,18 @@ Get the current balance of this wallet in the currency's smallest denomination (
 ```javascript
 // Example
 
-const numTransactions = abcTxLibGetNumTransactions(accountDataStore, walletDataStore)
+const numTransactions = abcTxLibGetNumTransactions(accountDataStore, walletDataStore, options)
 ```
 
 | Param | Type | Description |
 | --- | --- | --- |
 | accountDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for account wide data |
 | walletDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for wallet specific data |
+| options | <code>Object</code> | Options parameters below |
+
+| Option Params | Type | Description |
+| --- | --- | --- |
+| currencyCode | <code>String</code> | Currency code to use. ie "REP", "LTBCOIN". If not specified, uses the wallet's primary currency. ie. "BTC", or "ETH" |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
@@ -2433,7 +2451,8 @@ abcTxLibGetTransactions(accountDataStore, walletDataStore, options, function(err
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcWalletTx | <code>[ABCWalletTx](#abcwallettx)</code> | Parent [ABCWalletTx](#abcwallettx) for the transactions |
+| accountDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for account wide data |
+| walletDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for wallet specific data |
 | options | <code>Object</code> | Options for abcTxLibGetTransactions. If NULL, return all transactions |
 | callback | <code>Callback</code> | (Javascript) Callback function |
 
@@ -2447,43 +2466,90 @@ Returns an array of transactions matching the options specified. The [ABCTransac
 
 The `options` parameter may include the following:
 
-| Param | Type | Description |
+| Options Params | Type | Description |
 | --- | --- | --- |
+| currencyCode | <code>String</code> | Currency code to use. ie "REP", "LTBCOIN". If not specified, uses the wallet's primary currency. ie. "BTC", or "ETH" |
 | startIndex | <code>Int</code> | The starting index into the list of transactions. 0 specifies the newest transaction |
 | numEntries | <code>Int</code> |  The number of entries to return. If there aren't enough transactions to return `numEntries`, then the TxLib should return the maximum possible |
 
-### abcTxLibGetAddress
+### abcTxLibGetFreshAddress
 
 ```javascript
-abcTxLibGetAddress(index, function(error, address) {
-
-})
+const address = abcTxLibGetFreshAddress(accountDataStore, walletDataStore, options)
 ```
+| Param | Type | Description |
+| --- | --- | --- |
+| accountDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for account wide data |
+| walletDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for wallet specific data |
+| options | <code>Object</code> | Options object documented below |
 
-### abcTxLibGetAddressFunds
+| Option Params | Type | Description |
+| --- | --- | --- |
+| currencyCode | <code>String</code> | Currency code to use. ie "REP", "LTBCOIN". If not specified, uses the wallet's primary currency. ie. "BTC", or "ETH" |
+
+| Return | Type | Description |
+| --- | --- | --- |
+| address | <code>String</code> | Public address |
+
+Returns an address that has never received funds
+
+### abcTxLibAddGapLimitAddresses
 ```javascript
-abcTxLibGetAddressFunds(address, function(error, amountSatoshi) {
-
-})
+const abcError = abcTxLibAddGapLimitAddresses(accountDataStore, walletDataStore, addresses, options)
 ```
+| Param | Type | Description |
+| --- | --- | --- |
+| accountDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for account wide data |
+| walletDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for wallet specific data |
+| addresses | <code>Array</code> | Array of Strings containing public addresses |
+| options | <code>Object</code> | Options object documented below |
 
-### abcTxLibGetAddressIndexFunds
+The `options` parameter may include the following:
+
+| Options Params | Type | Description |
+| --- | --- | --- |
+| currencyCode | <code>String</code> | Currency code to use. ie "REP", "LTBCOIN". If not specified, 
+
+| Return | Type | Description |
+| --- | --- | --- |
+| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
+
+When implementing an HD wallet with multiple addresses, wallet implementations typically search for funds by going a limited number of addresses ahead of the last address that has funds received. This is usually about 10 addresses. `abcTxLibAddGapLimitAddresses` allows ABC to specify to the txLib to treat the given addresses as if they had funds received and to forward their gap limit accordingly.
+
+### abcTxLibIsAddressUsed
 ```javascript
-abcTxLibGetAddressFunds(index, function(error, amountSatoshi) {
-
-})
+const isUsed = abcTxLibIsAddressUsed(accountDataStore, walletDataStore, address, options)
 ```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| accountDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for account wide data |
+| walletDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for wallet specific data |
+| address | <code>String</code> | String of public address to query |
+| options | <code>Object</code> | Options parameters below |
+
+The `options` parameter may include the following:
+
+| Options Params | Type | Description |
+| --- | --- | --- |
+| currencyCode | <code>String</code> | Currency code to use. ie "REP", "LTBCOIN". If not specified, 
+
+| Return | Type | Description |
+| --- | --- | --- |
+| isUsed | <code>Boolean</code> | True if address has ever received money |
+
+
 
 ### abcTxLibMakeSpend
 ```javascript
-abcTxLibMakeSpend(abcSpendInfo, function(error, abcTransaction) {
+abcTxLibMakeSpend(accountDataStore, walletDataStore, abcSpendInfo, function(error, abcTransaction) {
   
 })
 ```
 
 ### abcTxLibSignTx
 ```javascript
-abcTxLibSignTx(abcTransaction, function(error) {
+abcTxLibSignTx(accountDataStore, walletDataStore, abcTransaction, function(error) {
   
 })
 ```
@@ -2491,14 +2557,14 @@ abcTxLibSignTx(abcTransaction, function(error) {
 
 ### abcTxLibBroadcastTx
 ```javascript
-abcTxLibSignTx(abcTransaction, function(error) {
+abcTxLibBroadcastTx(accountDataStore, walletDataStore, abcTransaction, function(error) {
   
 })
 ```
 
 ### abcTxLibSaveTx
 ```javascript
-abcTxLibSaveTx(abcTransaction, function(error) {
+abcTxLibSaveTx(accountDataStore, walletDataStore, abcTransaction, function(error) {
   
 })
 ```

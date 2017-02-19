@@ -2327,7 +2327,7 @@ const options =
   masterPrivateKey
 }
 
-abcTxLibInit(options, callbacks, function(error) {
+abcTxLibInit(abcTxLibAccess, options, callbacks, function(error) {
   if (error === null) {
     // Success
   }
@@ -2336,14 +2336,13 @@ abcTxLibInit(options, callbacks, function(error) {
 
 | Param | Type | Description |
 | --- | --- | --- |
+| abcTxLibAccess | <code>[ABCTxLibAccess](#abctxlibaccess)</code> | Object with various parameters to access the wallet and account |
 | options | <code>Object</code> | Options for abcTxLibInit |
 | callbacks | <code>[ABCTxLibCallbacks](#abctxlibcallbacks)</code> | Various callbacks when wallet is updated |
 | callback | <code>Callback</code> | (Javascript) Callback function |
 
 | Options | Type | Description |
 | --- | --- | --- |
-| accountDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for account wide data |
-| walletDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for wallet specific data |
 | masterPrivateKey | <code>String</code> | Master private key for wallet in format specific to the wallet type. ie. `wallet:repo:bitcoin-bip44` would have a `masterPrivateKey` in the format of a bip39 12-24 word mnemonic. This parameter may be unspecified, in which case, the TxLibrary should have cached a `masterPublicKey` in `localDataStore` |
 | masterPublicKey | <code>String</code> | Master public key for wallet in format specific to the wallet type. ie. `wallet:repo:bitcoin-bip44` would have a `masterPublicKey` in the format of a base58 string starting with "xpub" such as "xpub661MyMwAqRbcFtXgS5sYJABqqG9YLmC4Q1Rdap9gSE8NqtwybGhePY2gZ29ESFjqJoCu1Rupje8YtGqsefD265TMg7usUDFdp6W1EGMcet8". This parameter may be unspecified, in which case, the TxLibrary should have cached a `masterPublicKey` in `localDataStore` |
 
@@ -2369,7 +2368,7 @@ const tokens =
   enableTokens = [ "XCP, "TATIANACOIN" ]
 }
 
-abcTxLibEnableTokens(accountDataStore, walletDataStore, tokens, function(error) {
+abcTxLibEnableTokens(abcTxLibAccess, tokens, function(error) {
   if (error === NULL) {
     // Success
   }
@@ -2378,8 +2377,7 @@ abcTxLibEnableTokens(accountDataStore, walletDataStore, tokens, function(error) 
 
 | Param | Type | Description |
 | --- | --- | --- |
-| accountDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for account wide data |
-| walletDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for wallet specific data |
+| abcTxLibAccess | <code>[ABCTxLibAccess](#abctxlibaccess)</code> | Object with various parameters to access the wallet and account |
 | tokens | <code>Array</code> | Array of strings specifying the currency codes of tokens to enable in this wallet |
 
 | Callback Param | Type | Description |
@@ -2393,13 +2391,12 @@ Enable support for meta tokens (ie. counterparty, colored coin, ethereum ERC20).
 ```javascript
 // Example
 
-const balance = abcTxLibGetBalance(accountDataStore, walletDataStore, options)
+const balance = abcTxLibGetBalance(abcTxLibAccess, options)
 ```
 
 | Param | Type | Description |
 | --- | --- | --- |
-| accountDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for account wide data |
-| walletDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for wallet specific data |
+| abcTxLibAccess | <code>[ABCTxLibAccess](#abctxlibaccess)</code> | Object with various parameters to access the wallet and account |
 | options | <code>Object</code> | Options parameters below |
 
 | Option Params | Type | Description |
@@ -2417,13 +2414,12 @@ Get the current balance of this wallet in the currency's smallest denomination (
 ```javascript
 // Example
 
-const numTransactions = abcTxLibGetNumTransactions(accountDataStore, walletDataStore, options)
+const numTransactions = abcTxLibGetNumTransactions(abcTxLibAccess, options)
 ```
 
 | Param | Type | Description |
 | --- | --- | --- |
-| accountDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for account wide data |
-| walletDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for wallet specific data |
+| abcTxLibAccess | <code>[ABCTxLibAccess](#abctxlibaccess)</code> | Object with various parameters to access the wallet and account |
 | options | <code>Object</code> | Options parameters below |
 
 | Option Params | Type | Description |
@@ -2442,7 +2438,7 @@ Get the number of transactions in the wallet
 const options = { startIndex: 5,
                   numEnteries: 50 }
                   
-abcTxLibGetTransactions(accountDataStore, walletDataStore, options, function(error, transactions) {
+abcTxLibGetTransactions(abcTxLibAccess, options, function(error, transactions) {
   if (error === null) {
     console.log(transactions[0].txid) // => "1209befa09ab3efc039abf09490ac34fe09abc938"
   }
@@ -2451,8 +2447,7 @@ abcTxLibGetTransactions(accountDataStore, walletDataStore, options, function(err
 
 | Param | Type | Description |
 | --- | --- | --- |
-| accountDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for account wide data |
-| walletDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for wallet specific data |
+| abcTxLibAccess | <code>[ABCTxLibAccess](#abctxlibaccess)</code> | Object with various parameters to access the wallet and account |
 | options | <code>Object</code> | Options for abcTxLibGetTransactions. If NULL, return all transactions |
 | callback | <code>Callback</code> | (Javascript) Callback function |
 
@@ -2475,12 +2470,11 @@ The `options` parameter may include the following:
 ### abcTxLibGetFreshAddress
 
 ```javascript
-const address = abcTxLibGetFreshAddress(accountDataStore, walletDataStore, options)
+const address = abcTxLibGetFreshAddress(abcTxLibAccess, options)
 ```
 | Param | Type | Description |
 | --- | --- | --- |
-| accountDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for account wide data |
-| walletDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for wallet specific data |
+| abcTxLibAccess | <code>[ABCTxLibAccess](#abctxlibaccess)</code> | Object with various parameters to access the wallet and account |
 | options | <code>Object</code> | Options object documented below |
 
 | Option Params | Type | Description |
@@ -2495,12 +2489,11 @@ Returns an address that has never received funds
 
 ### abcTxLibAddGapLimitAddresses
 ```javascript
-const abcError = abcTxLibAddGapLimitAddresses(accountDataStore, walletDataStore, addresses, options)
+const abcError = abcTxLibAddGapLimitAddresses(abcTxLibAccess, addresses, options)
 ```
 | Param | Type | Description |
 | --- | --- | --- |
-| accountDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for account wide data |
-| walletDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for wallet specific data |
+| abcTxLibAccess | <code>[ABCTxLibAccess](#abctxlibaccess)</code> | Object with various parameters to access the wallet and account |
 | addresses | <code>Array</code> | Array of Strings containing public addresses |
 | options | <code>Object</code> | Options object documented below |
 
@@ -2518,13 +2511,12 @@ When implementing an HD wallet with multiple addresses, wallet implementations t
 
 ### abcTxLibIsAddressUsed
 ```javascript
-const isUsed = abcTxLibIsAddressUsed(accountDataStore, walletDataStore, address, options)
+const isUsed = abcTxLibIsAddressUsed(abcTxLibAccess, address, options)
 ```
 
 | Param | Type | Description |
 | --- | --- | --- |
-| accountDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for account wide data |
-| walletDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for wallet specific data |
+| abcTxLibAccess | <code>[ABCTxLibAccess](#abctxlibaccess)</code> | Object with various parameters to access the wallet and account |
 | address | <code>String</code> | String of public address to query |
 | options | <code>Object</code> | Options parameters below |
 
@@ -2542,14 +2534,14 @@ The `options` parameter may include the following:
 
 ### abcTxLibMakeSpend
 ```javascript
-abcTxLibMakeSpend(accountDataStore, walletDataStore, abcSpendInfo, function(error, abcTransaction) {
+abcTxLibMakeSpend(abcTxLibAccess, abcSpendInfo, function(error, abcTransaction) {
   
 })
 ```
 
 ### abcTxLibSignTx
 ```javascript
-abcTxLibSignTx(accountDataStore, walletDataStore, abcTransaction, function(error) {
+abcTxLibSignTx(abcTxLibAccess, abcTransaction, function(error) {
   
 })
 ```
@@ -2557,17 +2549,27 @@ abcTxLibSignTx(accountDataStore, walletDataStore, abcTransaction, function(error
 
 ### abcTxLibBroadcastTx
 ```javascript
-abcTxLibBroadcastTx(accountDataStore, walletDataStore, abcTransaction, function(error) {
+abcTxLibBroadcastTx(abcTxLibAccess, abcTransaction, function(error) {
   
 })
 ```
 
 ### abcTxLibSaveTx
 ```javascript
-abcTxLibSaveTx(accountDataStore, walletDataStore, abcTransaction, function(error) {
+abcTxLibSaveTx(abcTxLibAccess, abcTransaction, function(error) {
   
 })
 ```
+
+## ABCTxLibAccess
+
+| Param | Type | Description |
+| --- | --- | --- |
+| accountDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for account wide data |
+| walletDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for wallet specific data |
+
+Various objects needed to save/restore data for the TxLib
+
 
 ## ABCTxLibCallbacks
 

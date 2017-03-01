@@ -47,7 +47,6 @@ var abc = require ('airbitz-core-js')
 
 // React Native
 var abc = require ('airbitz-core-react-native')
-
 ```
 
 ```objc
@@ -97,8 +96,6 @@ Initialize and create an ABCContext object. Required for functionality of ABC SD
 | error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
 | context | <code>[ABCContext](##abccontext)</code> | Initialized context |
 
-
-
 ### createAccount
 
 ```javascript
@@ -109,7 +106,6 @@ abcContext.createAccount(username,
                          callback)
 
 // Example
-
 function abcAccountRemotePasswordChange () {}
 function abcAccountLoggedOut () {}
 function abcAccountOTPRequired () {}
@@ -175,7 +171,6 @@ Create and log into a new ABCAccount
 | delegate | <code>[ABCAccountDelegate](#abcaccountdelegate)</code> | (ObjC) Callback event delegates |
 | callback | <code>Callback</code> | Callback function when routine completes|
 
-
 | Return Param | Type | Description |
 | --- | --- | --- |
 | error | <code>[ABCError](#abcerror)</code> | Error object. Null if no error |
@@ -207,13 +202,10 @@ Get local account details for a previously logged in account. This returns an AB
 | delegate | <code>[ABCAccountDelegate](#abcaccountdelegate)</code> | (ObjC) Callback event delegates |
 | callback | <code>Callback</code> | Callback function when routine completes |
 
-
 | Return Param | Type | Description |
 | --- | --- | --- |
 | error | <code>[ABCError](#abcerror)</code> | Error object. Null if no error |
 | account | <code>[ABCAccount](#abcaccount)</code> | Initialized account |
-
-
 
 ### loginWithPassword
 
@@ -281,13 +273,10 @@ The otpResetToken is only returned if the caller has provided the correct userna
 | delegate | <code>[ABCAccountDelegate](#abcaccountdelegate)</code> | (ObjC) Callback event delegates |
 | callback | <code>Callback</code> | Callback function when routine completes |
 
-
 | Return Param | Type | Description |
 | --- | --- | --- |
 | error | <code>[ABCError](#abcerror)</code> | Error object. Null if no error |
 | account | <code>[ABCAccount](#abcaccount)</code> | Initialized account |
-
-
 
 ### loginWithPIN
 
@@ -429,7 +418,6 @@ Deletes named account from local device. Account is recoverable if it contains a
 abcContext.pinLoginEnabled(username, callback)
 
 // Example
-
 abcContext.pinLoginEnabled(username,function (error, enabled) {
     if (!error) {
       console.log("PIN Login enabled state: " + enabled)
@@ -463,7 +451,6 @@ Checks if PIN login is possible for the given username. This checks if there is 
 abcContext.listUsernames(callback)
 
 // Example
-
 abcContext.listUsernames(function (error, usernames) {
     if (!error) {
       console.log("username 0: " + usernames[0])
@@ -499,7 +486,6 @@ Get a list of previously logged in usernames on this device
 abcContext.usernameAvailable(username, callback)
 
 // Example
-
 abcContext.usernameAvailable(username, function (error, available) {
     if (!error && available) {
       console.log("username available = " + available)
@@ -569,9 +555,6 @@ To obtain an otpResetToken, attempt a login into the OTP protected account using
 | --- | --- | --- |
 | error | <code>[ABCError](#abcerror)</code> | Error object. Null if no error |
 
-
-
-
 ## ABCAccount
 
 ### Class Properties
@@ -579,7 +562,6 @@ To obtain an otpResetToken, attempt a login into the OTP protected account using
 | Property | Type | Description |
 | --- | --- | --- |
 | username | <code>String</code> | Account username |
-
 
 ### logout
 
@@ -641,8 +623,6 @@ Change the password of the currently logged in ABCAccount
 | --- | --- | --- |
 | error | <code>[ABCError](#abcerror)</code> | Error object. Null if no error |
 
-
-
 ### changePIN
 
 ```javascript
@@ -683,8 +663,6 @@ Change the PIN of the currently logged in ABCAccount
 | --- | --- | --- |
 | error | <code>[ABCError](#abcerror)</code> | Error object. Null if no error |
 
-
-
 ### checkPassword
 
 ```javascript
@@ -719,15 +697,12 @@ Checks if password is the correct password for this account
 | error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
 | passwordCorrect | <code>Boolean</code> | True if password is correct |
 
-
-
 ### enablePINLogin
 
 ```javascript
 abcAccount.enablePINLogin(enable, callback)
 
 // Example
-
 abcAccount.enablePINLogin(enable, function (error) {
     if (error) {
       // Failed
@@ -762,7 +737,6 @@ Enable or disable PIN login on this account. Set enable = YES to allow PIN login
 abcAccount.setupOTPKey(key, callback)
 
 // Example
-
 abcAccount.setupOTPKey(key, function (error) {
     if (error) {
       // Failed
@@ -808,7 +782,6 @@ Device B can call getOTPLocalKey and Device A can add the OTP key using setupOTP
 abcAccount.getOTPLocalKey(callback)
 
 // Example
-
 abcAccount.getOTPLocalKey(key, function (error, key) {
     if (!error) {
       // Yay. Success
@@ -843,7 +816,6 @@ Gets the locally saved OTP key for the current user
 abcAccount.getOTPDetails(callback)
 
 // Example
-
 abcAccount.getOTPDetails(function (error, enabled, timeout) {
     // Do something with 'enabled' or 'timeout'
 })
@@ -856,7 +828,7 @@ abcAccount.getOTPDetails(function (error, enabled, timeout) {
 // Example
 BOOL enabled = NO;
 long timeout = 0;
-    
+
 ABCError *error = [abcAccount getOTPDetails:&enabled
                                     timeout:&timeout];
 ```
@@ -880,7 +852,6 @@ Reads the OTP configuration from the server. Gets information on whether OTP is 
 abcAccount.enableOTP(timeout, callback)
 
 // Example
-
 abcAccount.enableOTP(timeout, function (error) {
     if (error) {
       // Failed
@@ -918,7 +889,6 @@ Sets up OTP authentication on the server for currently logged in user. This will
 abcAccount.disableOTP(callback)
 
 // Example
-
 abcAccount.disableOTP(function (error) {
     if (error) {
       // Failed
@@ -945,14 +915,12 @@ Removes the OTP authentication requirement from the server for the currently log
 | --- | --- | --- |
 | error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
 
-
 ### cancelOTPResetRequest
 
 ```javascript
 abcAccount.cancelOTPResetRequest(callback)
 
 // Example
-
 abcAccount.cancelOTPResetRequest(function (error) {
     if (error) {
       // Failed
@@ -978,7 +946,6 @@ Removes the OTP reset request from the server for the currently logged in user. 
 | Return Param | Type | Description |
 | --- | --- | --- |
 | error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
-
 
 ### parseUri
 
@@ -1006,7 +973,6 @@ Parses a URI extracting various elements into an [ABCParsedUri](#abcparseduri) o
 abcAccount.signBitIDRequest(uri, message, callback)
 
 // Example
-
 abcAccount.signBitIDRequest("bitid://airbitz.co/developer?nonce=12345",
                             "Hello World", function (error, abcSignature) {
   if (!error) {
@@ -1048,7 +1014,6 @@ Sign an arbitrary message with a BitID URI. The URI determines the key derivatio
 abcAccount.createWallet(walletType, abcWalletKeys)
 
 // Example
-
 const abcWalletKeys = {
   ethereumKey: new Buffer(secureRandom(32)).toString('hex')
 }
@@ -1079,7 +1044,6 @@ Create a new [ABCWallet](#abcwallet) object and add it to the current account. E
 | <code>wallet:repo:bitcoin-bip44-multisig</code> | <code>bitcoinKey-BIP44</code> | HD BIP44 bitcoin wallet with 24 word mnemonic master private key and upto 15 of 15 multisig support |
 | <code>wallet:repo:com.mydomain.myapp.myDataStoreType</code> | <code>NULL</code> | Generic data store for your app |
 
-
 Please contact developer@airbitz.co for the addition of new wallet types.
 
 ### listWalletIds
@@ -1094,14 +1058,12 @@ Get an array list of wallet IDs in the current account
 | --- | --- | --- |
 | walletIds | <code>Array</code> | Array of strings of wallet IDs |
 
-
 ### getWallet
 
 ```javascript
 abcAccount.getWallet(walletId)
 
 // Example
-
 const abcWallet = abcAccount.getWallet(walletId)
 ```
 
@@ -1114,7 +1076,6 @@ Get an [ABCWallet](#abcwallet) object given a `walletId`
 | Return Param | Type | Description |
 | --- | --- | --- |
 | abcWallet | <code>[ABCWallet](#abcwallet)</code> | [ABCWallet](#abcwallet) object |
-
 
 ### getFirstWallet
 
@@ -1263,7 +1224,6 @@ Returns a list of transactions in the current wallet. Transactions are returned 
 abcWallet.addTxFunctionality(ABCWalletTxLibrary, callbacks, callback)
 
 // Example
-
 var abcWalletTxLibrary = require('airbitz-core-js-bitcoin`).txLib
 
 function abcWalletTxAddressesChecked(abcWalletTx, progressRatio) { }
@@ -1488,7 +1448,6 @@ Setup the script/contract for this wallet. This is used to setup basic multisig 
 abcWallet.tx.getBalance(currencyCode)
 
 // Example
-
 const balance = abcWallet.tx.getBalance("BTC")
 ```
 
@@ -1508,9 +1467,7 @@ Gets the current balance of the wallet denominated in the smallest unit of the c
 abcWallet.tx.getTransactions(options, callback)
 
 // Example
-
 // Create query that looks in the first 100 transactions filtered to the past 2 days that have meta data matching the string "Mom". Then returns the first 10 of those transactions
-
 var end = new Date();
 var start = new Date();
 start.setDate(end.getDate() - 1);
@@ -1611,7 +1568,7 @@ const abcReceiveAddress = abcWallet.tx.getReceiveAddress(options, function (erro
 })
 
 // Example to get an ABCRequestAddress object for BTC currency and previous publicAddress '1FVBrmeuEeAxbNcj2EL4v2XsfBDbv7A9aE'
-const options = { 
+const options = {
   currencyCode: "BTC",
   publicAddress: '1FVBrmeuEeAxbNcj2EL4v2XsfBDbv7A9aE'
 }
@@ -1647,7 +1604,6 @@ Returns an [ABCReceiveAddress](#abcreceiveaddress) object. This routine is used 
 abcWallet.tx.saveReceiveAddress(abcReceiveAddress, callback)
 
 // Example
-
 abcWallet.tx.getReceiveAddress(null, function (error) {
   if (!error) {
     // Success
@@ -1796,7 +1752,7 @@ Creates an unsigned [ABCTransaction](#abctransaction) object which can be then b
 ```javascript
 abcWallet.tx.signTx(abcTransaction, callback)
 
-// Example 
+// Example
 abcWallet.tx.signTx(abcTransaction, function(error) {
   if (!error) {
     // Success, transaction signed
@@ -1823,7 +1779,7 @@ Call [ABCTransaction.broadcastTx](#broadcasttx) followed by [ABCTransaction.save
 ```javascript
 abcWallet.tx.broadcastTx(abcTransaction, callback)
 
-// Example 
+// Example
 abcWallet.tx.broadcastTx(abcTransaction, function(error) {
   if (!error) {
     // Success, transaction sent
@@ -1848,7 +1804,7 @@ Broadcasts transaction to the blockchain.
 ```javascript
 abcWallet.tx.saveTx(abcTransaction, callback)
 
-// Example 
+// Example
 abcWallet.tx.saveTx(abcTransaction, function(error) {
   if (!error) {
     // Success, transaction saved
@@ -1873,7 +1829,7 @@ Saves transaction to local cache. This will cause the transaction to show in cal
 ```javascript
 abcWallet.tx.signBroadcastAndSave(abcTransaction, callback)
 
-// Example 
+// Example
 abcWallet.tx.signBroadcastAndSave(abcTransaction, function(error) {
   if (!error) {
     // Success, transaction sent
@@ -1896,7 +1852,6 @@ Convenience routine to do `signTx`, `broadcastTx`, then `saveTx` in one call.
 ### getPaymentProtocolInfo
 
 ```javascript
-
 // Example
 const abcParsedUri = abcAccount.parseUri("bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.000000&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X")
 
@@ -2105,8 +2060,6 @@ Non-blockchain transaction meta data associated to an [ABCTransaction](#abctrans
 | bizId | <code>Int</code> | Unique bizId associated to a business listing in the Airbitz Business Directory |
 | miscJson | <code>String</code> | Generic JSON string that can be used for additional meta data |
 
-
-
 ## ABCTransaction
 
 Object represents a signed or unsigned transaction that may or may not be broadcast to the blockchain.
@@ -2124,7 +2077,6 @@ Object represents a signed or unsigned transaction that may or may not be broadc
 | runningBalance | <code>Int</code> | Running balance of entire wallet as of this transaction |
 | signedTx |<code>Array</code> | Buffer of signed transaction data with signature. NULL if transaction is unsigned |
 | otherParams |<code>Object</code> | Crypto currency specific data |
-
 
 `otherParams` has the following parameters for bitcoin wallets
 
@@ -2241,7 +2193,7 @@ console.log(details)
 
 "
 { currencyCode: "BTC",
-  denominations: 
+  denominations:
                   [
                     { name: "bits", multiplier: 100,       symbol: "ƀ" },
                     { name: "mBTC", multiplier: 100000,    symbol: "mɃ" },
@@ -2294,7 +2246,6 @@ Get details of the crypto currency supported by this library
 
 ```javascript
 // Example
-
 function abcTxLibCBTransactionsChanged(abcTransactions) { }
 
 const callbacks =
@@ -2372,7 +2323,6 @@ Enable support for meta tokens (ie. counterparty, colored coin, ethereum ERC20).
 
 ```javascript
 // Example
-
 const balance = abcTxLibGetBalance(abcTxLibAccess, options)
 ```
 
@@ -2395,7 +2345,6 @@ Get the current balance of this wallet in the currency's smallest denomination (
 
 ```javascript
 // Example
-
 const numTransactions = abcTxLibGetNumTransactions(abcTxLibAccess, options)
 ```
 
@@ -2556,7 +2505,6 @@ abcTxLibSaveTx(abcTxLibAccess, abcTransaction, function(error) {
 | walletDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for wallet specific data |
 
 Various objects needed to save/restore data for the TxLib
-
 
 ## ABCTxLibCallbacks
 
@@ -2961,7 +2909,7 @@ Then build and run the code in Xcode. You can then launch the app, login, naviga
 
 # Submit Your Plugin
 
-To submit your plugin for inclusion in Airbitz, submit a pull request for the changes to the `airbitz-plugins` repo. In addition, submit pull requests for either the iOS file `Plugins.m` or the Android file `PluginFramework.java`. 
+To submit your plugin for inclusion in Airbitz, submit a pull request for the changes to the `airbitz-plugins` repo. In addition, submit pull requests for either the iOS file `Plugins.m` or the Android file `PluginFramework.java`.
 
 # Plugin API Reference
 
@@ -3011,7 +2959,6 @@ The ABCWallet object represents a single BIP32 HD wallet in the user's Airbitz a
 Airbitz.core.getSelectedWallet(callback)
 
 // Example
-
 Airbitz.core.getSelectedWallet(function (response){
   console.log("Wallet name: " + response['name'])
   console.log("Wallet balance in satoshis: " + response['balance'])
@@ -3039,7 +2986,6 @@ Returns the user’s currently selected wallet as the first parameter of the cal
 Airbitz.core.setupWalletChangeListener(callback)
 
 // Example
-
 Airbitz.core.setupWalletChangeListener(function (response){
   console.log("Wallet name: " + response['name'])
   console.log("Wallet balance in satoshis: " + response['balance'])
@@ -3066,7 +3012,6 @@ Callback is called when wallet is changed AND every time the plugin is initializ
 Airbitz.core.createReceiveRequest(wallet, options)
 
 // Example
-
 Airbitz.core.createReceiveRequest(wallet, {
     label: "Roger Mark",
     category: "Income:Consulting",
@@ -3131,7 +3076,6 @@ Create a receive request from the provided wallet. Returns an object with a bitc
 Airbitz.core.finalizeReceiveRequest(ABCWallet, address)
 
 // Example
-
 Airbitz.core.walletSelected({
   success: function(wallet) {
     Airbitz.core.createReceiveRequest(wallet, {
@@ -3242,7 +3186,6 @@ The optional metadata given in 'options' such as 'label', 'category', and 'notes
 Airbitz.core.createSpendRequest2(wallet, address, amount, address2, amount2, options)
 
 // Example
-
 Airbitz.core.createSpendRequest2(wallet,
                                  "12xZEQL72YnGEbtW7bA4FPA1BUEHkxQoWN", 123000000,
                                  "1FSxyn9AbBMwGusKAFqvyS63763tM8KiA2", 312000000, {
@@ -3315,7 +3258,6 @@ Request that the user spends to two different addresses with two different amoun
 Airbitz.core.writeData(key, data)
 
 // Example
-
 Airbitz.core.writeData("userInfo", '{ "name": "Joe",
                                       "phone": "619-800-1234",
                                       "age:" 69 }')
@@ -3342,7 +3284,6 @@ Securely persist data into the Airbitz core under this user's account. Only the 
 data = Airbitz.core.readData(key)
 
 // Example
-
 Airbitz.core.writeData("userInfo", '{ "name": "Joe",
                                       "phone": "619-800-1234",
                                       "age:" 69 }')
@@ -3447,7 +3388,6 @@ Formats satoshis to display to the user. This uses the user’s BTC denomination
 value = Airbitz.config.get(key)
 
 // Example
-
 value = Airbitz.config.get("API_KEY")
 ```
 
@@ -3477,7 +3417,6 @@ Fetch a configuration value. These are set in the native iOS/Android code, befor
 Airbitz.ui.title(title)
 
 // Example
-
 Airbitz.ui.title("Bob's Awesome Plugin");
 ```
 

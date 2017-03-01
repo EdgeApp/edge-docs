@@ -16,7 +16,7 @@ search: true
 ---
 # Introduction
 
-AirbitzCore (ABC) is a Javascript/ObjC/Java client-side blockchain and Edge Security SDK providing auto-encrypted and auto-backed up accounts and wallets with zero-knowledge security and privacy. All blockchain/bitcoin private and public keys are fully encrypted by the users' credentials before being backed up on to peer to peer servers. 
+AirbitzCore (ABC) is a Javascript/ObjC/Java client-side blockchain and Edge Security SDK providing auto-encrypted and auto-backed up accounts and wallets with zero-knowledge security and privacy. All blockchain/bitcoin private and public keys are fully encrypted by the users' credentials before being backed up on to peer to peer servers.
 
 ABC allows developers to apply client-side data security, encrypted such that only the end-user can access the data. [ABCDataStore](#abcdatastore) object in the Airbitz ABCAccount object allows developers to store arbitrary Edge-Secured data on the user’s account which is automatically encrypted, automatically backed up, and automatically synchronized between the user’s authenticated devices.
 
@@ -67,14 +67,14 @@ abc.makeABCContext(apiKey, type, hbitsKey, callback)
 const abcContext = abc.makeABCContext(apiKey, type, hbitsKey)
 
 // Example
-const abcContext = abc.makeABCContext('your-api-key-here', 
-                                      'account:repo:com.mydomain.myapp', 
+const abcContext = abc.makeABCContext('your-api-key-here',
+                                      'account:repo:com.mydomain.myapp',
                                       null)
-                                      
+
 // React Native version
-const abcContext = abc.makeABCContextRN('your-api-key-here', 
-                                        'account:repo:com.mydomain.myapp', 
-                                         null)                                      
+const abcContext = abc.makeABCContextRN('your-api-key-here',
+                                        'account:repo:com.mydomain.myapp',
+                                         null)
 ```
 
 ```objc
@@ -90,7 +90,7 @@ Initialize and create an ABCContext object. Required for functionality of ABC SD
 | apiKey | <code>string</code> | Get an API Key from https://developer.airbitz.co |
 | type | <code>string</code> | Type of account that this application will be accessing. Type is of the format "account:repo:com.domain.app". At this moment, all types must begin with "account:repo:" and developers should add their reverse domain and application afterwards. This 'type' is what allows a singleSignOn login to access the same account object for this particular application. ie. User's using Edge Login (SingleSignOn) in application type "account:repo:com.domain.app" will get a different account repository when logged into an app with type "account:repo:com.domain2.app". |
 | hbitsKey | <code>string</code> | (Optional) Unique key used to encrypt private keys for use as implementation specific "gift cards" that are only redeemable by applications using this implementation.|
-| callback | <code>Callback</code> | (Javascript) Callback function when routine completes|
+| callback | <code>Callback</code> | (Javascript) Callback function when routine completes |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
@@ -102,7 +102,7 @@ Initialize and create an ABCContext object. Required for functionality of ABC SD
 ### createAccount
 
 ```javascript
-abcContext.createAccount(username, 
+abcContext.createAccount(username,
                          password,
                          pin,
                          ABCAccountCallbacks,
@@ -123,8 +123,8 @@ const abcCallbacks = {
    abcAccountOTPSkew,
    abcAccountAccountChanged
 }
-   
-abcContext.createAccount("myUsername", 
+
+abcContext.createAccount("myUsername",
                          "myNot5oGoodPassw0rd",
                          "2946",
                          abcCallbacks,
@@ -133,12 +133,11 @@ abcContext.createAccount("myUsername",
       // Error creating account
     } else {
       abcAccount = account;
-    }                                                                              
+    }
 })
 ```
 
 ```objc
-
 -(void) createAccount:(NSString *) username
              password:(NSString *) password
                   pin:(NSString *) pin
@@ -163,7 +162,6 @@ ABCAccount *abcAccount;
         // Yikes
     }
 }];
-
 ```
 
 Create and log into a new ABCAccount
@@ -189,7 +187,7 @@ Create and log into a new ABCAccount
 abcContext.getLocalAccount(username, callbacks, callback)
 
 // Example
-abcContext.getLocalAccount("JoeHomey", callbacks, 
+abcContext.getLocalAccount("JoeHomey", callbacks,
                            function (error, account) {
     if (error) {
       // Failed to get account.
@@ -207,7 +205,7 @@ Get local account details for a previously logged in account. This returns an AB
 | username | <code>string</code> | Account username |
 | callbacks | <code>[ABCAccountCallbacks](#abcaccountcallbacks)</code> | (Javascript) Callback event routines |
 | delegate | <code>[ABCAccountDelegate](#abcaccountdelegate)</code> | (ObjC) Callback event delegates |
-| callback | <code>Callback</code> | Callback function when routine completes|
+| callback | <code>Callback</code> | Callback function when routine completes |
 
 
 | Return Param | Type | Description |
@@ -223,7 +221,7 @@ Get local account details for a previously logged in account. This returns an AB
 abcContext.loginWithPassword(username, password, otp, callbacks, callback)
 
 // Example
-abcContext.loginWithPassword("JoeHomey", "My0KPa55WoRd@Airb1t5", null, callbacks, 
+abcContext.loginWithPassword("JoeHomey", "My0KPa55WoRd@Airb1t5", null, callbacks,
                              function (error, account) {
     if (error) {
       if (error.code === ABCConditionCodeInvalidOTP) {
@@ -239,7 +237,6 @@ abcContext.loginWithPassword("JoeHomey", "My0KPa55WoRd@Airb1t5", null, callbacks
 ```
 
 ```objc
-
 -(void) loginWithPassword:(NSString *) username
                  password:(NSString *) password
                  delegate:(ABCAccountDelegate) delegate
@@ -254,7 +251,7 @@ ABCAccount *abcAccount;
                      callback:^(ABCError *error, ABCAccount *account)
 {
     if (error)
-    {       
+    {
       // Yikes
       if (error.code == ABCConditionCodeInvalidOTP) {
         NSLog(@"otpResetToken: %@", error.otpResetToken)
@@ -265,8 +262,8 @@ ABCAccount *abcAccount;
         NSLog(@"Account name = %@", account.username);
     }
 }];
-
 ```
+
 Login to an Airbitz account with a full password. May optionally send 'otp' key which is required for any accounts that have OTP enabled using [ABCAccount.enableOTP](#enableotp). OTP key can be retrieved from a device that has account logged in and OTP enabled using getOTPLocalKey.
 
 If routine returns with error.code == ABCConditionCodeInvalidOTP, then the account has OTP enabled and needs the OTP key specified in parameter 'otp'. ABCError object may have properties otpResetToken and otpResetDate set which allow the user to call requestOTPReset to disable OTP.
@@ -282,7 +279,7 @@ The otpResetToken is only returned if the caller has provided the correct userna
 | otp | <code>string</code> | (Optional) OTP key retrieved from getOTPLocalKey |
 | callbacks | <code>[ABCAccountCallbacks](#abcaccountcallbacks)</code> | (Javascript) Callback event routines |
 | delegate | <code>[ABCAccountDelegate](#abcaccountdelegate)</code> | (ObjC) Callback event delegates |
-| callback | <code>Callback</code> | Callback function when routine completes|
+| callback | <code>Callback</code> | Callback function when routine completes |
 
 
 | Return Param | Type | Description |
@@ -298,7 +295,7 @@ The otpResetToken is only returned if the caller has provided the correct userna
 abcContext.loginWithPIN(username, pin, callbacks, callback)
 
 // Example
-abcContext.loginWithPIN("JoeHomey", "2847", null, 
+abcContext.loginWithPIN("JoeHomey", "2847", null,
                         function (error, account) {
     if (error) {
       // Error
@@ -331,8 +328,8 @@ ABCAccount *abcAccount;
         // Yikes
     }
 }];
-
 ```
+
 Login to an Airbitz account with PIN. Used to sign into devices that have previously been logged into using a full username & password
 
 | Param | Type | Description |
@@ -367,7 +364,6 @@ abcContext.accountHasPassword("JoeHomey", function (error, hasPassword) {
 ```
 
 ```objc
-
 -(BOOL) accountHasPassword:(NSString *) username
                      error:(ABCError *) error;
 
@@ -376,8 +372,8 @@ ABCError *error;
 
 BOOL hasPassword = [abcContext accountHasPassword:@"myUsername"
                                             error:&error
-
 ```
+
 Check if specified username has a password on the account or if it is a PIN-only account.
 
 | Param | Type | Description |
@@ -407,15 +403,14 @@ abcContext.deleteLocalAccount("JoeHomey", function (error) {
 ```
 
 ```objc
-
 - (ABCError *) deleteLocalAccount:(NSString *) username;
 
 // Example
 ABCError *error;
 
 ABCError *error = [abcContext deleteLocalAccount:@"myUsername"];
-
 ```
+
 Deletes named account from local device. Account is recoverable if it contains a password. Use accountHasPassword to determine if account has a password. Recommend warning user before executing deleteLocalAccount if accountHasPassword returns FALSE.
 
 | Param | Type | Description |
@@ -465,7 +460,6 @@ Checks if PIN login is possible for the given username. This checks if there is 
 ### listUsernames
 
 ```javascript
-
 abcContext.listUsernames(callback)
 
 // Example
@@ -548,7 +542,6 @@ abcContext.requestOTPReset("JoeHomey", "ZR2G9d8TYW8DH6", function (error) {
 ```
 
 ```objc
-
 - (void)requestOTPReset:(NSString *)username
                   token:(NSString *)otpResetToken
                callback:(void (^)(ABCError *error)) callback;
@@ -559,8 +552,8 @@ abcContext.requestOTPReset("JoeHomey", "ZR2G9d8TYW8DH6", function (error) {
     if (!error)
         // Yay. Now to wait until the timeout expires to login again.
 }];
-
 ```
+
 Launches an OTP reset timer on the server, which will disable the OTP authentication requirement on the account `username` when timeout expires. The expiration timeout is set when OTP is first enabled using [ABCAccount.enableOTP](#enableotp).
 
 To obtain an otpResetToken, attempt a login into the OTP protected account using loginWithPassword with the correct username/password. The login should fail with error.code == ABCConditionCodeInvalidOTP. The OTP token will be in the error.otpResetToken property of the ABCError object.
@@ -582,6 +575,7 @@ To obtain an otpResetToken, attempt a login into the OTP protected account using
 ## ABCAccount
 
 ### Class Properties
+
 | Property | Type | Description |
 | --- | --- | --- |
 | username | <code>String</code> | Account username |
@@ -603,7 +597,7 @@ Logout the currently logged in ABCAccount
 
 | Param | Type | Description |
 | --- | --- | --- |
-| account | <code>[ABCAccount](#abcaccount)</code> | Account object|
+| account | <code>[ABCAccount](#abcaccount)</code> | Account object |
 | callback | <code>Callback</code> | (Javascript) Callback function |
 
 
@@ -634,14 +628,13 @@ abcAccount.changePassword(password, function(error) {
         // Yay, new password set
     }
 }];
-
 ```
 
 Change the password of the currently logged in ABCAccount
 
 | Param | Type | Description |
 | --- | --- | --- |
-| password | <code>String</code> | Password string|
+| password | <code>String</code> | Password string |
 | callback | <code>Callback</code> | Callback function |
 
 | Return Param | Type | Description |
@@ -790,8 +783,8 @@ Associates an OTP key with the currently logged in account. An OTP key can be re
 
 This method is primarily used to add an OTP key to an account & device that was successfully logged in prior to OTP being enabled. A second device may have enabled OTP which would cause OTP warnings on the first device upon login.
 
-ie. 
-Device A creates account "bob". 
+ie.
+Device A creates account "bob".
 Device B login to account "bob".
 Device B enables OTP.
 
@@ -1014,11 +1007,11 @@ abcAccount.signBitIDRequest(uri, message, callback)
 
 // Example
 
-abcAccount.signBitIDRequest("bitid://airbitz.co/developer?nonce=12345", 
+abcAccount.signBitIDRequest("bitid://airbitz.co/developer?nonce=12345",
                             "Hello World", function (error, abcSignature) {
   if (!error) {
     console.log("Public address of signature = " + abcSignature.address)
-    console.log("Signature = " + abcSignature.signature)    
+    console.log("Signature = " + abcSignature.signature)
   }
 })
 ```
@@ -1032,9 +1025,8 @@ abcSignature = [abcAccount signBitIDRequest:@"bitid://airbitz.co/developer?nonce
                                     message:@"Hello World"];
 if (!error) {
   NSLog(@"Public address of signature = %@", abcSignature.address)
-  NSLog(@"Signature = %@", abcSignature.signature)    
+  NSLog(@"Signature = %@", abcSignature.signature)
 }
-
 ```
 
 Sign an arbitrary message with a BitID URI. The URI determines the key derivation used to sign the message.
@@ -1053,7 +1045,6 @@ Sign an arbitrary message with a BitID URI. The URI determines the key derivatio
 ### createWallet
 
 ```javascript
-
 abcAccount.createWallet(walletType, abcWalletKeys)
 
 // Example
@@ -1065,9 +1056,7 @@ const abcWalletKeys = {
 
 abcAccount.createWallet("wallet:repo:ethereum",
                         abcWalletKeys,
-                        function (error, id) {
-                        
-}
+                        function (error, id) { /* your callback */ })
 ```
 
 Create a new [ABCWallet](#abcwallet) object and add it to the current account. Each wallet object represents key storage for a specific cryptocurrency type or other misc functionality such as BitID or general data storage. Once a wallet is created, the wallet keys cannot be modified. ABCWallet objects may be shared between ABCAccount objects of the same or different users given permission by the user.
@@ -1085,7 +1074,7 @@ Create a new [ABCWallet](#abcwallet) object and add it to the current account. E
 | Wallet Type | Key Name | Description |
 | --- | --- | --- |
 | <code>wallet:repo:bitcoin</code> | <code>bitcoinKey</code> | HD BIP32 bitcoin wallet with base16 private key |
-| <code>wallet:repo:ethereum</code> | <code>ethereumKey</code> | Single address ethereum wallet with base16 private key 
+| <code>wallet:repo:ethereum</code> | <code>ethereumKey</code> | Single address ethereum wallet with base16 private key
 | <code>wallet:repo:bitcoin-bip44</code> | <code>bitcoinKey-BIP44</code> | HD BIP44 bitcoin wallet with 24 word mnemonic master private key |
 | <code>wallet:repo:bitcoin-bip44-multisig</code> | <code>bitcoinKey-BIP44</code> | HD BIP44 bitcoin wallet with 24 word mnemonic master private key and upto 15 of 15 multisig support |
 | <code>wallet:repo:com.mydomain.myapp.myDataStoreType</code> | <code>NULL</code> | Generic data store for your app |
@@ -1093,13 +1082,11 @@ Create a new [ABCWallet](#abcwallet) object and add it to the current account. E
 
 Please contact developer@airbitz.co for the addition of new wallet types.
 
-
 ### listWalletIds
 
 ```javascript
 const walletIds = abcAccount.listWalletIds()
 ```
-
 
 Get an array list of wallet IDs in the current account
 
@@ -1138,7 +1125,7 @@ abcAccount.getFirstWallet(walletType)
 const abcWallet = abcAccount.getFirstWallet('wallet:repo:ethereum')
 ```
 
-Get the first [ABCWallet](#abcwallet) object of type `walletType` 
+Get the first [ABCWallet](#abcwallet) object of type `walletType`
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1148,7 +1135,6 @@ Get the first [ABCWallet](#abcwallet) object of type `walletType`
 | Return Param | Type | Description |
 | --- | --- | --- |
 | abcWallet | <code>[ABCWallet](#abcwallet)</code> | (Javascript) Error object. Null if no error |
-
 
 ### shareWallet (proposal)
 
@@ -1208,9 +1194,7 @@ abcAccount.importWallet(shareWalletToken, function(error, abcWallet) {
 
 Provides a key that can given to another user/app to share a wallet with that account.
 
-
-
-## ABCAccountCallbacks 
+## ABCAccountCallbacks
 
 Callback routines that notify application when various changes have occurred in the account. This is only utilized for Javascript. For ObjC, see [ABCAccountDelegate](#abcaccountdelegate).
 
@@ -1224,10 +1208,10 @@ Callback routines that notify application when various changes have occurred in 
 | abcAccountOTPSkew | <code>Function</code> | Account has OTP enabled and this device has a time skew with the server |
 | abcAccountAccountChanged | <code>Function</code> | Account dataStore has changed |
 
-
 ## ABCBitIDSignature
 
 ### Class Properties
+
 | Property | Type | Description |
 | --- | --- | --- |
 | address | <code>String</code> | Public address of private key used to sign |
@@ -1236,6 +1220,7 @@ Callback routines that notify application when various changes have occurred in 
 ## ABCWallet
 
 ### Class Properties
+
 | Property | Type | Description |
 | --- | --- | --- |
 | walletId | <code>String</code> | Unique ID for wallet |
@@ -1245,7 +1230,7 @@ Callback routines that notify application when various changes have occurred in 
 | dataStore | <code>[ABCDataStore](#abcdatastore)</code> | [ABCDataStore](#abcdatastore) object. This datastore object is encrypted by default, backed up to the cloud, and synchronized with any device the user logs into. Data modifications are versioned and can be rolled back but this functionality is not yet exposed via API. dataStore object may NULL if parent [ABCAccount](#abcaccount) has not been logged into yet |
 | localDataStore | <code>[ABCDataStore](#abcdatastore)</code> | [ABCDataStore](#abcdatastore) object that only exists on the current device. This data is not encrypted nor backed up. Not to be used for sensitive data but rather as a local cache of network data. Data is not version controlled and has no rollback capability. Common use case will be for local device specific wallet settings, blockchain cache information, and public address cache for use when account/wallet has not yet been decrypted (background processing) |
 | tx | <code>[ABCWalletTx](#abcwallettx)</code> | Optional and may be null. Exposes transactional functionality for this wallet. Requires addTxFunctionality to be called |
- 
+
 ### renameWallet
 
 ```javascript
@@ -1330,13 +1315,13 @@ Adds send/receive transaction capability for a specific currency to a wallet. An
 abcWallet.dataStore.writeData(folder, key, value, callback)
 
 // Example
-abcWallet.dataStore.writeData("userAddress", 
-                              "state", 
-                              "California", 
+abcWallet.dataStore.writeData("userAddress",
+                              "state",
+                              "California",
                               function(error) {
   if (error === null) {
     // Success
-  }    
+  }
 })
 ```
 
@@ -1359,12 +1344,12 @@ Writes a string of data to the specified dataStore folder using the given key. `
 abcWallet.dataStore.readData(folder, key, callback)
 
 // Example
-abcWallet.dataStore.readData("userAddress", 
-                             "state", 
+abcWallet.dataStore.readData("userAddress",
+                             "state",
                              function(error, value) {
   if (error === null) {
     console.log(value)
-  }    
+  }
 })
 ```
 
@@ -1387,12 +1372,12 @@ Reads back a string of data from the specified dataStore folder using the given 
 abcWallet.dataStore.removeKey(folder, key, callback)
 
 // Example
-abcWallet.dataStore.removeKey("userAddress", 
-                              "state", 
+abcWallet.dataStore.removeKey("userAddress",
+                              "state",
                               function(error) {
   if (error === null) {
     // Success. Key/value pair removed
-  }    
+  }
 })
 ```
 
@@ -1414,11 +1399,11 @@ Removes the specified key/value pair from the dataStore.
 abcWallet.dataStore.removeFolder(folder, callback)
 
 // Example
-abcWallet.dataStore.removeFolder("userAddress", 
+abcWallet.dataStore.removeFolder("userAddress",
                                  function(error) {
   if (error === null) {
     // Success. Key/value pair removed
-  }    
+  }
 })
 ```
 
@@ -1439,10 +1424,10 @@ Removes the specified folder from the dataStore. All key/value pairs in the fold
 abcWallet.dataStore.listKeys(folder, callback)
 
 // Example
-abcWallet.dataStore.listKeys("userAddress", 
+abcWallet.dataStore.listKeys("userAddress",
                              function(error, keys) {
   if (error === null) {
-  }    
+  }
 })
 ```
 
@@ -1470,7 +1455,7 @@ AirbitzCore can be extended to allow wallets to have transactional capabilities 
 
 ## ABCWalletTx
 
-Each ABCWalletTx represents a single or HD cryptocurrency wallet tied to one specific blockchain such as bitcoin or ethereum. Various methods and fields in ABCWalletTx are arrays or accept an index which selects which token system in the wallet is being referenced. 
+Each ABCWalletTx represents a single or HD cryptocurrency wallet tied to one specific blockchain such as bitcoin or ethereum. Various methods and fields in ABCWalletTx are arrays or accept an index which selects which token system in the wallet is being referenced.
 
 | Property | Type | Description |
 | --- | --- | --- |
@@ -1484,7 +1469,6 @@ Each ABCWalletTx represents a single or HD cryptocurrency wallet tied to one spe
 (under construction)
 
 ```javascript
-
 // Example
 var abcSetupContractOptions = [
   { addMasterPublicKey: "xpub12fe094ab5d830ee9ac0102fbd223e" },
@@ -1494,8 +1478,8 @@ var abcSetupContractOptions = [
 ]
 
 abcWallet.tx.setupContract(abcSetupContractOptions)
-
 ```
+
 Setup the script/contract for this wallet. This is used to setup basic multisig wallets under currencies like bitcoin and ethereum.
 
 ### getBalance
@@ -1545,7 +1529,6 @@ const options = {
 const abcTransactions = abcWallet.tx.getTransactions(options, function(error, abcTransactions) {
   const abcTransaction = abcTransactions[0]
 })
-
 ```
 
 | Param | Type | Description |
@@ -1567,7 +1550,7 @@ const abcTransactions = abcWallet.tx.getTransactions(options, function(error, ab
 | error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
 | transactions | <code>ABCTransaction</code> | Array of [ABCTransaction](#abctransaction) objects |
 
-Returns a list of transactions in the current wallet. Options allow pruning of the search to a subset of the transactions in addition to string filtering. Options are applied in the following order: 
+Returns a list of transactions in the current wallet. Options allow pruning of the search to a subset of the transactions in addition to string filtering. Options are applied in the following order:
 
 Note that all indices start with the most recent transaction and work downwards to oldest.
 
@@ -1638,7 +1621,6 @@ const abcReceiveAddress = abcWallet.tx.getReceiveAddress(options, , function (er
     // Success
   }
 })
-
 ```
 
 | Param | Type | Description |
@@ -1657,7 +1639,7 @@ const abcReceiveAddress = abcWallet.tx.getReceiveAddress(options, , function (er
 | error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
 | abcReceiveAddress | <code>ABCReceiveAddress</code> | [ABCReceiveAddress](#abcreceiveaddress) |
 
-Returns an [ABCReceiveAddress](#abcreceiveaddress) object. This routine is used to generate a new public address or return a previously request address object.  The `metadata` object 
+Returns an [ABCReceiveAddress](#abcreceiveaddress) object. This routine is used to generate a new public address or return a previously request address object.  The `metadata` object
 
 ### saveReceiveAddress
 
@@ -1670,7 +1652,7 @@ abcWallet.tx.getReceiveAddress(null, function (error) {
   if (!error) {
     // Success
     console.log("My bitcoin address: " + abcReceiveAddress.publicAddress)
-    abcReceiveAddress.amountSatoshi = 150000000 // 1.5 BTC 
+    abcReceiveAddress.amountSatoshi = 150000000 // 1.5 BTC
     abcReceiveAddress.metaData.payeeName = "Johnny Be Good"
     abcReceiveAddress.metaData.category = "Income:Rent"
     abcReceiveAddress.saveReceiveAddress(function(error) {
@@ -1678,7 +1660,6 @@ abcWallet.tx.getReceiveAddress(null, function (error) {
     })
   }
 })
-
 ```
 
 Updates the internal database of `metaData` corresponding to this `receiveAddress`. Any transactions that are received in this address are automatically tagged with the `metaData` from this `receiveAddress`.
@@ -1730,15 +1711,15 @@ const abcSpendInfo = {
     category: 'Expense:Professional Services'
   },
   spendTargets: [
-    { 
+    {
       publicAddress: '12xZEQL72YnGEbtW7bA4FPA1BUEHkxQoWN',
       amountSatoshi: 210000000 // 2.1 BTC
     },
-    { 
+    {
       currencyCode: 'LTBCOIN'
       publicAddress: '1FSxyn9AbBMwGusKAFqvyS63763tM8KiA2',
       amountSatoshi: 120 // 120 LTBCOIN
-    }    
+    }
   ]
 }
 
@@ -1784,7 +1765,7 @@ const abcSpendInfo = {
     category: 'Transfer:Wallet:College Fund'
   },
   spendTargets: [
-    { 
+    {
       destWallet,
       amountSatoshi: 210000000 // 2.1 BTC
     }
@@ -1910,13 +1891,13 @@ abcWallet.tx.signBroadcastAndSave(abcTransaction, function(error) {
 | --- | --- | --- |
 | abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
 
-Convenience routine to do `signTx`, `broadcastTx`, then `saveTx` in one call. 
+Convenience routine to do `signTx`, `broadcastTx`, then `saveTx` in one call.
 
 ### getPaymentProtocolInfo
 
 ```javascript
 
-// Example 
+// Example
 const abcParsedUri = abcAccount.parseUri("bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.000000&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X")
 
 abcWallet.tx.getPaymentProtocolInfo(abcParsedUri.paymentProtocolURL, function(error, paymentProtocolInfo) {
@@ -1963,7 +1944,7 @@ const abcSpendInfo = {
     category: 'Expense:Professional Services',
   },
   spendTargets: [
-    { 
+    {
       publicAddress: '12xZEQL72YnGEbtW7bA4FPA1BUEHkxQoWN',
     }
   ]
@@ -2005,7 +1986,7 @@ abcSpendInfo = {
     category: 'Transfer:Wallet:College Fund',
   },
   spendTargets: [
-    { 
+    {
       destWallet,
       amountSatoshi: 210000000, // 2.1 BTC
     },
@@ -2018,7 +1999,7 @@ Parameters
 | Param | Type | Description |
 | --- | --- | --- |
 | currencyCode | <code>String</code> | (Optional) Chooses the currency or meta-token to spend from. If not specified, uses the primary currency of this wallet |
-| noUnconfirmed | <code>Boolean</code> | (Optional) If set to TRUE, this will not spend from any unconfirmed funds. Default is FALSE | 
+| noUnconfirmed | <code>Boolean</code> | (Optional) If set to TRUE, this will not spend from any unconfirmed funds. Default is FALSE |
 | spendTargets | <code>Array</code> | Array of [ABCSpendTarget](#abcspendtarget) objects |
 | networkFeeOption | <code>String</code> | Adjusts network fee amount. Must be either "low", "standard", "high", or "custom". If unspecified, the default is "standard" |
 | customNetworkFee | <code>Int</code> | Amount of per byte network fee if `networkFeeOption` is set to `custom`. Should be specified as smallest denomination of currency. ie Satoshis |
@@ -2030,12 +2011,12 @@ Parameter object used for creating an [ABCSpend](#abcspend) object.
 
 ```javascript
 // Example spend target with a public addresses
-const spendTarget = 
-  { 
+const spendTarget =
+  {
     currencyCode: 'BTC',
     publicAddress: '1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs',
     amountSatoshi: 210000000 // 2.1 BTC
-  }    
+  }
 
 // Example to spend to a BIP70 payment request
 const abcParsedUri = abcAccount.parseUri("bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.000000&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X")
@@ -2099,7 +2080,7 @@ Object provides basic UI displayable info about a BIP70 payment request. Also in
 | --- | --- | --- |
 | domain | <code>String</code> | DNS name of originator of request |
 | amountSatoshi | <code>Int</code> | Amount of request |
-| memo | <code>String</code> | Memo field returned by merchant | 
+| memo | <code>String</code> | Memo field returned by merchant |
 | merchant | <code>String</code> | Name of merchat (may be blank) |
 | abcSpendTarget | <code>[ABCSpendTarget](#abcspendtarget)</code> | [ABCSpendTarget](#abcspendtarget) object that can be used in an [ABCSpendInfo](#abcspendinfo) |
 
@@ -2183,13 +2164,13 @@ const priceofBitcoin = convertCurrency(1, "BTC", "USD")
 
 | Param | Type | Description |
 | --- | --- | --- |
-| amount | <code>Float</code> | Amount of source currency to convert | 
-| sourceCurrency | <code>String</code> | 3 character currency code of source currency | 
-| destinationCurrency | <code>String</code> | 3 character currency code of destination currency | 
+| amount | <code>Float</code> | Amount of source currency to convert |
+| sourceCurrency | <code>String</code> | 3 character currency code of source currency |
+| destinationCurrency | <code>String</code> | 3 character currency code of destination currency |
 
 | Return | Type | Description |
 | --- | --- | --- |
-| destinationAmount | <code>Float</code> | Amount of destination currency after conversion | 
+| destinationAmount | <code>Float</code> | Amount of destination currency after conversion |
 
 Converts one currency value into another using exchange rate cache. Returns 0 if the currency pair cannot be converted due to missing support from exchange rate sources or if sources cannot be reached.
 
@@ -2215,11 +2196,11 @@ name = getName()
 getCurrencyPairs(pairs, callback)
 
 // Example
-const pairs = 
+const pairs =
 [
   { source: "BTC", dest: "USD" },
   { source: "BTC", dest: "EUR" },
-  { source: "LTC", dest: "GBP" } 
+  { source: "LTC", dest: "GBP" }
 ]
 
 getCurrencyPairs(pairs, function(returnPairs) {
@@ -2239,7 +2220,7 @@ Requests the exchange rate from an array of currency pairs. Function should retu
 
 # Currency Plugin API
 
-Cryptocurrency functionality for AirbitzCore is provided by currency API libraries that follow the Currency Plugin API. These libraries can be easily added to Airbitz by providing the following library API for import into an [ABCWallet](#abcwallet). ABC will call into the library [abcTxLibInit](#abctxlibinit) to initialize the library with a set of callbacks. 
+Cryptocurrency functionality for AirbitzCore is provided by currency API libraries that follow the Currency Plugin API. These libraries can be easily added to Airbitz by providing the following library API for import into an [ABCWallet](#abcwallet). ABC will call into the library [abcTxLibInit](#abctxlibinit) to initialize the library with a set of callbacks.
 
 To add additional currency functionality, create a library that exposes an API that follows the ABCWalletTxLibrary template below.
 
@@ -2249,7 +2230,7 @@ The repo `airbitz-core-js-bitcoin` exposes this API for bitcoin
 
 ## ABCWalletTxLibrary
 
-This prototype class provides all the necessary API to support a cryptocurrency in Airbitz. 
+This prototype class provides all the necessary API to support a cryptocurrency in Airbitz.
 
 ### abcTxLibGetInfo
 
@@ -2257,7 +2238,7 @@ This prototype class provides all the necessary API to support a cryptocurrency 
 const details = abcTxLibGetInfo()
 
 console.log(details)
-    
+
 "
 { currencyCode: "BTC",
   denominations: 
@@ -2280,10 +2261,11 @@ console.log(details)
                       { name: "TATIANACOIN",  multiplier: 1 }
                      ],
       symbolImage: "qe/3fthfi2fg1/3iufhlq249r8yq34tiuhqggiuhaiwughiuaergih/ef"
-    },    
+    }
 }
 "
 ```
+
 | Return Param | Type | Description |
 | --- | --- | --- |
 | details | <code>Object</code> | Details of supported currency |
@@ -2293,7 +2275,7 @@ The `details` object includes the following params:
 | Param | Type | Description |
 | --- | --- | --- |
 | currencyCode | <code>String</code> | The 3 character code for the currency |
-| denominations | <code>Array</code> | An array of Objects of the possible denominations for this currency | 
+| denominations | <code>Array</code> | An array of Objects of the possible denominations for this currency |
 | symbolImage | <code>String</code> | Base64 encoded png or jpg image of the currency symbol (optional) |
 | metaTokens | <code>Object</code> | Array of objects describing the supported metatokens |
 
@@ -2320,7 +2302,7 @@ const callbacks =
   abcTxLibCBTransactionsChanged
 }
 
-const options = 
+const options =
 {
   accountDataStore,
   walletDataStore,
@@ -2351,9 +2333,9 @@ abcTxLibInit(abcTxLibAccess, options, callbacks, function(error) {
 | --- | --- | --- |
 | abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
 
-Initialization of the library effectively creates a cryptocurrency wallet within the [ABCWallet](#abcwallet) object. The TxLib should spin up any background tasks necessary to begin querying the blockchain and field any requests for transactions. `abcTxLibInit` will be called once for every wallet of the same or different currency. 
+Initialization of the library effectively creates a cryptocurrency wallet within the [ABCWallet](#abcwallet) object. The TxLib should spin up any background tasks necessary to begin querying the blockchain and field any requests for transactions. `abcTxLibInit` will be called once for every wallet of the same or different currency.
 
-Any global information that the TxLib needs to keep should be kept in the [ABCWallet.abcAccount](#abcaccount) using the `dataStore` for encrypted, backed-up data, and using the `localDataStore` for unencrypted, device specific data. 
+Any global information that the TxLib needs to keep should be kept in the [ABCWallet.abcAccount](#abcaccount) using the `dataStore` for encrypted, backed-up data, and using the `localDataStore` for unencrypted, device specific data.
 
 It is recommended the master public keys be keps in the [ABCWallet](#abcwallet) `localDataStore` so they can be accessed for querying the blockchain while not logged in. Local blockchain cache information can be stored in either the [ABCWallet](#abcwallet) or [ABCWallet.abcAccount](#abcaccount) `localDataStore` depending on whether the implementation chooses to hold a global blockchain cache or per wallet information.
 
@@ -2363,7 +2345,7 @@ It is recommended the master public keys be keps in the [ABCWallet](#abcwallet) 
 
 ```javascript
 // Example
-const tokens = 
+const tokens =
 {
   enableTokens = [ "XCP, "TATIANACOIN" ]
 }
@@ -2437,7 +2419,7 @@ Get the number of transactions in the wallet
 ```javascript
 const options = { startIndex: 5,
                   numEnteries: 50 }
-                  
+
 abcTxLibGetTransactions(abcTxLibAccess, options, function(error, transactions) {
   if (error === null) {
     console.log(transactions[0].txid) // => "1209befa09ab3efc039abf09490ac34fe09abc938"
@@ -2457,7 +2439,7 @@ abcTxLibGetTransactions(abcTxLibAccess, options, function(error, transactions) {
 | transactions | <code>Array</code> | Array of [ABCTransaction](#abctransaction) objects |
 
 Returns an array of transactions matching the options specified. The [ABCTransaction](#abctransaction) must have the following fields filled out by the TxLib:
-`abcWallet`, `txid`, `date`, `blockHeight`, and `amountSatoshi`. The remaining fields are updated by Airbitz Core. 
+`abcWallet`, `txid`, `date`, `blockHeight`, and `amountSatoshi`. The remaining fields are updated by Airbitz Core.
 
 The `options` parameter may include the following:
 
@@ -2472,6 +2454,7 @@ The `options` parameter may include the following:
 ```javascript
 const address = abcTxLibGetFreshAddress(abcTxLibAccess, options)
 ```
+
 | Param | Type | Description |
 | --- | --- | --- |
 | abcTxLibAccess | <code>[ABCTxLibAccess](#abctxlibaccess)</code> | Object with various parameters to access the wallet and account |
@@ -2488,9 +2471,11 @@ const address = abcTxLibGetFreshAddress(abcTxLibAccess, options)
 Returns an address that has never received funds
 
 ### abcTxLibAddGapLimitAddresses
+
 ```javascript
 const abcError = abcTxLibAddGapLimitAddresses(abcTxLibAccess, addresses, options)
 ```
+
 | Param | Type | Description |
 | --- | --- | --- |
 | abcTxLibAccess | <code>[ABCTxLibAccess](#abctxlibaccess)</code> | Object with various parameters to access the wallet and account |
@@ -2501,7 +2486,7 @@ The `options` parameter may include the following:
 
 | Options Params | Type | Description |
 | --- | --- | --- |
-| currencyCode | <code>String</code> | Currency code to use. ie "REP", "LTBCOIN". If not specified, 
+| currencyCode | <code>String</code> | Currency code to use. ie "REP", "LTBCOIN". If not specified,
 
 | Return | Type | Description |
 | --- | --- | --- |
@@ -2510,6 +2495,7 @@ The `options` parameter may include the following:
 When implementing an HD wallet with multiple addresses, wallet implementations typically search for funds by going a limited number of addresses ahead of the last address that has funds received. This is usually about 10 addresses. `abcTxLibAddGapLimitAddresses` allows ABC to specify to the txLib to treat the given addresses as if they had funds received and to forward their gap limit accordingly.
 
 ### abcTxLibIsAddressUsed
+
 ```javascript
 const isUsed = abcTxLibIsAddressUsed(abcTxLibAccess, address, options)
 ```
@@ -2524,40 +2510,41 @@ The `options` parameter may include the following:
 
 | Options Params | Type | Description |
 | --- | --- | --- |
-| currencyCode | <code>String</code> | Currency code to use. ie "REP", "LTBCOIN". If not specified, 
+| currencyCode | <code>String</code> | Currency code to use. ie "REP", "LTBCOIN". If not specified,
 
 | Return | Type | Description |
 | --- | --- | --- |
 | isUsed | <code>Boolean</code> | True if address has ever received money |
 
-
-
 ### abcTxLibMakeSpend
+
 ```javascript
 abcTxLibMakeSpend(abcTxLibAccess, abcSpendInfo, function(error, abcTransaction) {
-  
+  // your callback here
 })
 ```
 
 ### abcTxLibSignTx
+
 ```javascript
 abcTxLibSignTx(abcTxLibAccess, abcTransaction, function(error) {
-  
+  // your_callback_here
 })
 ```
 
-
 ### abcTxLibBroadcastTx
+
 ```javascript
 abcTxLibBroadcastTx(abcTxLibAccess, abcTransaction, function(error) {
-  
+  // your_callback_here
 })
 ```
 
 ### abcTxLibSaveTx
+
 ```javascript
 abcTxLibSaveTx(abcTxLibAccess, abcTransaction, function(error) {
-  
+  // your_callback_here
 })
 ```
 
@@ -2578,14 +2565,13 @@ Various objects needed to save/restore data for the TxLib
 ```javascript
 abcTxLibCBTransactionsChanged(abcTransactions)
 ```
+
 | Param | Type | Description |
 | --- | --- | --- |
 | abcTransactions | <code>Array</code> | Array of [ABCTransaction](#abctransaction) objects which are new or have changed. Changes may include the block height when this transaction was confirmed |
 
 Callback fires when the TxLib detects new or updated transactions from the blockchain network. The [ABCTransaction](#abctransaction) objects must have the following fields filled out by the TxLib:
-`abcWalletTx`, `txid`, `date`, `blockHeight`, and `amountSatoshi`. The remaining fields are updated by Airbitz Core. 
-
-
+`abcWalletTx`, `txid`, `date`, `blockHeight`, and `amountSatoshi`. The remaining fields are updated by Airbitz Core.
 
 # Account Management UI
 
@@ -2601,7 +2587,6 @@ A sample webpage exists in [airbitz-core-js-sample](https://github.com/Airbitz/a
 
 ## Usage
 
-
 ### makeABCUIContext
 
 ```javascript
@@ -2609,7 +2594,7 @@ abcUiContext = abcui.makeABCUIContext({'apiKey': 'api-key-here',
                                        'accountType': 'account:repo:com.mydomain.myapp',
                                        'bundlePath': '/path-to-abcui/',
                                        'vendorName': 'My Awesome Project',
-                                       'vendorImageUrl': 'https://mydomain.com/mylogo.png'})    
+                                       'vendorImageUrl': 'https://mydomain.com/mylogo.png'})
 ```
 
 Initializes the ABCUI library and returns an [ABCUIContext](#abcuicontext) object
@@ -2626,10 +2611,10 @@ Initializes the ABCUI library and returns an [ABCUIContext](#abcuicontext) objec
 | --- | --- | --- |
 | abcUiContext | <code>[ABCUIContext](#abcuicontext)</code> | Airbitz account object |
 
-
 ## ABCUIContext
 
 ### openLoginWindow
+
 ```javascript
 abcUiContext.openLoginWindow(function(error, account) {
   _account = account;
@@ -2653,7 +2638,7 @@ Create an overlay popup where a user can register a new account or login to a pr
 
 ```javascript
 abcUiContext.openManageWindow(_account, function(error) {
-    
+  // your_callback_here
 })
 ```
 
@@ -2668,12 +2653,7 @@ Launch an account management window for changing password, PIN, and recovery que
 | --- | --- | --- |
 | error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
 
-
-
 ![Manage UI](#https://airbitz.co/go/wp-content/uploads/2016/08/Screen-Shot-2016-08-26-at-12.50.26-PM.png)
-
-
-
 
 # Wallet Plugin API
 
@@ -2695,11 +2675,12 @@ The `airbitz-plugins` repo has a build system to help ease the creation of the f
 
 Clone the repos [airbitz-plugins](https://github.com/Airbitz/airbitz-plugins), [airbitz-ios-gui](https://github.com/Airbitz/airbitz-ios-gui), and [airbitz-android-gui](https://github.com/Airbitz/airbitz-android-gui) to the same level directory.
 
-
 ### NPM
+
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```java
 // No content for this language. Select 'Javascript/HTML` above
 ```
@@ -2740,6 +2721,7 @@ cp -a blank yourpluginname
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```java
 // No content for this language. Select 'Javascript/HTML` above
 ```
@@ -2754,7 +2736,6 @@ plugins/yourpluginname/vendors/qrcode.min.js
 
 And here is a list of the files in the new plugin.
 
-
 ## index.html
 
 Let’s take a look at the `index.html`. The `index.html` is essentially your main function into the plugin. That means, you need to declare all of your dependencies here, such as CSS, fonts or javascript files. You can view the full source of the sample file [here.](https://github.com/Airbitz/airbitz-plugins/tree/master/plugins/blank/index.html). Let’s examine the file piece by piece.
@@ -2762,6 +2743,7 @@ Let’s take a look at the `index.html`. The `index.html` is essentially your ma
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```java
 // No content for this language. Select 'Javascript/HTML` above
 ```
@@ -2774,12 +2756,12 @@ Let’s take a look at the `index.html`. The `index.html` is essentially your ma
 
 First up is the `<head>` tag. The head can contain whatever you want, in this case its just a reference to our `style.css` but other references or javascript files can be included. The build system will automatically inline them into the final build.
 
-
 ### `<body>` tag
 
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```java
 // No content for this language. Select 'Javascript/HTML` above
 ```
@@ -2801,6 +2783,7 @@ Next up is the `<body>` tag. To keep things simple you can add your UI directly 
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```java
 // No content for this language. Select 'Javascript/HTML` above
 ```
@@ -2819,15 +2802,16 @@ Next up is the `<body>` tag. To keep things simple you can add your UI directly 
 
 At the bottom of the `<body>` tag, we can include other dependencies such as all our javascript libraries. Its important to include `abc.js` which will give you access to the Airbitz wallet functionality.
 
-
 ## script.js
 
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```java
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```javascript
 $(function() {
   Airbitz.ui.title('Blank Plugin');
@@ -2860,6 +2844,7 @@ The `script.js` calls into the Airbitz core in a few ways. First it calls `Airbi
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```java
 // No content for this language. Select 'Javascript/HTML` above
 ```
@@ -2910,6 +2895,7 @@ Follow the README instructions in `airbitz-android-gui` to make sure you can bui
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```java
 // No content for this language. Select 'Javascript/HTML` above
 ```
@@ -2929,12 +2915,11 @@ Now we need to modify the native code. In your favorite editor open `java/com/ai
 
 ### Build and Run the Airbitz app
 
-Now that all the code is in place we can build the plugin, then the Airbitz app, and run your plugin. 
+Now that all the code is in place we can build the plugin, then the Airbitz app, and run your plugin.
 
 `./gradlew buildAirbitzPlugins installDevelopDebug`
 
 Last, launch the app, login, navigate to Buy/Sell and launch your plugin.
-
 
 ## iOS
 
@@ -2947,6 +2932,7 @@ Follow the README instructions in `airbitz-ios-gui` to make sure you can build t
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```java
 // No content for this language. Select 'Javascript/HTML` above
 ```
@@ -2984,6 +2970,7 @@ To submit your plugin for inclusion in Airbitz, submit a pull request for the ch
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```java
 // No content for this language. Select 'Javascript/HTML` above
 ```
@@ -3008,13 +2995,14 @@ The ABCWallet object represents a single BIP32 HD wallet in the user's Airbitz a
 | currencyCode | <code>Number</code> | Wallet ISO currency code number |
 | balance | <code>Number</code> | Wallet balance in satoshis |
 
-
 ## Airbitz Core
+
 ### getSelectedWallet
 
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```java
 // No content for this language. Select 'Javascript/HTML` above
 ```
@@ -3026,7 +3014,7 @@ Airbitz.core.getSelectedWallet(callback)
 
 Airbitz.core.getSelectedWallet(function (response){
   console.log("Wallet name: " + response['name'])
-  console.log("Wallet balance in satoshis: " + response['balance'])  
+  console.log("Wallet balance in satoshis: " + response['balance'])
 });
 ```
 
@@ -3042,6 +3030,7 @@ Returns the user’s currently selected wallet as the first parameter of the cal
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```java
 // No content for this language. Select 'Javascript/HTML` above
 ```
@@ -3053,12 +3042,11 @@ Airbitz.core.setupWalletChangeListener(callback)
 
 Airbitz.core.setupWalletChangeListener(function (response){
   console.log("Wallet name: " + response['name'])
-  console.log("Wallet balance in satoshis: " + response['balance'])  
+  console.log("Wallet balance in satoshis: " + response['balance'])
 });
 ```
 
 Callback is called when wallet is changed AND every time the plugin is initialized.
-
 
 | Response | Type | Description |
 | --- | --- | --- |
@@ -3066,10 +3054,10 @@ Callback is called when wallet is changed AND every time the plugin is initializ
 
 ### createReceiveRequest
 
-
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```java
 // No content for this language. Select 'Javascript/HTML` above
 ```
@@ -3092,15 +3080,17 @@ Airbitz.core.createReceiveRequest(wallet, {
     }
 });
 ```
-    
+
 > Response
- 
+
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```java
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```javascript
 {
     "address": "1PfLSCgMZdzHRKsQDSya6Pin3ugqLKri3n"
@@ -3132,9 +3122,11 @@ Create a receive request from the provided wallet. Returns an object with a bitc
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```java
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```javascript
 Airbitz.core.finalizeReceiveRequest(ABCWallet, address)
 
@@ -3158,7 +3150,6 @@ Airbitz.core.walletSelected({
 });
 ```
 
-
 | Param | Type | Description |
 | --- | --- | --- |
 | wallet | <code>ABCWallet</code> | Wallet to finalize receive request/address from |
@@ -3168,10 +3159,10 @@ Finalizing a request marks the address as used and it will not be used for futur
 
 ### createSpendRequest
 
-
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```java
 // No content for this language. Select 'Javascript/HTML` above
 ```
@@ -3197,15 +3188,17 @@ Airbitz.core.createSpendRequest(wallet, "12xZEQL72YnGEbtW7bA4FPA1BUEHkxQoWN", 12
     }
 });
 ```
-    
+
 > Response
- 
+
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```java
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```javascript
 {
     "back": false
@@ -3214,7 +3207,7 @@ Airbitz.core.createSpendRequest(wallet, "12xZEQL72YnGEbtW7bA4FPA1BUEHkxQoWN", 12
 
 Request that the user spends. This takes the user to the native spend confirmation screen so they can confirm the spend.
 
-The optional metadata given in 'options' such as 'label', 'category', and 'notes' will also be written for this transaction. 
+The optional metadata given in 'options' such as 'label', 'category', and 'notes' will also be written for this transaction.
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -3235,12 +3228,12 @@ The optional metadata given in 'options' such as 'label', 'category', and 'notes
 | success | <code>Function</code> | Success callback |
 | error | <code>Function</code> | Error callback |
 
-
 ### createSpendRequest2
 
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```java
 // No content for this language. Select 'Javascript/HTML` above
 ```
@@ -3250,8 +3243,8 @@ Airbitz.core.createSpendRequest2(wallet, address, amount, address2, amount2, opt
 
 // Example
 
-Airbitz.core.createSpendRequest2(wallet, 
-                                 "12xZEQL72YnGEbtW7bA4FPA1BUEHkxQoWN", 123000000, 
+Airbitz.core.createSpendRequest2(wallet,
+                                 "12xZEQL72YnGEbtW7bA4FPA1BUEHkxQoWN", 123000000,
                                  "1FSxyn9AbBMwGusKAFqvyS63763tM8KiA2", 312000000, {
     label: "Roger Mark",
     category: "Income:Consulting",
@@ -3268,15 +3261,17 @@ Airbitz.core.createSpendRequest2(wallet,
     }
 });
 ```
-    
+
 > Response
- 
+
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```java
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```javascript
 {
     "back": false
@@ -3308,10 +3303,10 @@ Request that the user spends to two different addresses with two different amoun
 
 ### writeData
 
-
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```java
 // No content for this language. Select 'Javascript/HTML` above
 ```
@@ -3335,10 +3330,10 @@ Securely persist data into the Airbitz core under this user's account. Only the 
 
 ### readData
 
-
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```java
 // No content for this language. Select 'Javascript/HTML` above
 ```
@@ -3356,7 +3351,8 @@ data = Airbitz.core.readData("userInfo")
 console.log(data) => { "name": "Joe",
                        "phone": "619-800-1234",
                        "age": 69 }
-```    
+```
+
 Read back data from the Airbitz core under this user's account. Only the current plugin will have access to that data. Data is fully encrypted and synchronized between devices that the user logs into.
 
 | Param | Type | Description |
@@ -3373,13 +3369,14 @@ Read back data from the Airbitz core under this user's account. Only the current
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```java
 // No content for this language. Select 'Javascript/HTML` above
 ```
 
 ```javascript
 Airbitz.core.clearData()
-```    
+```
 
 Clear all data in the Airbitz core, for the current plugin.
 
@@ -3388,6 +3385,7 @@ Clear all data in the Airbitz core, for the current plugin.
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```java
 // No content for this language. Select 'Javascript/HTML` above
 ```
@@ -3408,6 +3406,7 @@ Get the user’s currently selected BTC denomination. It can be BTC, mBTC or bit
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```java
 // No content for this language. Select 'Javascript/HTML` above
 ```
@@ -3432,13 +3431,14 @@ Formats satoshis to display to the user. This uses the user’s BTC denomination
 | --- | --- | --- |
 | amountString | <code>String</code> | Formatted denomination string |
 
-
 ## Airbitz Config
+
 ### get
 
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```java
 // No content for this language. Select 'Javascript/HTML` above
 ```
@@ -3468,6 +3468,7 @@ Fetch a configuration value. These are set in the native iOS/Android code, befor
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```java
 // No content for this language. Select 'Javascript/HTML` above
 ```
@@ -3475,25 +3476,23 @@ Fetch a configuration value. These are set in the native iOS/Android code, befor
 ```javascript
 Airbitz.ui.title(title)
 
-
 // Example
-
-s
 
 Airbitz.ui.title("Bob's Awesome Plugin");
 ```
+
 Set the title of the current view. This updates the native apps titlebar.
 
 | Param | Type | Description |
 | --- | --- | --- |
 | title | <code>String</code> | Title on navbar |
 
-
 ### showAlert
 
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```java
 // No content for this language. Select 'Javascript/HTML` above
 ```
@@ -3501,17 +3500,11 @@ Set the title of the current view. This updates the native apps titlebar.
 ```javascript
 Airbitz.ui.showAlert(title, message, options)
 
-
 // Example
-
-s
-
 Airbitz.ui.showAlert("Account creation error", "Error creating account. Please try again later");
 
 Airbitz.ui.showAlert("Creating account", "Please wait...", {"showSpinner": true});
-
 ```
-
 
 Launches a native alert dialog. Alert will automatically fade when tapped or after ~6 seconds unless the showSpinner option is given.
 
@@ -3530,14 +3523,13 @@ Launches a native alert dialog. Alert will automatically fade when tapped or aft
 ```objc
 // No content for this language. Select 'Javascript/HTML` above
 ```
+
 ```java
 // No content for this language. Select 'Javascript/HTML` above
 ```
 
 ```javascript
 Airbitz.ui.hideAlert()
-
 ```
 
 Hides any currently displaying alert from showAlert
-

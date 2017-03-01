@@ -7,7 +7,7 @@ language_tabs:
   - java: Java/Android
 
 toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
+  - <a href='https://developer.airbitz.co'>Sign Up for a Developer Key</a>
 
 includes:
   - errors
@@ -34,8 +34,7 @@ See the following Github repos for your various development environments. Instal
 
 [Java/Android](https://github.com/Airbitz/airbitz-core-java)
 
-[React Native/Javascript](https://github.com/Airbitz/airbitz-core-react-native)
-
+[React Native/Javascript](https://github.com/Airbitz/airbitz-core-js)
 
 ## Include and initialize the SDK
 
@@ -87,7 +86,7 @@ Initialize and create an ABCContext object. Required for functionality of ABC SD
 | Param | Type | Description |
 | --- | --- | --- |
 | apiKey | `string` | Get an API Key from <https://developer.airbitz.co> |
-| type | `string` | Type of account that this application will be accessing. Type is of the format "account:repo:com.domain.app". At this moment, all types must begin with "account:repo:" and developers should add their reverse domain and application afterwards. This 'type' is what allows a singleSignOn login to access the same account object for this particular application. ie. User's using Edge Login (SingleSignOn) in application type "account:repo:com.domain.app" will get a different account repository when logged into an app with type "account:repo:com.domain2.app". |
+| type | `string` | Type of account that this application will be accessing. Type is of the format `"account:repo:com.domain.app"`. At this moment, all types must begin with "account:repo:" and developers should add their reverse domain and application afterwards. This 'type' is what allows a singleSignOn login to access the same account object for this particular application. ie. User's using Edge Login (SingleSignOn) in application type `"account:repo:com.domain.app"` will get a different account repository when logged into an app with type `"account:repo:com.domain2.app"`. |
 | hbitsKey | `string` | (Optional) Unique key used to encrypt private keys for use as implementation specific "gift cards" that are only redeemable by applications using this implementation.|
 | callback | `Callback` | (Javascript) Callback function when routine completes |
 

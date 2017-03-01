@@ -596,6 +596,13 @@ html, body {
 }
 
 @media (max-width: $phone-width) {
+  table {
+    padding: 0 !important;
+  }
+  code {
+    word-break: break-all;
+    hyphens: auto;
+  }
   .dark-box {
     display: none;
   }

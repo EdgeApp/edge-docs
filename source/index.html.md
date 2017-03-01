@@ -86,15 +86,15 @@ Initialize and create an ABCContext object. Required for functionality of ABC SD
 
 | Param | Type | Description |
 | --- | --- | --- |
-| apiKey | <code>string</code> | Get an API Key from https://developer.airbitz.co |
-| type | <code>string</code> | Type of account that this application will be accessing. Type is of the format "account:repo:com.domain.app". At this moment, all types must begin with "account:repo:" and developers should add their reverse domain and application afterwards. This 'type' is what allows a singleSignOn login to access the same account object for this particular application. ie. User's using Edge Login (SingleSignOn) in application type "account:repo:com.domain.app" will get a different account repository when logged into an app with type "account:repo:com.domain2.app". |
-| hbitsKey | <code>string</code> | (Optional) Unique key used to encrypt private keys for use as implementation specific "gift cards" that are only redeemable by applications using this implementation.|
-| callback | <code>Callback</code> | (Javascript) Callback function when routine completes |
+| apiKey | `string` | Get an API Key from <https://developer.airbitz.co> |
+| type | `string` | Type of account that this application will be accessing. Type is of the format "account:repo:com.domain.app". At this moment, all types must begin with "account:repo:" and developers should add their reverse domain and application afterwards. This 'type' is what allows a singleSignOn login to access the same account object for this particular application. ie. User's using Edge Login (SingleSignOn) in application type "account:repo:com.domain.app" will get a different account repository when logged into an app with type "account:repo:com.domain2.app". |
+| hbitsKey | `string` | (Optional) Unique key used to encrypt private keys for use as implementation specific "gift cards" that are only redeemable by applications using this implementation.|
+| callback | `Callback` | (Javascript) Callback function when routine completes |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
-| context | <code>[ABCContext](##abccontext)</code> | Initialized context |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| context | [`ABCContext`](#abccontext) | Initialized context |
 
 ### createAccount
 
@@ -164,17 +164,17 @@ Create and log into a new ABCAccount
 
 | Param | Type | Description |
 | --- | --- | --- |
-| username | <code>string</code> | Account username |
-| password | <code>string</code> | Account password |
-| pin | <code>string</code> | Account PIN for fast re-login |
-| callbacks | <code>[ABCAccountCallbacks](#abcaccountcallbacks)</code> | (Javascript) Callback event routines |
-| delegate | <code>[ABCAccountDelegate](#abcaccountdelegate)</code> | (ObjC) Callback event delegates |
-| callback | <code>Callback</code> | Callback function when routine completes|
+| username | `string` | Account username |
+| password | `string` | Account password |
+| pin | `string` | Account PIN for fast re-login |
+| callbacks | [`ABCAccountCallbacks`](#abcaccountcallbacks) | (Javascript) Callback event routines |
+| delegate | [`ABCAccountDelegate`](#abcaccountdelegate) | (ObjC) Callback event delegates |
+| callback | `Callback` | Callback function when routine completes|
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | Error object. Null if no error |
-| account | <code>[ABCAccount](#abcaccount)</code> | Initialized account |
+| error | [`ABCError`](#abcerror) | Error object. Null if no error |
+| account | [`ABCAccount`](#abcaccount) | Initialized account |
 
 ### getLocalAccount
 
@@ -197,15 +197,15 @@ Get local account details for a previously logged in account. This returns an AB
 
 | Param | Type | Description |
 | --- | --- | --- |
-| username | <code>string</code> | Account username |
-| callbacks | <code>[ABCAccountCallbacks](#abcaccountcallbacks)</code> | (Javascript) Callback event routines |
-| delegate | <code>[ABCAccountDelegate](#abcaccountdelegate)</code> | (ObjC) Callback event delegates |
-| callback | <code>Callback</code> | Callback function when routine completes |
+| username | `string` | Account username |
+| callbacks | [`ABCAccountCallbacks`](#abcaccountcallbacks) | (Javascript) Callback event routines |
+| delegate | [`ABCAccountDelegate`](#abcaccountdelegate) | (ObjC) Callback event delegates |
+| callback | `Callback` | Callback function when routine completes |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | Error object. Null if no error |
-| account | <code>[ABCAccount](#abcaccount)</code> | Initialized account |
+| error | [`ABCError`](#abcerror) | Error object. Null if no error |
+| account | [`ABCAccount`](#abcaccount) | Initialized account |
 
 ### loginWithPassword
 
@@ -266,17 +266,17 @@ The otpResetToken is only returned if the caller has provided the correct userna
 
 | Param | Type | Description |
 | --- | --- | --- |
-| username | <code>string</code> | Account username |
-| password | <code>string</code> | Account password |
-| otp | <code>string</code> | (Optional) OTP key retrieved from getOTPLocalKey |
-| callbacks | <code>[ABCAccountCallbacks](#abcaccountcallbacks)</code> | (Javascript) Callback event routines |
-| delegate | <code>[ABCAccountDelegate](#abcaccountdelegate)</code> | (ObjC) Callback event delegates |
-| callback | <code>Callback</code> | Callback function when routine completes |
+| username | `string` | Account username |
+| password | `string` | Account password |
+| otp | `string` | (Optional) OTP key retrieved from getOTPLocalKey |
+| callbacks | [`ABCAccountCallbacks`](#abcaccountcallbacks) | (Javascript) Callback event routines |
+| delegate | [`ABCAccountDelegate`](#abcaccountdelegate) | (ObjC) Callback event delegates |
+| callback | `Callback` | Callback function when routine completes |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | Error object. Null if no error |
-| account | <code>[ABCAccount](#abcaccount)</code> | Initialized account |
+| error | [`ABCError`](#abcerror) | Error object. Null if no error |
+| account | [`ABCAccount`](#abcaccount) | Initialized account |
 
 ### loginWithPIN
 
@@ -323,16 +323,16 @@ Login to an Airbitz account with PIN. Used to sign into devices that have previo
 
 | Param | Type | Description |
 | --- | --- | --- |
-| username | <code>string</code> | Account username |
-| pin | <code>string</code> | Account PIN for fast re-login |
-| callbacks | <code>[ABCAccountCallbacks](#abcaccountcallbacks)</code> | (Javascript) Callback event routines |
-| delegate | <code>[ABCAccountDelegate](#abcaccountdelegate)</code> | (ObjC) Callback event delegates |
-| callback | <code>Callback</code> | Callback function when routine completes|
+| username | `string` | Account username |
+| pin | `string` | Account PIN for fast re-login |
+| callbacks | [`ABCAccountCallbacks`](#abcaccountcallbacks) | (Javascript) Callback event routines |
+| delegate | [`ABCAccountDelegate`](#abcaccountdelegate) | (ObjC) Callback event delegates |
+| callback | `Callback` | Callback function when routine completes|
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | Error object. Null if no error |
-| account | <code>[ABCAccount](#abcaccount)</code> | Initialized account |
+| error | [`ABCError`](#abcerror) | Error object. Null if no error |
+| account | [`ABCAccount`](#abcaccount) | Initialized account |
 
 
 ### accountHasPassword
@@ -367,13 +367,13 @@ Check if specified username has a password on the account or if it is a PIN-only
 
 | Param | Type | Description |
 | --- | --- | --- |
-| username | <code>string</code> | Account username |
-| callback | <code>Callback</code> | (Javascript) Callback function when routine completes |
+| username | `string` | Account username |
+| callback | `Callback` | (Javascript) Callback function when routine completes |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | Error object. Null if no error |
-| hasPassword | <code>Boolean</code> | True if account has a password |
+| error | [`ABCError`](#abcerror) | Error object. Null if no error |
+| hasPassword | `Boolean` | True if account has a password |
 
 
 ### deleteLocalAccount
@@ -404,13 +404,13 @@ Deletes named account from local device. Account is recoverable if it contains a
 
 | Param | Type | Description |
 | --- | --- | --- |
-| username | <code>string</code> | Account username |
-| callback | <code>Callback</code> | (Javascript) Callback function when routine completes |
+| username | `string` | Account username |
+| callback | `Callback` | (Javascript) Callback function when routine completes |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | Error object. Null if no error |
-| hasPassword | <code>Boolean</code> | True if account has a password |
+| error | [`ABCError`](#abcerror) | Error object. Null if no error |
+| hasPassword | `Boolean` | True if account has a password |
 
 ### pinLoginEnabled
 
@@ -437,13 +437,13 @@ Checks if PIN login is possible for the given username. This checks if there is 
 
 | Param | Type | Description |
 | --- | --- | --- |
-| username | <code>String</code> | Account username |
-| callback | <code>Callback</code> | (Javascript) Callback function when routine completes|
+| username | `String` | Account username |
+| callback | `Callback` | (Javascript) Callback function when routine completes|
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | Error object. Null if no error |
-| enabled | <code>Boolean</code> | True if PIN login is enabled |
+| error | [`ABCError`](#abcerror) | Error object. Null if no error |
+| enabled | `Boolean` | True if PIN login is enabled |
 
 ### listUsernames
 
@@ -473,12 +473,12 @@ Get a list of previously logged in usernames on this device
 
 | Param | Type | Description |
 | --- | --- | --- |
-| callback | <code>Callback</code> | (Javascript) Callback function when routine completes|
+| callback | `Callback` | (Javascript) Callback function when routine completes|
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | Error object. Null if no error |
-| usernames | <code>Array</code> | Array |
+| error | [`ABCError`](#abcerror) | Error object. Null if no error |
+| usernames | `Array` | Array |
 
 ### usernameAvailable
 
@@ -505,13 +505,13 @@ Checks if PIN login is possible for the given username. This checks if there is 
 
 | Param | Type | Description |
 | --- | --- | --- |
-| username | <code>String</code> | Account username |
-| callback | <code>Callback</code> | (Javascript) Callback function when routine completes|
+| username | `String` | Account username |
+| callback | `Callback` | (Javascript) Callback function when routine completes|
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | Error object. Null if no error |
-| enabled | <code>Boolean</code> | True if PIN login is enabled |
+| error | [`ABCError`](#abcerror) | Error object. Null if no error |
+| enabled | `Boolean` | True if PIN login is enabled |
 
 
 ### requestOTPReset
@@ -547,13 +547,13 @@ To obtain an otpResetToken, attempt a login into the OTP protected account using
 
 | Param | Type | Description |
 | --- | --- | --- |
-| username | <code>String</code> | Account username |
-| otpResetToken | <code>String</code> | Reset token from loginWithPassword |
-| callback | <code>Callback</code> | (Javascript) Callback function when routine completes |
+| username | `String` | Account username |
+| otpResetToken | `String` | Reset token from loginWithPassword |
+| callback | `Callback` | (Javascript) Callback function when routine completes |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | Error object. Null if no error |
 
 ## ABCAccount
 
@@ -561,7 +561,7 @@ To obtain an otpResetToken, attempt a login into the OTP protected account using
 
 | Property | Type | Description |
 | --- | --- | --- |
-| username | <code>String</code> | Account username |
+| username | `String` | Account username |
 
 ### logout
 
@@ -579,8 +579,8 @@ Logout the currently logged in ABCAccount
 
 | Param | Type | Description |
 | --- | --- | --- |
-| account | <code>[ABCAccount](#abcaccount)</code> | Account object |
-| callback | <code>Callback</code> | (Javascript) Callback function |
+| account | [`ABCAccount`](#abcaccount) | Account object |
+| callback | `Callback` | (Javascript) Callback function |
 
 
 ### changePassword
@@ -616,12 +616,12 @@ Change the password of the currently logged in ABCAccount
 
 | Param | Type | Description |
 | --- | --- | --- |
-| password | <code>String</code> | Password string |
-| callback | <code>Callback</code> | Callback function |
+| password | `String` | Password string |
+| callback | `Callback` | Callback function |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | Error object. Null if no error |
 
 ### changePIN
 
@@ -656,12 +656,12 @@ Change the PIN of the currently logged in ABCAccount
 
 | Param | Type | Description |
 | --- | --- | --- |
-| pin | <code>String</code> | 4 digit PIN string|
-| callback | <code>Callback</code> | (Javascript/ObjC) Callback function |
+| pin | `String` | 4 digit PIN string|
+| callback | `Callback` | (Javascript/ObjC) Callback function |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | Error object. Null if no error |
 
 ### checkPassword
 
@@ -689,13 +689,13 @@ Checks if password is the correct password for this account
 
 | Param | Type | Description |
 | --- | --- | --- |
-| password | <code>string</code> | Account password |
-| callback | <code>Callback</code> | (Javascript) Callback function |
+| password | `string` | Account password |
+| callback | `Callback` | (Javascript) Callback function |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
-| passwordCorrect | <code>Boolean</code> | True if password is correct |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| passwordCorrect | `Boolean` | True if password is correct |
 
 ### enablePINLogin
 
@@ -723,12 +723,12 @@ Enable or disable PIN login on this account. Set enable = YES to allow PIN login
 
 | Param | Type | Description |
 | --- | --- | --- |
-| enable | <code>Boolean</code> | Set true to enable PIN login. False to disable |
-| callback | <code>Callback</code> | (Javascript) Callback function |
+| enable | `Boolean` | Set true to enable PIN login. False to disable |
+| callback | `Callback` | (Javascript) Callback function |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
 
 
 ### setupOTPKey
@@ -768,12 +768,12 @@ Device B can call getOTPLocalKey and Device A can add the OTP key using setupOTP
 
 | Param | Type | Description |
 | --- | --- | --- |
-| key | <code>String</code> | OTP key |
-| callback | <code>Callback</code> | (Javascript) Callback function |
+| key | `String` | OTP key |
+| callback | `Callback` | (Javascript) Callback function |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
 
 
 ### getOTPLocalKey
@@ -802,12 +802,12 @@ Gets the locally saved OTP key for the current user
 
 | Param | Type | Description |
 | --- | --- | --- |
-| callback | <code>Callback</code> | (Javascript) Callback function |
+| callback | `Callback` | (Javascript) Callback function |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
-| key | <code>String</code> | OTP key |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| key | `String` | OTP key |
 
 
 ### getOTPDetails
@@ -837,13 +837,13 @@ Reads the OTP configuration from the server. Gets information on whether OTP is 
 
 | Param | Type | Description |
 | --- | --- | --- |
-| callback | <code>Callback</code> | (Javascript) Callback function |
+| callback | `Callback` | (Javascript) Callback function |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
-| enabled | <code>Boolean</code> | True if OTP is enabled on this accout |
-| timeout | <code>Number</code> | Number seconds required after a reset is requested before OTP is disabled (iOS only. Android returns 0) |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| enabled | `Boolean` | True if OTP is enabled on this accout |
+| timeout | `Number` | Number seconds required after a reset is requested before OTP is disabled (iOS only. Android returns 0) |
 
 
 ### enableOTP
@@ -875,12 +875,12 @@ Sets up OTP authentication on the server for currently logged in user. This will
 
 | Param | Type | Description |
 | --- | --- | --- |
-| timeout | <code>Number</code> | Number seconds required after a reset is requested before OTP is disabled |
-| callback | <code>Callback</code> | (Javascript) Callback function |
+| timeout | `Number` | Number seconds required after a reset is requested before OTP is disabled |
+| callback | `Callback` | (Javascript) Callback function |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
 
 
 ### disableOTP
@@ -909,11 +909,11 @@ Removes the OTP authentication requirement from the server for the currently log
 
 | Param | Type | Description |
 | --- | --- | --- |
-| callback | <code>Callback</code> | (Javascript) Callback function |
+| callback | `Callback` | (Javascript) Callback function |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
 
 ### cancelOTPResetRequest
 
@@ -941,11 +941,11 @@ Removes the OTP reset request from the server for the currently logged in user. 
 
 | Param | Type | Description |
 | --- | --- | --- |
-| callback | <code>Callback</code> | (Javascript) Callback function |
+| callback | `Callback` | (Javascript) Callback function |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
 
 ### parseUri
 
@@ -959,11 +959,11 @@ console.log(abcParsedUri.paymentProtocolURL) // -> https://bitpay.com/i/7TEzdBg6
 
 | Param | Type | Description |
 | --- | --- | --- |
-| uri | <code>String</code> | URI to parse |
+| uri | `String` | URI to parse |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| abcParsedUri | <code>[ABCParsedUri](#abcparseduri)</code> | Object with parsed parameters |
+| abcParsedUri | [`ABCParsedUri`](#abcparseduri) | Object with parsed parameters |
 
 Parses a URI extracting various elements into an [ABCParsedUri](#abcparseduri) object
 
@@ -999,14 +999,14 @@ Sign an arbitrary message with a BitID URI. The URI determines the key derivatio
 
 | Param | Type | Description |
 | --- | --- | --- |
-| url | <code>String</code> | URI used to derive the private key to do the signature |
-| message | <code>String</code> | Message to sign |
-| callback | <code>Callback</code> | (Javascript) Callback function |
+| url | `String` | URI used to derive the private key to do the signature |
+| message | `String` | Message to sign |
+| callback | `Callback` | (Javascript) Callback function |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
-| abcSignature | <code>[ABCBitIDSignature](#ABCBitIDSignature)</code> | BitID Signature Object |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| abcSignature | [`ABCBitIDSignature`](#ABCBitIDSignature) | BitID Signature Object |
 
 ### createWallet
 
@@ -1028,21 +1028,21 @@ Create a new [ABCWallet](#abcwallet) object and add it to the current account. E
 
 | Param | Type | Description |
 | --- | --- | --- |
-| walletType | <code>String</code> | Wallet type corresponding to the one of the following below |
-| callback | <code>Callback</code> | (Javascript) Callback function |
+| walletType | `String` | Wallet type corresponding to the one of the following below |
+| callback | `Callback` | (Javascript) Callback function |
 
 | Callback Params | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
-| id | <code>String</code> | Strings of wallet ID |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| id | `String` | Strings of wallet ID |
 
 | Wallet Type | Key Name | Description |
 | --- | --- | --- |
-| <code>wallet:repo:bitcoin</code> | <code>bitcoinKey</code> | HD BIP32 bitcoin wallet with base16 private key |
-| <code>wallet:repo:ethereum</code> | <code>ethereumKey</code> | Single address ethereum wallet with base16 private key
-| <code>wallet:repo:bitcoin-bip44</code> | <code>bitcoinKey-BIP44</code> | HD BIP44 bitcoin wallet with 24 word mnemonic master private key |
-| <code>wallet:repo:bitcoin-bip44-multisig</code> | <code>bitcoinKey-BIP44</code> | HD BIP44 bitcoin wallet with 24 word mnemonic master private key and upto 15 of 15 multisig support |
-| <code>wallet:repo:com.mydomain.myapp.myDataStoreType</code> | <code>NULL</code> | Generic data store for your app |
+| `wallet:repo:bitcoin` | `bitcoinKey` | HD BIP32 bitcoin wallet with base16 private key |
+| `wallet:repo:ethereum` | `ethereumKey` | Single address ethereum wallet with base16 private key
+| `wallet:repo:bitcoin-bip44` | `bitcoinKey-BIP44` | HD BIP44 bitcoin wallet with 24 word mnemonic master private key |
+| `wallet:repo:bitcoin-bip44-multisig` | `bitcoinKey-BIP44` | HD BIP44 bitcoin wallet with 24 word mnemonic master private key and upto 15 of 15 multisig support |
+| `wallet:repo:com.mydomain.myapp.myDataStoreType` | `NULL` | Generic data store for your app |
 
 Please contact developer@airbitz.co for the addition of new wallet types.
 
@@ -1056,7 +1056,7 @@ Get an array list of wallet IDs in the current account
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| walletIds | <code>Array</code> | Array of strings of wallet IDs |
+| walletIds | `Array` | Array of strings of wallet IDs |
 
 ### getWallet
 
@@ -1071,11 +1071,11 @@ Get an [ABCWallet](#abcwallet) object given a `walletId`
 
 | Param | Type | Description |
 | --- | --- | --- |
-| walletId | <code>String</code> | Wallet ID from listWallets. NULL if no matching wallet |
+| walletId | `String` | Wallet ID from listWallets. NULL if no matching wallet |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| abcWallet | <code>[ABCWallet](#abcwallet)</code> | [ABCWallet](#abcwallet) object |
+| abcWallet | [`ABCWallet`](#abcwallet) | [ABCWallet](#abcwallet) object |
 
 ### getFirstWallet
 
@@ -1090,12 +1090,12 @@ Get the first [ABCWallet](#abcwallet) object of type `walletType`
 
 | Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
-| walletType | <code>String</code> | Wallet type |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| walletType | `String` | Wallet type |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| abcWallet | <code>[ABCWallet](#abcwallet)</code> | (Javascript) Error object. Null if no error |
+| abcWallet | [`ABCWallet`](#abcwallet) | (Javascript) Error object. Null if no error |
 
 ### shareWallet (proposal)
 
@@ -1116,13 +1116,13 @@ abcAccount.importWallet(shareWalletToken, function(error, abcWallet) {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcWallet | <code>[ABCWallet](#abcwallet)</code> | Wallet to share |
-| callback | <code>Callback</code> | (Javascript) Callback function |
+| abcWallet | [`ABCWallet`](#abcwallet) | Wallet to share |
+| callback | `Callback` | (Javascript) Callback function |
 
 | Callback Params | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
-| shareWalletToken | <code>String</code> | Token to use with [importWallet](#importWallet) |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| shareWalletToken | `String` | Token to use with [importWallet](#importWallet) |
 
 Provides a key that can given to another user/app to share a wallet with that account.
 
@@ -1145,13 +1145,13 @@ abcAccount.importWallet(shareWalletToken, function(error, abcWallet) {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| shareWalletToken | <code>String</code> | Token to use with [importWallet](#importwallet) |
-| callback | <code>Callback</code> | (Javascript) Callback function |
+| shareWalletToken | `String` | Token to use with [importWallet](#importwallet) |
+| callback | `Callback` | (Javascript) Callback function |
 
 | Callback Params | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
-| shareWalletToken | <code>String</code> | Token from [shareWallet](#sharewallet) |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| shareWalletToken | `String` | Token from [shareWallet](#sharewallet) |
 
 Provides a key that can given to another user/app to share a wallet with that account.
 
@@ -1163,11 +1163,11 @@ Callback routines that notify application when various changes have occurred in 
 
 | Property | Type | Description |
 | --- | --- | --- |
-| abcAccountRemotePasswordChange | <code>Function</code> | Account password has been changed by a remote device. |
-| abcAccountLoggedOut | <code>Function</code> | Account has been logged out |
-| abcAccountOTPRequired | <code>Function</code> | Account has OTP enabled and this device does not have the correct OTP token |
-| abcAccountOTPSkew | <code>Function</code> | Account has OTP enabled and this device has a time skew with the server |
-| abcAccountAccountChanged | <code>Function</code> | Account dataStore has changed |
+| abcAccountRemotePasswordChange | `Function` | Account password has been changed by a remote device. |
+| abcAccountLoggedOut | `Function` | Account has been logged out |
+| abcAccountOTPRequired | `Function` | Account has OTP enabled and this device does not have the correct OTP token |
+| abcAccountOTPSkew | `Function` | Account has OTP enabled and this device has a time skew with the server |
+| abcAccountAccountChanged | `Function` | Account dataStore has changed |
 
 ## ABCBitIDSignature
 
@@ -1175,8 +1175,8 @@ Callback routines that notify application when various changes have occurred in 
 
 | Property | Type | Description |
 | --- | --- | --- |
-| address | <code>String</code> | Public address of private key used to sign |
-| signature | <code>String</code> | Public address of private key used to sign |
+| address | `String` | Public address of private key used to sign |
+| signature | `String` | Public address of private key used to sign |
 
 ## ABCWallet
 
@@ -1184,13 +1184,13 @@ Callback routines that notify application when various changes have occurred in 
 
 | Property | Type | Description |
 | --- | --- | --- |
-| walletId | <code>String</code> | Unique ID for wallet |
-| walletName | <code>String</code> | Human readable name of wallet |
-| walletType | <code>String</code> | Type of wallet as specified in [createWallet](#createWallet)
-| keys | <code>Object</code> | Object with keys placed at createWallet time |
-| dataStore | <code>[ABCDataStore](#abcdatastore)</code> | [ABCDataStore](#abcdatastore) object. This datastore object is encrypted by default, backed up to the cloud, and synchronized with any device the user logs into. Data modifications are versioned and can be rolled back but this functionality is not yet exposed via API. dataStore object may NULL if parent [ABCAccount](#abcaccount) has not been logged into yet |
-| localDataStore | <code>[ABCDataStore](#abcdatastore)</code> | [ABCDataStore](#abcdatastore) object that only exists on the current device. This data is not encrypted nor backed up. Not to be used for sensitive data but rather as a local cache of network data. Data is not version controlled and has no rollback capability. Common use case will be for local device specific wallet settings, blockchain cache information, and public address cache for use when account/wallet has not yet been decrypted (background processing) |
-| tx | <code>[ABCWalletTx](#abcwallettx)</code> | Optional and may be null. Exposes transactional functionality for this wallet. Requires addTxFunctionality to be called |
+| walletId | `String` | Unique ID for wallet |
+| walletName | `String` | Human readable name of wallet |
+| walletType | `String` | Type of wallet as specified in [createWallet](#createWallet)
+| keys | `Object` | Object with keys placed at createWallet time |
+| dataStore | [`ABCDataStore`](#abcdatastore) | [ABCDataStore](#abcdatastore) object. This datastore object is encrypted by default, backed up to the cloud, and synchronized with any device the user logs into. Data modifications are versioned and can be rolled back but this functionality is not yet exposed via API. dataStore object may NULL if parent [ABCAccount](#abcaccount) has not been logged into yet |
+| localDataStore | [`ABCDataStore`](#abcdatastore) | [ABCDataStore](#abcdatastore) object that only exists on the current device. This data is not encrypted nor backed up. Not to be used for sensitive data but rather as a local cache of network data. Data is not version controlled and has no rollback capability. Common use case will be for local device specific wallet settings, blockchain cache information, and public address cache for use when account/wallet has not yet been decrypted (background processing) |
+| tx | [`ABCWalletTx`](#abcwallettx) | Optional and may be null. Exposes transactional functionality for this wallet. Requires addTxFunctionality to be called |
 
 ### renameWallet
 
@@ -1208,12 +1208,12 @@ abcWallet.renameWallet("My Wallet", function (error) {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| name | <code>String</code> | New wallet name |
-| callback | <code>Callback</code> | (Javascript) Callback function |
+| name | `String` | New wallet name |
+| callback | `Callback` | (Javascript) Callback function |
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
 
 Returns a list of transactions in the current wallet. Transactions are returned ordered from newest to oldest.
 
@@ -1249,21 +1249,21 @@ abcWallet.addTxFunctionality(abcWalletTxLibrary, callbacks, function (error) {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcWalletTxLibrary | <code>[ABCWalletTxLibrary](#abcwallettxlibrary)</code> | Object that exposes the [ABCWalletTxLibrary](#abcwallettxlibrary) functions |
-| callbacks | <code>Object</code> | Object with callback functions |
-| callback | <code>Function</code> | (Javascript) Callback function |
+| abcWalletTxLibrary | [`ABCWalletTxLibrary`](#abcwallettxlibrary) | Object that exposes the [ABCWalletTxLibrary](#abcwallettxlibrary) functions |
+| callbacks | `Object` | Object with callback functions |
+| callback | `Function` | (Javascript) Callback function |
 
 | Callback name | Type | Description |
 | --- | --- | --- |
-| abcWalletTxAddressesChecked(ABCWalletTx, progressRatio) | <code>Function</code> | Wallet has been fully updated with latest transactions from the network |
-| abcWalletTxBalanceChanged(ABCWalletTx) | <code>Function</code> | Wallet balance has changed due to transactions already detected from other devices, from new transactions, or from dropped transactions |
-| abcWalletTxNewTransactions(Array) | <code>Function</code> | Array of new ABCTransaction objects. These are new funds that the GUI should show as a notificatino to the user |
-| abcWalletTxTransactionsChanged(Array) | <code>Function</code> | Array of ABCTransaction objects. These transactions are either previously recognized funds from a new device that have now synced to this device, or updates to previously seen transactions such as a change in the block number this transaction was confirmed in. |
-| abcWalletTxBlockHeightChanged(ABCWalletTx, height) | <code>Function</code> | Blockchain height changed. This is unused for sub wallets |
+| abcWalletTxAddressesChecked(ABCWalletTx, progressRatio) | `Function` | Wallet has been fully updated with latest transactions from the network |
+| abcWalletTxBalanceChanged(ABCWalletTx) | `Function` | Wallet balance has changed due to transactions already detected from other devices, from new transactions, or from dropped transactions |
+| abcWalletTxNewTransactions(Array) | `Function` | Array of new ABCTransaction objects. These are new funds that the GUI should show as a notificatino to the user |
+| abcWalletTxTransactionsChanged(Array) | `Function` | Array of ABCTransaction objects. These transactions are either previously recognized funds from a new device that have now synced to this device, or updates to previously seen transactions such as a change in the block number this transaction was confirmed in. |
+| abcWalletTxBlockHeightChanged(ABCWalletTx, height) | `Function` | Blockchain height changed. This is unused for sub wallets |
 
 | Callback Params | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
 
 Adds send/receive transaction capability for a specific currency to a wallet. An [ABCWalletTxLibrary](#abcwallettxlibrary) object must be passed in that exposes the entire [ABCWalletTxLibrary](#abcwallettxlibrary) interface. Airbitz includes support for bitcoin transactions through the [`airbitz-core-js-bitcoin`](https://github.com/Airbitz/airbitz-core-js-bitcoin) repository. Once called, the ABCWallet object will expose the [ABCWalletTx](#abcwallettx) interface at [ABCWallet.tx](#abcwallettx). Once the callback returns, ABCWallet.tx will be accessible with previously saved transactions and dataStores.
 
@@ -1287,14 +1287,14 @@ abcWallet.dataStore.writeData("userAddress",
 
 | Param | Type | Description |
 | --- | --- | --- |
-| folder | <code>String</code> | Name of folder for data store |
-| key | <code>String</code> | Name of data key |
-| value | <code>String</code> | data value |
-| callback | <code>Function</code> | (Javascript) Callback function |
+| folder | `String` | Name of folder for data store |
+| key | `String` | Name of data key |
+| value | `String` | data value |
+| callback | `Function` | (Javascript) Callback function |
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
 
 Writes a string of data to the specified dataStore folder using the given key. `folder` must not include the characters "/". The dataStore object at this point only provides a single depth folder for storing key/value pairs. Keys can be enumerated using the [ABCDataStore.listKeys](#listkeys) method. Data can read back using the [ABCDataStore.readData](#readdata) method.
 
@@ -1315,14 +1315,14 @@ abcWallet.dataStore.readData("userAddress",
 
 | Param | Type | Description |
 | --- | --- | --- |
-| folder | <code>String</code> | Name of folder for data store |
-| key | <code>String</code> | Name of data key |
-| callback | <code>Callback</code> | (Javascript) Callback function |
+| folder | `String` | Name of folder for data store |
+| key | `String` | Name of data key |
+| callback | `Callback` | (Javascript) Callback function |
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
-| value | <code>String</code> | data value |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| value | `String` | data value |
 
 Reads back a string of data from the specified dataStore folder using the given key. `folder` must not include the characters "/". The dataStore object at this point only provides a single depth folder for storing key/value pairs. Keys can be enumerated using the [ABCDataStore.listKeys](#listkeys) method.
 
@@ -1343,13 +1343,13 @@ abcWallet.dataStore.removeKey("userAddress",
 
 | Param | Type | Description |
 | --- | --- | --- |
-| folder | <code>String</code> | Name of folder for data store |
-| key | <code>String</code> | Name of data key |
-| callback | <code>Callback</code> | (Javascript) Callback function |
+| folder | `String` | Name of folder for data store |
+| key | `String` | Name of data key |
+| callback | `Callback` | (Javascript) Callback function |
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
 
 Removes the specified key/value pair from the dataStore.
 
@@ -1369,12 +1369,12 @@ abcWallet.dataStore.removeFolder("userAddress",
 
 | Param | Type | Description |
 | --- | --- | --- |
-| folder | <code>String</code> | Name of folder for data store |
-| callback | <code>Callback</code> | (Javascript) Callback function |
+| folder | `String` | Name of folder for data store |
+| callback | `Callback` | (Javascript) Callback function |
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
 
 Removes the specified folder from the dataStore. All key/value pairs in the folder will also be removed.
 
@@ -1393,13 +1393,13 @@ abcWallet.dataStore.listKeys("userAddress",
 
 | Param | Type | Description |
 | --- | --- | --- |
-| folder | <code>String</code> | Name of folder for data store |
-| callback | <code>Callback</code> | (Javascript) Callback function |
+| folder | `String` | Name of folder for data store |
+| callback | `Callback` | (Javascript) Callback function |
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
-| keys | <code>Array</code> | Array of strings of keys in folder |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| keys | `Array` | Array of strings of keys in folder |
 
 List the keys in the specified folder
 
@@ -1419,10 +1419,10 @@ Each ABCWalletTx represents a single or HD cryptocurrency wallet tied to one spe
 
 | Property | Type | Description |
 | --- | --- | --- |
-| abcWallet | <code>[ABCWallet](#abcwallet)</code> | Parent [ABCWallet](#abcwallet) object |
-| fiatCurrencyCode | <code>String</code> | 3 character fiat currency code |
-| cryptoCurrencyCodes | <code>Array</code> | Array of Strings of crypto currency code. ie "BTC" |
-| primaryCryptoCurrencyCode | <code>String</code> | String of primary crypto currency code. ie "BTC". Other codes in `cryptoCurrencyCodes` will reference meta-tokens of this currency's blockchain. |
+| abcWallet | [`ABCWallet`](#abcwallet) | Parent [ABCWallet](#abcwallet) object |
+| fiatCurrencyCode | `String` | 3 character fiat currency code |
+| cryptoCurrencyCodes | `Array` | Array of Strings of crypto currency code. ie "BTC" |
+| primaryCryptoCurrencyCode | `String` | String of primary crypto currency code. ie "BTC". Other codes in `cryptoCurrencyCodes` will reference meta-tokens of this currency's blockchain. |
 
 ### setupContract
 
@@ -1453,11 +1453,11 @@ const balance = abcWallet.tx.getBalance("BTC")
 
 | Param | Type | Description |
 | --- | --- | --- |
-| currencyCode | <code>String</code> | Selects which currency to return a balance for. If NULL, returns the balance of the primary currency of the wallet's blockchain. ie. "BTC" or "ETH" |
+| currencyCode | `String` | Selects which currency to return a balance for. If NULL, returns the balance of the primary currency of the wallet's blockchain. ie. "BTC" or "ETH" |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| balance | <code>Int</code> | Wallet balance in smallest unit of currency. ie Satoshis |
+| balance | `Int` | Wallet balance in smallest unit of currency. ie Satoshis |
 
 Gets the current balance of the wallet denominated in the smallest unit of the currency. ie. Unit of satoshis for the currency bitcoin.
 
@@ -1490,22 +1490,22 @@ const abcTransactions = abcWallet.tx.getTransactions(options, function(error, ab
 
 | Param | Type | Description |
 | --- | --- | --- |
-| options | <code>Object</code> | May be NULL which will return all transactions |
+| options | `Object` | May be NULL which will return all transactions |
 
 | Option Params | Type | Description |
 | --- | --- | --- |
-| startIndex | <code>Int</code> | Index into the full list of transactions. If unspecified, no transactions are filtered and search passes on to `startDate`. Index 0 refers to the most recent transaction. |
-| startEntries | <code>Int</code> | Number of entries to return from start of index. `startIndex` must be specified |
-| startDate | <code>Date</code> | Date object, in local time, when to start returning transactions. If unspecified, transactions are not filtered by date and search passes on to `searchString` |
-| endDate | <code>Date</code> | Date object, in local time, when to stop returning transactions. Must be later than `startDate` and `startDate` must be specified |
-| searchString | <code>String</code> | Include only transactions that have metaData that matches `searchString`. (Optional) |
-| returnIndex | <code>Int</code> | Index into the filtered list of transactions. If unspecified, no transactions are filtered and current results are returned.  Index 0 refers to the most recent transaction. |
-| returnEntries | <code>Int</code> | Number of entries to return from index of filtered transactions. `returnEntries` must be specified |
+| startIndex | `Int` | Index into the full list of transactions. If unspecified, no transactions are filtered and search passes on to `startDate`. Index 0 refers to the most recent transaction. |
+| startEntries | `Int` | Number of entries to return from start of index. `startIndex` must be specified |
+| startDate | `Date` | Date object, in local time, when to start returning transactions. If unspecified, transactions are not filtered by date and search passes on to `searchString` |
+| endDate | `Date` | Date object, in local time, when to stop returning transactions. Must be later than `startDate` and `startDate` must be specified |
+| searchString | `String` | Include only transactions that have metaData that matches `searchString`. (Optional) |
+| returnIndex | `Int` | Index into the filtered list of transactions. If unspecified, no transactions are filtered and current results are returned.  Index 0 refers to the most recent transaction. |
+| returnEntries | `Int` | Number of entries to return from index of filtered transactions. `returnEntries` must be specified |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
-| transactions | <code>ABCTransaction</code> | Array of [ABCTransaction](#abctransaction) objects |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| transactions | `ABCTransaction` | Array of [ABCTransaction](#abctransaction) objects |
 
 Returns a list of transactions in the current wallet. Options allow pruning of the search to a subset of the transactions in addition to string filtering. Options are applied in the following order:
 
@@ -1529,11 +1529,11 @@ const height = abcWallet.tx.getBlockHeight()
 
 | Param | Type | Description |
 | --- | --- | --- |
-| void | <code>Void</code> | none |
+| void | `Void` | none |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| height | <code>Int</code> | Block height of current wallet |
+| height | `Int` | Block height of current wallet |
 
 Gets the current blockchain height of the wallet's cryptocurrency. This is expected to be the same value for all meta-tokens in this wallet and hence does not require a currencyCode index.
 
@@ -1582,19 +1582,19 @@ const abcReceiveAddress = abcWallet.tx.getReceiveAddress(options, , function (er
 
 | Param | Type | Description |
 | --- | --- | --- |
-| options |  <code>Object</code> | Options object. See below
-| callback | <code>Callback</code> | (Javascript) Callback function |
+| options |  `Object` | Options object. See below
+| callback | `Callback` | (Javascript) Callback function |
 
 | Options Param | Type | Description |
 | --- | --- | --- |
-| currencyCode | <code>String</code> | (Optional) Chooses the currency or meta-token to get an address for. If not specified, uses the primary currency of this wallet |
-| publicAddress | <code>String</code> | (Optional) Get an ABCReceiveAddress object using a previously returned public address. If `publicAddress` is set, `addressTag` must be null or unspecified |
-| addressTag | <code>String</code> | (Optional) Arbitrary tag for this specific address request type. Future calls to getReceiveAddress with the same tag will return the same address as the previous call with the same tag unless that address has received funds. Useful for specifying a "display" address which is shown on screen but never used for email or SMS requests. Calling [lockReceiveAddress](#lockreceiveaddress) will cause this address to no longer be returned regardless of whether it has received funds. If `addressTag` is set, `publicAddress` must be null or unspecified |
+| currencyCode | `String` | (Optional) Chooses the currency or meta-token to get an address for. If not specified, uses the primary currency of this wallet |
+| publicAddress | `String` | (Optional) Get an ABCReceiveAddress object using a previously returned public address. If `publicAddress` is set, `addressTag` must be null or unspecified |
+| addressTag | `String` | (Optional) Arbitrary tag for this specific address request type. Future calls to getReceiveAddress with the same tag will return the same address as the previous call with the same tag unless that address has received funds. Useful for specifying a "display" address which is shown on screen but never used for email or SMS requests. Calling [lockReceiveAddress](#lockreceiveaddress) will cause this address to no longer be returned regardless of whether it has received funds. If `addressTag` is set, `publicAddress` must be null or unspecified |
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
-| abcReceiveAddress | <code>ABCReceiveAddress</code> | [ABCReceiveAddress](#abcreceiveaddress) |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| abcReceiveAddress | `ABCReceiveAddress` | [ABCReceiveAddress](#abcreceiveaddress) |
 
 Returns an [ABCReceiveAddress](#abcreceiveaddress) object. This routine is used to generate a new public address or return a previously request address object.  The `metadata` object
 
@@ -1643,7 +1643,7 @@ const qrCode = makeAddressQrCode(abcReceiveAddress)
 
 | Return | Type | Description |
 | --- | --- | --- |
-| qrCode | <code>String</code> | Base64 encoded image of addressUri |
+| qrCode | `String` | Base64 encoded image of addressUri |
 
 ### makeAddressUri
 
@@ -1653,7 +1653,7 @@ const qrCode = makeAddressUri(abcReceiveAddress)
 
 | Return | Type | Description |
 | --- | --- | --- |
-| addressUri | <code>String</code> | BIP21 or equivalent URI that encodes public address and optionally requested amount, name of requestor, and category of requested funds |
+| addressUri | `String` | BIP21 or equivalent URI that encodes public address and optionally requested amount, name of requestor, and category of requested funds |
 
 
 ### makeSpend
@@ -1739,11 +1739,11 @@ srcWallet.tx.signBroadcastAndSave(abcTransaction, function(error, abcTransaction
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcSpendInfo | <code>[ABCSpendInfo](#abcspendinfo)</code> | [ABCSpendInfo](#abcspendinfo) object with various parameters for a spend operation including output addresses, amounts, or payment protocol payment objects (BIP70) |
+| abcSpendInfo | [`ABCSpendInfo`](#abcspendinfo) | [ABCSpendInfo](#abcspendinfo) object with various parameters for a spend operation including output addresses, amounts, or payment protocol payment objects (BIP70) |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| abcTransaction | <code>[ABCTransaction](#abctransaction)</code> | Unsigned [ABCTransaction](#abctransaction) object |
+| abcTransaction | [`ABCTransaction`](#abctransaction) | Unsigned [ABCTransaction](#abctransaction) object |
 
 Creates an unsigned [ABCTransaction](#abctransaction) object which can be then be signed and broadcast to the network. Complete the spend by calling [ABCTransaction.signBroadcastAndSave](#signbroadcastandsave). Estimated fees can be determined by reading back [ABCTransaction.networkFee](#abctransaction)
 
@@ -1763,12 +1763,12 @@ abcWallet.tx.signTx(abcTransaction, function(error) {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcTransaction | <code>[ABCTransaction](#abctransaction)</code> | Unsigned [ABCTransaction](#abctransaction) object |
-| callback | <code>Callback</code> | (Javascript) Callback function |
+| abcTransaction | [`ABCTransaction`](#abctransaction) | Unsigned [ABCTransaction](#abctransaction) object |
+| callback | `Callback` | (Javascript) Callback function |
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
+| abcError | [`ABCError`](#abcerror) | [ABCError](#abcerror) object |
 
 Signs this [ABCTransaction](#abctransaction) object. Does not broadcast this to the blockchain or save it in the local transaction cache. [ABCTransaction](#abctransaction).txid is null until this routine is called.
 
@@ -1790,12 +1790,12 @@ abcWallet.tx.broadcastTx(abcTransaction, function(error) {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcTransaction | <code>[ABCTransaction](#abctransaction)</code> | Signed [ABCTransaction](#abctransaction) object |
-| callback | <code>Callback</code> | (Javascript) Callback function |
+| abcTransaction | [`ABCTransaction`](#abctransaction) | Signed [ABCTransaction](#abctransaction) object |
+| callback | `Callback` | (Javascript) Callback function |
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
+| abcError | [`ABCError`](#abcerror) | [ABCError](#abcerror) object |
 
 Broadcasts transaction to the blockchain.
 
@@ -1815,12 +1815,12 @@ abcWallet.tx.saveTx(abcTransaction, function(error) {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcTransaction | <code>[ABCTransaction](#abctransaction)</code> | Signed [ABCTransaction](#abctransaction) object |
-| callback | <code>Callback</code> | (Javascript) Callback function |
+| abcTransaction | [`ABCTransaction`](#abctransaction) | Signed [ABCTransaction](#abctransaction) object |
+| callback | `Callback` | (Javascript) Callback function |
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
+| abcError | [`ABCError`](#abcerror) | [ABCError](#abcerror) object |
 
 Saves transaction to local cache. This will cause the transaction to show in calls to [ABCWallet.tx.getTransactions](#gettransactions).
 
@@ -1840,12 +1840,12 @@ abcWallet.tx.signBroadcastAndSave(abcTransaction, function(error) {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcTransaction | <code>[ABCTransaction](#abctransaction)</code> | Unsigned [ABCTransaction](#abctransaction) object |
-| callback | <code>Callback</code> | (Javascript) Callback function |
+| abcTransaction | [`ABCTransaction`](#abctransaction) | Unsigned [ABCTransaction](#abctransaction) object |
+| callback | `Callback` | (Javascript) Callback function |
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
+| abcError | [`ABCError`](#abcerror) | [ABCError](#abcerror) object |
 
 Convenience routine to do `signTx`, `broadcastTx`, then `saveTx` in one call.
 
@@ -1877,13 +1877,13 @@ abcWallet.tx.getPaymentProtocolInfo(abcParsedUri.paymentProtocolURL, function(er
 
 | Param | Type | Description |
 | --- | --- | --- |
-| paymentProtocolURL | <code>String</code> | Payment protocol URL |
-| callback | <code>Callback</code> | (Javascript) Callback function |
+| paymentProtocolURL | `String` | Payment protocol URL |
+| callback | `Callback` | (Javascript) Callback function |
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
-| abcPaymentProtocolInfo | <code>[ABCPaymentProtocolInfo](#abcpaymentprotocolinfo)</code> | [ABCPaymentProtocolInfo](#abcpaymentprotocolinfo) object |
+| abcError | [`ABCError`](#abcerror) | [ABCError](#abcerror) object |
+| abcPaymentProtocolInfo | [`ABCPaymentProtocolInfo`](#abcpaymentprotocolinfo) | [ABCPaymentProtocolInfo](#abcpaymentprotocolinfo) object |
 
 Communicates over network with BIP70 payment request URL to get exact payment parameters. This returns a [ABCPaymentProtocolInfo](#abcpaymentprotocolinfo) which contains a custom, non-editable [ABCSpendTarget](#abcspendtarget) that can simply be placed into an [ABCSpendInfo](#abcspendinfo) object to send the transaction.
 
@@ -1953,12 +1953,12 @@ Parameters
 
 | Param | Type | Description |
 | --- | --- | --- |
-| currencyCode | <code>String</code> | (Optional) Chooses the currency or meta-token to spend from. If not specified, uses the primary currency of this wallet |
-| noUnconfirmed | <code>Boolean</code> | (Optional) If set to TRUE, this will not spend from any unconfirmed funds. Default is FALSE |
-| spendTargets | <code>Array</code> | Array of [ABCSpendTarget](#abcspendtarget) objects |
-| networkFeeOption | <code>String</code> | Adjusts network fee amount. Must be either "low", "standard", "high", or "custom". If unspecified, the default is "standard" |
-| customNetworkFee | <code>Int</code> | Amount of per byte network fee if `networkFeeOption` is set to `custom`. Should be specified as smallest denomination of currency. ie Satoshis |
-| metadata | <code>[ABCMetadata](#ABCMetadata)</code> | [ABCMetadata](#ABCMetadata) object. Outgoing transaction will have the specified metadata copied to the [ABCTransaction](#abctransaction) object |
+| currencyCode | `String` | (Optional) Chooses the currency or meta-token to spend from. If not specified, uses the primary currency of this wallet |
+| noUnconfirmed | `Boolean` | (Optional) If set to TRUE, this will not spend from any unconfirmed funds. Default is FALSE |
+| spendTargets | `Array` | Array of [ABCSpendTarget](#abcspendtarget) objects |
+| networkFeeOption | `String` | Adjusts network fee amount. Must be either "low", "standard", "high", or "custom". If unspecified, the default is "standard" |
+| customNetworkFee | `Int` | Amount of per byte network fee if `networkFeeOption` is set to `custom`. Should be specified as smallest denomination of currency. ie Satoshis |
+| metadata | [`ABCMetadata`](#abcMetadata) | [ABCMetadata](#abcMetadata) object. Outgoing transaction will have the specified metadata copied to the [ABCTransaction](#abctransaction) object |
 
 Parameter object used for creating an [ABCSpend](#abcspend) object.
 
@@ -2000,29 +2000,29 @@ Parameters
 
 | Param | Type | Description |
 | --- | --- | --- |
-| currencyCode | <code>String</code> | (Optional) Chooses the currency or meta-token type for the destination receiving address or wallet. If not specified, uses the primary currency of this wallet |
-| publicAddress | <code>String</code> | Public address in the format of the current wallet's currency. This requires the `amountSatoshi` field to be set. Must not set both `publicAddress` and `destWallet` |
-| amountSatoshi | <code>Int</code> | Amount to send in the smallest denomination of the source wallet's currency. ie Satoshis |
-| destWallet | <code>[ABCWallet](#abcwallet)</code> | Destination wallet to transfer funds to. Must also set `amountSatoshi`. Must not set both `publicAddress` and `destWallet` |
-| destMetadata | <code>[ABCMetadata](#abcmetadata)</code> | [ABCMetadata](#ABCMetadata) object with which will tag the transaction in the destination wallet. Must only be used when `destWallet` is set. |
+| currencyCode | `String` | (Optional) Chooses the currency or meta-token type for the destination receiving address or wallet. If not specified, uses the primary currency of this wallet |
+| publicAddress | `String` | Public address in the format of the current wallet's currency. This requires the `amountSatoshi` field to be set. Must not set both `publicAddress` and `destWallet` |
+| amountSatoshi | `Int` | Amount to send in the smallest denomination of the source wallet's currency. ie Satoshis |
+| destWallet | [`ABCWallet`](#abcwallet) | Destination wallet to transfer funds to. Must also set `amountSatoshi`. Must not set both `publicAddress` and `destWallet` |
+| destMetadata | [`ABCMetadata`](#abcmetadata) | [ABCMetadata](#abcmetadata) object with which will tag the transaction in the destination wallet. Must only be used when `destWallet` is set. |
 
 
 ## ABCParsedUri
 
 | Property | Type | Description |
 | --- | --- | --- |
-| publicAddress | <code>String</code> | Public address from URI |
-| privateKey | <code>String</code> | Private key |
-| bitIDURI | <code>String</code> | Full BitID URI |
-| bitIDDomain | <code>String</code> | Domain name portion of BitID URI |
-| bitIDCallbackURI | <code>String</code> | BitID Callback URI |
-| paymentProtocolURL | <code>String</code> | BIP70 Payment Request URL |
-| amountSatoshi | <code>Int</code> | Amount in the currency's smallest denomination (satoshis)
-| metadata | <code>[ABCMetadata](#abcmetadata)</code> | [ABCMetadata](#abcmetadata) object with info extracted from URI |
-| returnURI | <code>String</code> | URI to send user after URI/payment has been processed |
-| bitidPaymentAddress | <code>Bool</code> | True if BitID URI is requesting a payment address (experimental)|
-| bitidKYCProvider | <code>Bool</code> | True if BitID URI would like to provide KYC token (experimental) |
-| bitidKYCRequest | <code>Bool</code> | True if BitID URI is requesting a KYC token (experimental) |
+| publicAddress | `String` | Public address from URI |
+| privateKey | `String` | Private key |
+| bitIDURI | `String` | Full BitID URI |
+| bitIDDomain | `String` | Domain name portion of BitID URI |
+| bitIDCallbackURI | `String` | BitID Callback URI |
+| paymentProtocolURL | `String` | BIP70 Payment Request URL |
+| amountSatoshi | `Int` | Amount in the currency's smallest denomination (satoshis)
+| metadata | [`ABCMetadata`](#abcmetadata) | [ABCMetadata](#abcmetadata) object with info extracted from URI |
+| returnURI | `String` | URI to send user after URI/payment has been processed |
+| bitidPaymentAddress | `Bool` | True if BitID URI is requesting a payment address (experimental)|
+| bitidKYCProvider | `Bool` | True if BitID URI would like to provide KYC token (experimental) |
+| bitidKYCRequest | `Bool` | True if BitID URI is requesting a KYC token (experimental) |
 
 
 Object contains various parts of a parsed URI depending on the source URI. Any of the properties may be NULL.
@@ -2033,19 +2033,19 @@ Object provides basic UI displayable info about a BIP70 payment request. Also in
 
 | Property | Type | Description |
 | --- | --- | --- |
-| domain | <code>String</code> | DNS name of originator of request |
-| amountSatoshi | <code>Int</code> | Amount of request |
-| memo | <code>String</code> | Memo field returned by merchant |
-| merchant | <code>String</code> | Name of merchat (may be blank) |
-| abcSpendTarget | <code>[ABCSpendTarget](#abcspendtarget)</code> | [ABCSpendTarget](#abcspendtarget) object that can be used in an [ABCSpendInfo](#abcspendinfo) |
+| domain | `String` | DNS name of originator of request |
+| amountSatoshi | `Int` | Amount of request |
+| memo | `String` | Memo field returned by merchant |
+| merchant | `String` | Name of merchat (may be blank) |
+| abcSpendTarget | [`ABCSpendTarget`](#abcspendtarget) | [ABCSpendTarget](#abcspendtarget) object that can be used in an [ABCSpendInfo](#abcspendinfo) |
 
 ## ABCReceiveAddress
 
 | Property | Type | Description |
 | --- | --- | --- |
-| publicAddress | <code>String</code> | Raw public address in native format of wallet currency type. (ie. base58 for bitcoin, base16 for ethereum) |
-| amountSatoshi | <code>Int</code> | Amount of request denominated in the smallest unit of this wallet's currency (ie. bitcoin satoshis) |
-| metaData | <code>ABCMetadata</code> | [ABCMetadata](#abcmetadata) object corresponding to this address. Any transactions receiving funds into this address will automatically have this metadata in the [ABCTransaction](#abctransaction) object.
+| publicAddress | `String` | Raw public address in native format of wallet currency type. (ie. base58 for bitcoin, base16 for ethereum) |
+| amountSatoshi | `Int` | Amount of request denominated in the smallest unit of this wallet's currency (ie. bitcoin satoshis) |
+| metaData | `ABCMetadata` | [ABCMetadata](#abcmetadata) object corresponding to this address. Any transactions receiving funds into this address will automatically have this metadata in the [ABCTransaction](#abctransaction) object.
 
 ## ABCMetadata
 
@@ -2053,12 +2053,12 @@ Non-blockchain transaction meta data associated to an [ABCTransaction](#abctrans
 
 | Property | Type | Description |
 | --- | --- | --- |
-| payeeName | <code>String</code> | Name of external recipient or sender of funds |
-| category | <code>String</code> | Transaction category of format "Expense:Food & Dining". Category must be of the form [Category]:[Sub Category] where category is one of "Income", "Expense", "Transfer", or "Exchange". Income refers to incoming funds such as payroll or business sales. Expense is the purchase of goods or services. Transfer is a transfer of funds to/from another wallet or exchange account owned by the user. Exchange is the change of funds from one type of currency to another. If ABCWallet.tx is of type bitcoin, an incoming transaction from the purchase of bitcoin with USD should be categorized as "Exchange:Buy Bitcoin". |
-| notes | <code>String</code> | Misc notes field |
-| amountFiat | <code>Float</code> | Amount of transaction in the wallet's fiat currency at the time of the transaction |
-| bizId | <code>Int</code> | Unique bizId associated to a business listing in the Airbitz Business Directory |
-| miscJson | <code>String</code> | Generic JSON string that can be used for additional meta data |
+| payeeName | `String` | Name of external recipient or sender of funds |
+| category | `String` | Transaction category of format "Expense:Food & Dining". Category must be of the form [Category]:[Sub Category] where category is one of "Income", "Expense", "Transfer", or "Exchange". Income refers to incoming funds such as payroll or business sales. Expense is the purchase of goods or services. Transfer is a transfer of funds to/from another wallet or exchange account owned by the user. Exchange is the change of funds from one type of currency to another. If ABCWallet.tx is of type bitcoin, an incoming transaction from the purchase of bitcoin with USD should be categorized as "Exchange:Buy Bitcoin". |
+| notes | `String` | Misc notes field |
+| amountFiat | `Float` | Amount of transaction in the wallet's fiat currency at the time of the transaction |
+| bizId | `Int` | Unique bizId associated to a business listing in the Airbitz Business Directory |
+| miscJson | `String` | Generic JSON string that can be used for additional meta data |
 
 ## ABCTransaction
 
@@ -2066,25 +2066,25 @@ Object represents a signed or unsigned transaction that may or may not be broadc
 
 | Property | Type | Description |
 | --- | --- | --- |
-| abcWalletTx | <code>[ABCWalletTx](#abcwallettx)</code> | [ABCWalletTx](#abcwallettx) this transaction is from |
-| metadata | <code>[ABCMetadata](#abcmetadata)</code> | [ABCMetadata](#abcmetadata) of this transaction |
-| txid | <code>String</code> | Transaction ID as represented by the wallet's crypto currency. For bitcoin this is base16. This parameter is NULL until [signTx](#signtx) is called. |
-| date | <code>Date</code> | Date that transaction was broadcast, detected, or confirmed on the blockchain. If the tx detection date is after the confirmation time, then this is the confirmation time. NULL if transaction has not been broadcast |
-| blockHeight | <code>Int</code> | Block number that included this transaction |
-| amountSatoshi | <code>Int</code> | Amount of fees in denomination of smallest unit of currency |
-| providerFee | <code>Int</code> | Additional app provider fees in denomination of smallest unit of currency (ie. Satoshis) |
-| networkFee | <code>Int</code> | Fee paid to network (mining fee) in denomination of smallest unit of currency (ie. Satoshis) |
-| runningBalance | <code>Int</code> | Running balance of entire wallet as of this transaction |
-| signedTx |<code>Array</code> | Buffer of signed transaction data with signature. NULL if transaction is unsigned |
-| otherParams |<code>Object</code> | Crypto currency specific data |
+| abcWalletTx | [`ABCWalletTx`](#abcwallettx) | [ABCWalletTx](#abcwallettx) this transaction is from |
+| metadata | [`ABCMetadata`](#abcmetadata) | [ABCMetadata](#abcmetadata) of this transaction |
+| txid | `String` | Transaction ID as represented by the wallet's crypto currency. For bitcoin this is base16. This parameter is NULL until [signTx](#signtx) is called. |
+| date | `Date` | Date that transaction was broadcast, detected, or confirmed on the blockchain. If the tx detection date is after the confirmation time, then this is the confirmation time. NULL if transaction has not been broadcast |
+| blockHeight | `Int` | Block number that included this transaction |
+| amountSatoshi | `Int` | Amount of fees in denomination of smallest unit of currency |
+| providerFee | `Int` | Additional app provider fees in denomination of smallest unit of currency (ie. Satoshis) |
+| networkFee | `Int` | Fee paid to network (mining fee) in denomination of smallest unit of currency (ie. Satoshis) |
+| runningBalance | `Int` | Running balance of entire wallet as of this transaction |
+| signedTx |`Array` | Buffer of signed transaction data with signature. NULL if transaction is unsigned |
+| otherParams |`Object` | Crypto currency specific data |
 
 `otherParams` has the following parameters for bitcoin wallets
 
 | Property | Type | Description |
 | --- | --- | --- |
-| isReplaceByFee | <code>Bool</code> | True if this transaction is marked as RBF (BIP125) |
-| isDoubleSpend | <code>Bool</code> | True if this transaction is found to be a double spend attempt |
-| inputOutputList | <code>Array</code> | Array of transaction inputs and outputs |
+| isReplaceByFee | `Bool` | True if this transaction is marked as RBF (BIP125) |
+| isDoubleSpend | `Bool` | True if this transaction is found to be a double spend attempt |
+| inputOutputList | `Array` | Array of transaction inputs and outputs |
 
 ## ABCExchangeRateCache
 
@@ -2116,13 +2116,13 @@ const priceofBitcoin = convertCurrency(1, "BTC", "USD")
 
 | Param | Type | Description |
 | --- | --- | --- |
-| amount | <code>Float</code> | Amount of source currency to convert |
-| sourceCurrency | <code>String</code> | 3 character currency code of source currency |
-| destinationCurrency | <code>String</code> | 3 character currency code of destination currency |
+| amount | `Float` | Amount of source currency to convert |
+| sourceCurrency | `String` | 3 character currency code of source currency |
+| destinationCurrency | `String` | 3 character currency code of destination currency |
 
 | Return | Type | Description |
 | --- | --- | --- |
-| destinationAmount | <code>Float</code> | Amount of destination currency after conversion |
+| destinationAmount | `Float` | Amount of destination currency after conversion |
 
 Converts one currency value into another using exchange rate cache. Returns 0 if the currency pair cannot be converted due to missing support from exchange rate sources or if sources cannot be reached.
 
@@ -2140,7 +2140,7 @@ name = getName()
 
 | Return | Type | Description |
 | --- | --- | --- |
-| name | <code>String</code> | Name of the exchange rate source |
+| name | `String` | Name of the exchange rate source |
 
 ### getCurrencyPairs
 
@@ -2156,10 +2156,10 @@ const pairs =
 ]
 
 getCurrencyPairs(pairs, function(returnPairs) {
-  console.log(returnPairs) 
+  console.log(returnPairs)
 })
 
-For a source that cannot convert LTC, the output could be => 
+For a source that cannot convert LTC, the output could be =>
 "
 [
   { source: "BTC", dest: "USD", value: 890.23 },
@@ -2220,25 +2220,25 @@ console.log(details)
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| details | <code>Object</code> | Details of supported currency |
+| details | `Object` | Details of supported currency |
 
 The `details` object includes the following params:
 
 | Param | Type | Description |
 | --- | --- | --- |
-| currencyCode | <code>String</code> | The 3 character code for the currency |
-| denominations | <code>Array</code> | An array of Objects of the possible denominations for this currency |
-| symbolImage | <code>String</code> | Base64 encoded png or jpg image of the currency symbol (optional) |
-| metaTokens | <code>Object</code> | Array of objects describing the supported metatokens |
+| currencyCode | `String` | The 3 character code for the currency |
+| denominations | `Array` | An array of Objects of the possible denominations for this currency |
+| symbolImage | `String` | Base64 encoded png or jpg image of the currency symbol (optional) |
+| metaTokens | `Object` | Array of objects describing the supported metatokens |
 
 The `denominations` object includes the following params:
 
 | Param | Type | Description |
 | --- | --- | --- |
-| name | <code>String</code> | The human readable string to describe the denomination. |
-| multiplier | <code>Int</code> | The value to multiply the smallest unit of currency to get to the denomination. |
-| symbol | <code>String</code> | The human readable 1-3 character symbol of the currency. ie. "Ƀ" |
-| font | <code>String</code> | (Optional) The font required to display the symbol specified above. If not given, will use the default system font. |
+| name | `String` | The human readable string to describe the denomination. |
+| multiplier | `Int` | The value to multiply the smallest unit of currency to get to the denomination. |
+| symbol | `String` | The human readable 1-3 character symbol of the currency. ie. "Ƀ" |
+| font | `String` | (Optional) The font required to display the symbol specified above. If not given, will use the default system font. |
 
 Get details of the crypto currency supported by this library
 
@@ -2269,20 +2269,20 @@ abcTxLibInit(abcTxLibAccess, options, callbacks, function(error) {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcTxLibAccess | <code>[ABCTxLibAccess](#abctxlibaccess)</code> | Object with various parameters to access the wallet and account |
-| options | <code>Object</code> | Options for abcTxLibInit |
-| callbacks | <code>[ABCTxLibCallbacks](#abctxlibcallbacks)</code> | Various callbacks when wallet is updated |
-| callback | <code>Callback</code> | (Javascript) Callback function |
+| abcTxLibAccess | [`ABCTxLibAccess`](#abctxlibaccess) | Object with various parameters to access the wallet and account |
+| options | `Object` | Options for abcTxLibInit |
+| callbacks | [`ABCTxLibCallbacks`](#abctxlibcallbacks) | Various callbacks when wallet is updated |
+| callback | `Callback` | (Javascript) Callback function |
 
 | Options | Type | Description |
 | --- | --- | --- |
-| masterPrivateKey | <code>String</code> | Master private key for wallet in format specific to the wallet type. ie. `wallet:repo:bitcoin-bip44` would have a `masterPrivateKey` in the format of a bip39 12-24 word mnemonic. This parameter may be unspecified, in which case, the TxLibrary should have cached a `masterPublicKey` in `localDataStore` |
-| masterPublicKey | <code>String</code> | Master public key for wallet in format specific to the wallet type. ie. `wallet:repo:bitcoin-bip44` would have a `masterPublicKey` in the format of a base58 string starting with "xpub" such as "xpub661MyMwAqRbcFtXgS5sYJABqqG9YLmC4Q1Rdap9gSE8NqtwybGhePY2gZ29ESFjqJoCu1Rupje8YtGqsefD265TMg7usUDFdp6W1EGMcet8". This parameter may be unspecified, in which case, the TxLibrary should have cached a `masterPublicKey` in `localDataStore` |
+| masterPrivateKey | `String` | Master private key for wallet in format specific to the wallet type. ie. `wallet:repo:bitcoin-bip44` would have a `masterPrivateKey` in the format of a bip39 12-24 word mnemonic. This parameter may be unspecified, in which case, the TxLibrary should have cached a `masterPublicKey` in `localDataStore` |
+| masterPublicKey | `String` | Master public key for wallet in format specific to the wallet type. ie. `wallet:repo:bitcoin-bip44` would have a `masterPublicKey` in the format of a base58 string starting with "xpub" such as "xpub661MyMwAqRbcFtXgS5sYJABqqG9YLmC4Q1Rdap9gSE8NqtwybGhePY2gZ29ESFjqJoCu1Rupje8YtGqsefD265TMg7usUDFdp6W1EGMcet8". This parameter may be unspecified, in which case, the TxLibrary should have cached a `masterPublicKey` in `localDataStore` |
 
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
+| abcError | [`ABCError`](#abcerror) | [ABCError](#abcerror) object |
 
 Initialization of the library effectively creates a cryptocurrency wallet within the [ABCWallet](#abcwallet) object. The TxLib should spin up any background tasks necessary to begin querying the blockchain and field any requests for transactions. `abcTxLibInit` will be called once for every wallet of the same or different currency.
 
@@ -2310,12 +2310,12 @@ abcTxLibEnableTokens(abcTxLibAccess, tokens, function(error) {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcTxLibAccess | <code>[ABCTxLibAccess](#abctxlibaccess)</code> | Object with various parameters to access the wallet and account |
-| tokens | <code>Array</code> | Array of strings specifying the currency codes of tokens to enable in this wallet |
+| abcTxLibAccess | [`ABCTxLibAccess`](#abctxlibaccess) | Object with various parameters to access the wallet and account |
+| tokens | `Array` | Array of strings specifying the currency codes of tokens to enable in this wallet |
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
+| abcError | [`ABCError`](#abcerror) | [ABCError](#abcerror) object |
 
 Enable support for meta tokens (ie. counterparty, colored coin, ethereum ERC20). Library should begin checking the blockchain for the specified tokens and triggering the callbacks specified in abcTxLibInit.
 
@@ -2328,16 +2328,16 @@ const balance = abcTxLibGetBalance(abcTxLibAccess, options)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcTxLibAccess | <code>[ABCTxLibAccess](#abctxlibaccess)</code> | Object with various parameters to access the wallet and account |
-| options | <code>Object</code> | Options parameters below |
+| abcTxLibAccess | [`ABCTxLibAccess`](#abctxlibaccess) | Object with various parameters to access the wallet and account |
+| options | `Object` | Options parameters below |
 
 | Option Params | Type | Description |
 | --- | --- | --- |
-| currencyCode | <code>String</code> | Currency code to use. ie "REP", "LTBCOIN". If not specified, uses the wallet's primary currency. ie. "BTC", or "ETH" |
+| currencyCode | `String` | Currency code to use. ie "REP", "LTBCOIN". If not specified, uses the wallet's primary currency. ie. "BTC", or "ETH" |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| balance | <code>Int</code> | Balance in the smallest unit of the currency |
+| balance | `Int` | Balance in the smallest unit of the currency |
 
 Get the current balance of this wallet in the currency's smallest denomination (ie. satoshis)
 
@@ -2350,16 +2350,16 @@ const numTransactions = abcTxLibGetNumTransactions(abcTxLibAccess, options)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcTxLibAccess | <code>[ABCTxLibAccess](#abctxlibaccess)</code> | Object with various parameters to access the wallet and account |
-| options | <code>Object</code> | Options parameters below |
+| abcTxLibAccess | [`ABCTxLibAccess`](#abctxlibaccess) | Object with various parameters to access the wallet and account |
+| options | `Object` | Options parameters below |
 
 | Option Params | Type | Description |
 | --- | --- | --- |
-| currencyCode | <code>String</code> | Currency code to use. ie "REP", "LTBCOIN". If not specified, uses the wallet's primary currency. ie. "BTC", or "ETH" |
+| currencyCode | `String` | Currency code to use. ie "REP", "LTBCOIN". If not specified, uses the wallet's primary currency. ie. "BTC", or "ETH" |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| numTransactions | <code>Int</code> | Number of transactions in wallet |
+| numTransactions | `Int` | Number of transactions in wallet |
 
 Get the number of transactions in the wallet
 
@@ -2378,14 +2378,14 @@ abcTxLibGetTransactions(abcTxLibAccess, options, function(error, transactions) {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcTxLibAccess | <code>[ABCTxLibAccess](#abctxlibaccess)</code> | Object with various parameters to access the wallet and account |
-| options | <code>Object</code> | Options for abcTxLibGetTransactions. If NULL, return all transactions |
-| callback | <code>Callback</code> | (Javascript) Callback function |
+| abcTxLibAccess | [`ABCTxLibAccess`](#abctxlibaccess) | Object with various parameters to access the wallet and account |
+| options | `Object` | Options for abcTxLibGetTransactions. If NULL, return all transactions |
+| callback | `Callback` | (Javascript) Callback function |
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
-| transactions | <code>Array</code> | Array of [ABCTransaction](#abctransaction) objects |
+| abcError | [`ABCError`](#abcerror) | [ABCError](#abcerror) object |
+| transactions | `Array` | Array of [ABCTransaction](#abctransaction) objects |
 
 Returns an array of transactions matching the options specified. The [ABCTransaction](#abctransaction) must have the following fields filled out by the TxLib:
 `abcWallet`, `txid`, `date`, `blockHeight`, and `amountSatoshi`. The remaining fields are updated by Airbitz Core.
@@ -2394,9 +2394,9 @@ The `options` parameter may include the following:
 
 | Options Params | Type | Description |
 | --- | --- | --- |
-| currencyCode | <code>String</code> | Currency code to use. ie "REP", "LTBCOIN". If not specified, uses the wallet's primary currency. ie. "BTC", or "ETH" |
-| startIndex | <code>Int</code> | The starting index into the list of transactions. 0 specifies the newest transaction |
-| numEntries | <code>Int</code> |  The number of entries to return. If there aren't enough transactions to return `numEntries`, then the TxLib should return the maximum possible |
+| currencyCode | `String` | Currency code to use. ie "REP", "LTBCOIN". If not specified, uses the wallet's primary currency. ie. "BTC", or "ETH" |
+| startIndex | `Int` | The starting index into the list of transactions. 0 specifies the newest transaction |
+| numEntries | `Int` |  The number of entries to return. If there aren't enough transactions to return `numEntries`, then the TxLib should return the maximum possible |
 
 ### abcTxLibGetFreshAddress
 
@@ -2406,16 +2406,16 @@ const address = abcTxLibGetFreshAddress(abcTxLibAccess, options)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcTxLibAccess | <code>[ABCTxLibAccess](#abctxlibaccess)</code> | Object with various parameters to access the wallet and account |
-| options | <code>Object</code> | Options object documented below |
+| abcTxLibAccess | [`ABCTxLibAccess`](#abctxlibaccess) | Object with various parameters to access the wallet and account |
+| options | `Object` | Options object documented below |
 
 | Option Params | Type | Description |
 | --- | --- | --- |
-| currencyCode | <code>String</code> | Currency code to use. ie "REP", "LTBCOIN". If not specified, uses the wallet's primary currency. ie. "BTC", or "ETH" |
+| currencyCode | `String` | Currency code to use. ie "REP", "LTBCOIN". If not specified, uses the wallet's primary currency. ie. "BTC", or "ETH" |
 
 | Return | Type | Description |
 | --- | --- | --- |
-| address | <code>String</code> | Public address |
+| address | `String` | Public address |
 
 Returns an address that has never received funds
 
@@ -2427,19 +2427,19 @@ const abcError = abcTxLibAddGapLimitAddresses(abcTxLibAccess, addresses, options
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcTxLibAccess | <code>[ABCTxLibAccess](#abctxlibaccess)</code> | Object with various parameters to access the wallet and account |
-| addresses | <code>Array</code> | Array of Strings containing public addresses |
-| options | <code>Object</code> | Options object documented below |
+| abcTxLibAccess | [`ABCTxLibAccess`](#abctxlibaccess) | Object with various parameters to access the wallet and account |
+| addresses | `Array` | Array of Strings containing public addresses |
+| options | `Object` | Options object documented below |
 
 The `options` parameter may include the following:
 
 | Options Params | Type | Description |
 | --- | --- | --- |
-| currencyCode | <code>String</code> | Currency code to use. ie "REP", "LTBCOIN". If not specified,
+| currencyCode | `String` | Currency code to use. ie "REP", "LTBCOIN". If not specified,
 
 | Return | Type | Description |
 | --- | --- | --- |
-| abcError | <code>[ABCError](#abcerror)</code> | [ABCError](#abcerror) object |
+| abcError | [`ABCError`](#abcerror) | [ABCError](#abcerror) object |
 
 When implementing an HD wallet with multiple addresses, wallet implementations typically search for funds by going a limited number of addresses ahead of the last address that has funds received. This is usually about 10 addresses. `abcTxLibAddGapLimitAddresses` allows ABC to specify to the txLib to treat the given addresses as if they had funds received and to forward their gap limit accordingly.
 
@@ -2451,19 +2451,19 @@ const isUsed = abcTxLibIsAddressUsed(abcTxLibAccess, address, options)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcTxLibAccess | <code>[ABCTxLibAccess](#abctxlibaccess)</code> | Object with various parameters to access the wallet and account |
-| address | <code>String</code> | String of public address to query |
-| options | <code>Object</code> | Options parameters below |
+| abcTxLibAccess | [`ABCTxLibAccess`](#abctxlibaccess) | Object with various parameters to access the wallet and account |
+| address | `String` | String of public address to query |
+| options | `Object` | Options parameters below |
 
 The `options` parameter may include the following:
 
 | Options Params | Type | Description |
 | --- | --- | --- |
-| currencyCode | <code>String</code> | Currency code to use. ie "REP", "LTBCOIN". If not specified,
+| currencyCode | `String` | Currency code to use. ie "REP", "LTBCOIN". If not specified,
 
 | Return | Type | Description |
 | --- | --- | --- |
-| isUsed | <code>Boolean</code> | True if address has ever received money |
+| isUsed | `Boolean` | True if address has ever received money |
 
 ### abcTxLibMakeSpend
 
@@ -2501,8 +2501,8 @@ abcTxLibSaveTx(abcTxLibAccess, abcTransaction, function(error) {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| accountDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for account wide data |
-| walletDataStore | <code>[ABCDataStore](#abcdatastore)</code> | Local [ABCDataStore](#abcdatastore) for wallet specific data |
+| accountDataStore | [`ABCDataStore`](#abcdatastore) | Local [ABCDataStore](#abcdatastore) for account wide data |
+| walletDataStore | [`ABCDataStore`](#abcdatastore) | Local [ABCDataStore](#abcdatastore) for wallet specific data |
 
 Various objects needed to save/restore data for the TxLib
 
@@ -2516,7 +2516,7 @@ abcTxLibCBTransactionsChanged(abcTransactions)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcTransactions | <code>Array</code> | Array of [ABCTransaction](#abctransaction) objects which are new or have changed. Changes may include the block height when this transaction was confirmed |
+| abcTransactions | `Array` | Array of [ABCTransaction](#abctransaction) objects which are new or have changed. Changes may include the block height when this transaction was confirmed |
 
 Callback fires when the TxLib detects new or updated transactions from the blockchain network. The [ABCTransaction](#abctransaction) objects must have the following fields filled out by the TxLib:
 `abcWalletTx`, `txid`, `date`, `blockHeight`, and `amountSatoshi`. The remaining fields are updated by Airbitz Core.
@@ -2549,15 +2549,15 @@ Initializes the ABCUI library and returns an [ABCUIContext](#abcuicontext) objec
 
 | Param | Type | Description |
 | --- | --- | --- |
-| apiKey | <code>String</code> | API Key from https://developer.airbitz.co |
-| accountType | <code>String</code> | App account type of form 'account:repo:com.mydomain.myapp' |
-| bundlePath | <code>String</code> | Website path to the airbitz-core-js-ui repo |
-| vendorName | <code>String</code> | Name of your app |
-| vendorImageUrl | <code>String</code> | URL to image of your app's logo |
+| apiKey | `String` | API Key from <https://developer.airbitz.co> |
+| accountType | `String` | App account type of form 'account:repo:com.mydomain.myapp' |
+| bundlePath | `String` | Website path to the airbitz-core-js-ui repo |
+| vendorName | `String` | Name of your app |
+| vendorImageUrl | `String` | URL to image of your app's logo |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| abcUiContext | <code>[ABCUIContext](#abcuicontext)</code> | Airbitz account object |
+| abcUiContext | [`ABCUIContext`](#abcuicontext) | Airbitz account object |
 
 ## ABCUIContext
 
@@ -2573,12 +2573,12 @@ Create an overlay popup where a user can register a new account or login to a pr
 
 | Param | Type | Description |
 | --- | --- | --- |
-| callback | <code>Callback</code> | (Javascript) Callback function |
+| callback | `Callback` | (Javascript) Callback function |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
-| account | <code>[ABCAccount](#abcaccount)</code> | Airbitz account object |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| account | [`ABCAccount`](#abcaccount) | Airbitz account object |
 
 ![Login UI](#https://airbitz.co/go/wp-content/uploads/2016/08/Screen-Shot-2016-08-26-at-12.50.04-PM.png)
 
@@ -2594,12 +2594,12 @@ Launch an account management window for changing password, PIN, and recovery que
 
 | Param | Type | Description |
 | --- | --- | --- |
-| account | <code>[ABCAccount](#abcaccount)</code> | Airbitz account object to modify |
-| callback | <code>Callback</code> | (Javascript) Callback function |
+| account | [`ABCAccount`](#abcaccount) | Airbitz account object to modify |
+| callback | `Callback` | (Javascript) Callback function |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | <code>[ABCError](#abcerror)</code> | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
 
 ![Manage UI](#https://airbitz.co/go/wp-content/uploads/2016/08/Screen-Shot-2016-08-26-at-12.50.26-PM.png)
 
@@ -2937,11 +2937,11 @@ The ABCWallet object represents a single BIP32 HD wallet in the user's Airbitz a
 
 | Property | Type | Description |
 | --- | --- | --- |
-| id | <code>String</code> | Wallet ID |
-| name | <code>String</code> | Wallet text name |
-| currency | <code>String</code> | Wallet 3 letter currency code |
-| currencyCode | <code>Number</code> | Wallet ISO currency code number |
-| balance | <code>Number</code> | Wallet balance in satoshis |
+| id | `String` | Wallet ID |
+| name | `String` | Wallet text name |
+| currency | `String` | Wallet 3 letter currency code |
+| currencyCode | `Number` | Wallet ISO currency code number |
+| balance | `Number` | Wallet balance in satoshis |
 
 ## Airbitz Core
 
@@ -2970,7 +2970,7 @@ Returns the user’s currently selected wallet as the first parameter of the cal
 
 | Response | Type | Description |
 | --- | --- | --- |
-| wallet | <code>ABCWallet</code> | ABCWallet object |
+| wallet | `ABCWallet` | ABCWallet object |
 
 ## setupWalletChangeListener
 
@@ -2996,7 +2996,7 @@ Callback is called when wallet is changed AND every time the plugin is initializ
 
 | Response | Type | Description |
 | --- | --- | --- |
-| wallet | <code>ABCWallet</code> | ABCWallet object |
+| wallet | `ABCWallet` | ABCWallet object |
 
 ### createReceiveRequest
 
@@ -3046,21 +3046,21 @@ Create a receive request from the provided wallet. Returns an object with a bitc
 
 | Param | Type | Description |
 | --- | --- | --- |
-| wallet | <code>ABCWallet</code> | Wallet to create a receive request/address from |
-| options | <code>Object</code> | JS Object of options for receive request |
+| wallet | `ABCWallet` | Wallet to create a receive request/address from |
+| options | `Object` | JS Object of options for receive request |
 
 | Response | Type | Description |
 | --- | --- | --- |
-| address | <code>String</code> | Bitcoin public address of request |
+| address | `String` | Bitcoin public address of request |
 
 | Options | Type | Description |
 | --- | --- | --- |
-| label | <code>String</code> | (Optional) Transaction 'Payee/Payer' name |
-| category | <code>String</code> | (Optional) Transaction category such as "Expense:Rent" |
-| notes | <code>String</code> | (Optional) Transaction misc notes field |
-| amountSatoshi | <code>Number</code> | (Optional) Amount, in satoshis, for this request |
-| success | <code>Function</code> | Success callback |
-| error | <code>Function</code> | Error callback |
+| label | `String` | (Optional) Transaction 'Payee/Payer' name |
+| category | `String` | (Optional) Transaction category such as "Expense:Rent" |
+| notes | `String` | (Optional) Transaction misc notes field |
+| amountSatoshi | `Number` | (Optional) Amount, in satoshis, for this request |
+| success | `Function` | Success callback |
+| error | `Function` | Error callback |
 
 ### finalizeReceiveRequest
 
@@ -3096,8 +3096,8 @@ Airbitz.core.walletSelected({
 
 | Param | Type | Description |
 | --- | --- | --- |
-| wallet | <code>ABCWallet</code> | Wallet to finalize receive request/address from |
-| address | <code>String</code> | Address to finalize |
+| wallet | `ABCWallet` | Wallet to finalize receive request/address from |
+| address | `String` | Address to finalize |
 
 Finalizing a request marks the address as used and it will not be used for future requests. The optional metadata given in 'options' such as 'label', 'category', and 'notes' will also be written for this address. This is useful so that when a future payment comes in, the metadata can be auto-populated in the user's transaction details.
 
@@ -3155,22 +3155,22 @@ The optional metadata given in 'options' such as 'label', 'category', and 'notes
 
 | Param | Type | Description |
 | --- | --- | --- |
-| wallet | <code>ABCWallet</code> | Wallet to create a receive request/address from |
-| address | <code>String</code> | Bitcoin address or BIP21 URI |
-| amount | <code>Int</code> | Amount to send in satoshis |
-| options | <code>Object</code> | JS Object of options for receive request |
+| wallet | `ABCWallet` | Wallet to create a receive request/address from |
+| address | `String` | Bitcoin address or BIP21 URI |
+| amount | `Int` | Amount to send in satoshis |
+| options | `Object` | JS Object of options for receive request |
 
 | Response | Type | Description |
 | --- | --- | --- |
-| back | <code>Boolean</code> | True if user pressed back button and did not authorize the spend |
+| back | `Boolean` | True if user pressed back button and did not authorize the spend |
 
 | Options | Type | Description |
 | --- | --- | --- |
-| label | <code>String</code> | (Optional) Transaction 'Payee/Payer' name |
-| category | <code>String</code> | (Optional) Transaction category such as "Expense:Rent" |
-| notes | <code>String</code> | (Optional) Transaction misc notes field |
-| success | <code>Function</code> | Success callback |
-| error | <code>Function</code> | Error callback |
+| label | `String` | (Optional) Transaction 'Payee/Payer' name |
+| category | `String` | (Optional) Transaction category such as "Expense:Rent" |
+| notes | `String` | (Optional) Transaction misc notes field |
+| success | `Function` | Success callback |
+| error | `Function` | Error callback |
 
 ### createSpendRequest2
 
@@ -3225,24 +3225,24 @@ Request that the user spends to two different addresses with two different amoun
 
 | Param | Type | Description |
 | --- | --- | --- |
-| wallet | <code>ABCWallet</code> | Wallet to create a receive request/address from |
-| address | <code>String</code> | Bitcoin address or BIP21 URI |
-| amount | <code>Int</code> | Amount to send in satoshis |
-| address2 | <code>String</code> | Bitcoin address or BIP21 URI |
-| amount2 | <code>Int</code> | Amount to send in satoshis |
-| options | <code>Object</code> | JS Object of options for receive request |
+| wallet | `ABCWallet` | Wallet to create a receive request/address from |
+| address | `String` | Bitcoin address or BIP21 URI |
+| amount | `Int` | Amount to send in satoshis |
+| address2 | `String` | Bitcoin address or BIP21 URI |
+| amount2 | `Int` | Amount to send in satoshis |
+| options | `Object` | JS Object of options for receive request |
 
 | Response | Type | Description |
 | --- | --- | --- |
-| back | <code>Boolean</code> | True if user pressed back button and did not authorize the spend |
+| back | `Boolean` | True if user pressed back button and did not authorize the spend |
 
 | Options | Type | Description |
 | --- | --- | --- |
-| label | <code>String</code> | (Optional) Transaction 'Payee/Payer' name |
-| category | <code>String</code> | (Optional) Transaction category such as "Expense:Rent" |
-| notes | <code>String</code> | (Optional) Transaction misc notes field |
-| success | <code>Function</code> | Success callback |
-| error | <code>Function</code> | Error callback |
+| label | `String` | (Optional) Transaction 'Payee/Payer' name |
+| category | `String` | (Optional) Transaction category such as "Expense:Rent" |
+| notes | `String` | (Optional) Transaction misc notes field |
+| success | `Function` | Success callback |
+| error | `Function` | Error callback |
 
 ### writeData
 
@@ -3267,8 +3267,8 @@ Securely persist data into the Airbitz core under this user's account. Only the 
 
 | Param | Type | Description |
 | --- | --- | --- |
-| key | <code>String</code> | Key string to reference the data |
-| data | <code>String</code> | Value to store |
+| key | `String` | Key string to reference the data |
+| data | `String` | Value to store |
 
 ### readData
 
@@ -3298,11 +3298,11 @@ Read back data from the Airbitz core under this user's account. Only the current
 
 | Param | Type | Description |
 | --- | --- | --- |
-| key | <code>String</code> | Key string to reference the data |
+| key | `String` | Key string to reference the data |
 
 | Response | Type | Description |
 | --- | --- | --- |
-| data | <code>String</code> | Data stored from a previous call to writeData |
+| data | `String` | Data stored from a previous call to writeData |
 
 ### clearData
 
@@ -3339,7 +3339,7 @@ Get the user’s currently selected BTC denomination. It can be BTC, mBTC or bit
 
 | Response | Type | Description |
 | --- | --- | --- |
-| denomination | <code>String</code> | "BTC", "mBTC" or "bits" |
+| denomination | `String` | "BTC", "mBTC" or "bits" |
 
 
 ### formatSatoshi
@@ -3365,12 +3365,12 @@ Formats satoshis to display to the user. This uses the user’s BTC denomination
 
 | Param | Type | Description |
 | --- | --- | --- |
-| amountSatoshi | <code>Number</code> | Number of satoshis to convert |
-| withSymbol | <code>Boolean</code> | Set to true to display the denomination symbol "Ƀ, mɃ, ƀ" |
+| amountSatoshi | `Number` | Number of satoshis to convert |
+| withSymbol | `Boolean` | Set to true to display the denomination symbol "Ƀ, mɃ, ƀ" |
 
 | Response | Type | Description |
 | --- | --- | --- |
-| amountString | <code>String</code> | Formatted denomination string |
+| amountString | `String` | Formatted denomination string |
 
 ## Airbitz Config
 
@@ -3395,11 +3395,11 @@ Fetch a configuration value. These are set in the native iOS/Android code, befor
 
 | Param | Type | Description |
 | --- | --- | --- |
-| key | <code>String</code> | Key string to reference the data |
+| key | `String` | Key string to reference the data |
 
 | Response | Type | Description |
 | --- | --- | --- |
-| value | <code>String</code> | Data passed in from native app |
+| value | `String` | Data passed in from native app |
 
 ## Airbitz UI
 
@@ -3424,7 +3424,7 @@ Set the title of the current view. This updates the native apps titlebar.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| title | <code>String</code> | Title on navbar |
+| title | `String` | Title on navbar |
 
 ### showAlert
 
@@ -3449,13 +3449,13 @@ Launches a native alert dialog. Alert will automatically fade when tapped or aft
 
 | Param | Type | Description |
 | --- | --- | --- |
-| title | <code>String</code> | Title of alert |
-| message | <code>String</code> | Body of alert  |
-| options | <code>Object</code> | Optional parameters |
+| title | `String` | Title of alert |
+| message | `String` | Body of alert  |
+| options | `Object` | Optional parameters |
 
 | Options | Type | Description |
 | --- | --- | --- |
-| showSpinner | <code>Boolean</code> | (Optional) Add spinner to alert. Alert will persist until hideAlert is called. |
+| showSpinner | `Boolean` | (Optional) Add spinner to alert. Alert will persist until hideAlert is called. |
 
 ### hideAlert
 

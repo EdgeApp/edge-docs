@@ -431,6 +431,10 @@ html, body {
       min-width: 100px;
     }
 
+    td:last-child {
+      width: 65%;
+    }
+
     tr:last-child {
       border-bottom: 1px solid #ccc;
       // word-break: break-word;

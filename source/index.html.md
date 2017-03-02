@@ -2280,7 +2280,7 @@ The `metaTokens` array includes the following params:
 
 ```javascript
 // Example
-function abcTxLibBTCTransactionsChanged(abcTransactions) { 
+function abcTxLibBTCTransactionsChanged(abcTransactions) {
   // your_callback_here
 }
 
@@ -2332,12 +2332,8 @@ Retrieve the current block height from the network
 
 ```javascript
 // Example
-var blockHeight = btcEngine.getBlockHeight(abcTxLibAccess)
+var blockHeight = btcEngine.getBlockHeight()
 ```
-
-| Param | Type | Description |
-| --- | --- | --- |
-| abcTxLibAccess | [`ABCTxLibAccess`](#abctxlibaccess) | Object with various parameters to access the wallet and account |
 
 ### enableTokens
 
@@ -2349,7 +2345,7 @@ const tokens = {
   tokens: [ "XCP", "TATIANACOIN" ]
 }
 
-btcEngine.enableTokens(abcTxLibAccess, tokens, function(error) {
+btcEngine.enableTokens(tokens, function(error) {
   if (error === NULL) {
     // Success
   }
@@ -2358,7 +2354,6 @@ btcEngine.enableTokens(abcTxLibAccess, tokens, function(error) {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcTxLibAccess | [`ABCTxLibAccess`](#abctxlibaccess) | Object with various parameters to access the wallet and account |
 | tokens | `Array` | Array of strings specifying the currency codes of tokens to enable in this wallet |
 
 | Callback Param | Type | Description |
@@ -2371,12 +2366,11 @@ Enable support for meta tokens (ie. counterparty, colored coin, ethereum ERC20).
 
 ```javascript
 // Example
-const balance = btcEngine.getBalance(abcTxLibAccess, options)
+const balance = btcEngine.getBalance(options)
 ```
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcTxLibAccess | [`ABCTxLibAccess`](#abctxlibaccess) | Object with various parameters to access the wallet and account |
 | options | `Object` | Options parameters below |
 
 | Option Params | Type | Description |
@@ -2393,12 +2387,11 @@ Get the current balance of this wallet in the currency's smallest denomination (
 
 ```javascript
 // Example
-const numTransactions = btcEngine.getNumTransactions(abcTxLibAccess, options)
+const numTransactions = btcEngine.getNumTransactions(options)
 ```
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcTxLibAccess | [`ABCTxLibAccess`](#abctxlibaccess) | Object with various parameters to access the wallet and account |
 | options | `Object` | Options parameters below |
 
 | Option Params | Type | Description |
@@ -2419,7 +2412,7 @@ const options = {
   numEnteries: 50
 }
 
-btcEngine.getTransactions(abcTxLibAccess, options, function(error, transactions) {
+btcEngine.getTransactions(options, function(error, transactions) {
   if (error === null) {
     console.log(transactions[0].txid) // => "1209befa09ab3efc039abf09490ac34fe09abc938"
   }
@@ -2428,7 +2421,6 @@ btcEngine.getTransactions(abcTxLibAccess, options, function(error, transactions)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcTxLibAccess | [`ABCTxLibAccess`](#abctxlibaccess) | Object with various parameters to access the wallet and account |
 | options | `Object` | Options for abcTxLibGetTransactions. If NULL, return all transactions |
 | callback | `Callback` | (Javascript) Callback function |
 
@@ -2451,12 +2443,11 @@ The `options` parameter may include the following:
 ### getFreshAddress
 
 ```javascript
-const address = btcEngine.getFreshAddress(abcTxLibAccess, options)
+const address = btcEngine.getFreshAddress(options)
 ```
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcTxLibAccess | [`ABCTxLibAccess`](#abctxlibaccess) | Object with various parameters to access the wallet and account |
 | options | `Object` | Options object documented below |
 
 | Option Params | Type | Description |
@@ -2472,12 +2463,11 @@ Returns an address that has never received funds
 ### addGapLimitAddresses
 
 ```javascript
-const abcError = btcEngine.addGapLimitAddresses(abcTxLibAccess, addresses, options)
+const abcError = btcEngine.addGapLimitAddresses(addresses, options)
 ```
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcTxLibAccess | [`ABCTxLibAccess`](#abctxlibaccess) | Object with various parameters to access the wallet and account |
 | addresses | `Array` | Array of Strings containing public addresses |
 | options | `Object` | Options object documented below |
 
@@ -2496,12 +2486,11 @@ When implementing an HD wallet with multiple addresses, wallet implementations t
 ### isAddressUsed
 
 ```javascript
-const isUsed = btcEngine.isAddressUsed(abcTxLibAccess, address, options)
+const isUsed = btcEngine.isAddressUsed(address, options)
 ```
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcTxLibAccess | [`ABCTxLibAccess`](#abctxlibaccess) | Object with various parameters to access the wallet and account |
 | address | `String` | String of public address to query |
 | options | `Object` | Options parameters below |
 
@@ -2518,7 +2507,7 @@ The `options` parameter may include the following:
 ### makeSpend
 
 ```javascript
-btcEngine.makeSpend(abcTxLibAccess, abcSpendInfo, function(error, abcTransaction) {
+btcEngine.makeSpend(abcSpendInfo, function(error, abcTransaction) {
   // your_callback_here
 })
 ```
@@ -2526,7 +2515,7 @@ btcEngine.makeSpend(abcTxLibAccess, abcSpendInfo, function(error, abcTransaction
 ### signTx
 
 ```javascript
-btcEngine.signTx(abcTxLibAccess, abcTransaction, function(error) {
+btcEngine.signTx(abcTransaction, function(error) {
   // your_callback_here
 })
 ```
@@ -2534,7 +2523,7 @@ btcEngine.signTx(abcTxLibAccess, abcTransaction, function(error) {
 ### broadcastTx
 
 ```javascript
-btcEngine.broadcastTx(abcTxLibAccess, abcTransaction, function(error) {
+btcEngine.broadcastTx(abcTransaction, function(error) {
   // your_callback_here
 })
 ```
@@ -2542,7 +2531,7 @@ btcEngine.broadcastTx(abcTxLibAccess, abcTransaction, function(error) {
 ### saveTx
 
 ```javascript
-btcEngine.saveTx(abcTxLibAccess, abcTransaction, function(error) {
+btcEngine.saveTx(abcTransaction, function(error) {
   // your_callback_here
 })
 ```

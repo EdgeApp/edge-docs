@@ -39,13 +39,13 @@ See the following Github repos for your various development environments. Instal
 ## Include and initialize the SDK
 
 ```javascript
-var abc = require ('airbitz-core-js')
+var abc = require('airbitz-core-js')
 
 // Or
 <script src="abc.js"></script>
 
 // React Native
-var abc = require ('airbitz-core-react-native')
+var abc = require('airbitz-core-react-native')
 ```
 
 ```objc
@@ -1405,7 +1405,7 @@ List the keys in the specified folder
 # ABC Currency Transactions
 
 ```javascript
-var abcTxLibrary = require('airbitz-core-js-bitcoin`).txLib
+var abcTxLibrary = require('airbitz-core-js-bitcoin').txLib
 
 var success = abcWallet.addTxFunctionality(abcTxLibrary)
 ```
@@ -2183,36 +2183,65 @@ The repo `airbitz-core-js-bitcoin` exposes this API for bitcoin
 
 This prototype class provides all the necessary API to support a cryptocurrency in Airbitz.
 
-### abcTxLibGetInfo
+## Include and initialize the library
 
 ```javascript
-const details = abcTxLibGetInfo()
+var abcTxLibBTC = require('abcTxLibBtc')
+
+// Or
+<script src="abcTxLibBtc.js"></script>
+
+// React Native
+var abcTxLibBTC = require('abcTxLibBtc-react-native')
+```
+
+Include the proper header files and/or libraries for your language.
+
+### getInfo
+
+Get details of the crypto currency supported by this library
+
+```javascript
+const details = abcTxLibBTC.getInfo()
 
 console.log(details)
-
 "
-{ currencyCode: "BTC",
-  denominations:
-                  [
-                    { name: "bits", multiplier: 100,       symbol: "ƀ" },
-                    { name: "mBTC", multiplier: 100000,    symbol: "mɃ" },
-                    { name: "BTC",  multiplier: 100000000, symbol: "Ƀ" },
-                  ],
-  symbolImage: "qq/2iuhfiu1/3iufhlq249r8yq34tiuhq4giuhaiwughiuaergih/rg"
-  metaTokens:
-  [
-    { currencyCode: "XCP",
-      denominations: [
-                      { name: "XCP",  multiplier: 1 }
-                     ],
-      symbolImage: "fe/3fthfiu1/3iufhlq249r8yq34tiuhqggiuhaiwughiuaergih/ef"
+{
+  currencyCode: 'BTC',
+  denominations: [{
+    name: 'bits',
+    multiplier: 100,
+    symbol: 'ƀ'
+  },
+    {
+      name: 'mBTC',
+      multiplier: 100000,
+      symbol: 'mɃ'
     },
-    { currencyCode: "TATIANACOIN",
-      denominations: [
-                      { name: "TATIANACOIN",  multiplier: 1 }
-                     ],
-      symbolImage: "qe/3fthfi2fg1/3iufhlq249r8yq34tiuhqggiuhaiwughiuaergih/ef"
+    {
+      name: 'BTC',
+      multiplier: 100000000,
+      symbol: 'Ƀ'
     }
+  ],
+  symbolImage: 'qq/2iuhfiu1/3iufhlq249r8yq34tiuhq4giuhaiwughiuaergih/rg',
+  metaTokens: [{
+    currencyCode: 'XCP',
+    denominations: [{
+      name: 'XCP',
+      multiplier: 1
+    }],
+    symbolImage: 'fe/3fthfiu1/3iufhlq249r8yq34tiuhqggiuhaiwughiuaergih/ef'
+  },
+    {
+      currencyCode: 'TATIANACOIN',
+      denominations: [{
+        name: 'TATIANACOIN',
+        multiplier: 1
+      }],
+      symbolImage: 'qe/3fthfi2fg1/3iufhlq249r8yq34tiuhqggiuhaiwughiuaergih/ef'
+    }
+  ]
 }
 "
 ```
@@ -2228,7 +2257,7 @@ The `details` object includes the following params:
 | currencyCode | `String` | The 3 character code for the currency |
 | denominations | `Array` | An array of Objects of the possible denominations for this currency |
 | symbolImage | `String` | Base64 encoded png or jpg image of the currency symbol (optional) |
-| metaTokens | `Object` | Array of objects describing the supported metatokens |
+| metaTokens | `Array` | Array of objects describing the supported metatokens |
 
 The `denominations` object includes the following params:
 
@@ -2239,31 +2268,37 @@ The `denominations` object includes the following params:
 | symbol | `String` | The human readable 1-3 character symbol of the currency. ie. "Ƀ" |
 | font | `String` | (Optional) The font required to display the symbol specified above. If not given, will use the default system font. |
 
-Get details of the crypto currency supported by this library
+The `metaTokens` array includes the following params:
 
-### abcTxLibInit
+| Param | Type | Description |
+| --- | --- | --- |
+| currencyCode | `String` | The human readable string to describe the denomination. |
+| denominations | `Array` | An array of Objects of the possible denominations for this currency |
+| symbolImage | `String` | Base64 encoded png or jpg image of the currency symbol (optional) |
+
+### makeEngine
 
 ```javascript
 // Example
-function abcTxLibCBTransactionsChanged(abcTransactions) { }
-
-const callbacks =
-{
-  abcTxLibCBTransactionsChanged
+function abcTxLibBTCTransactionsChanged(abcTransactions) { 
+  // your_callback_here
 }
 
-const options =
-{
+const callbacks = {
+  abcTxLibCBTransactionsChanged
+}
+const options = {
   accountDataStore,
   walletDataStore,
   masterPrivateKey
 }
 
-abcTxLibInit(abcTxLibAccess, options, callbacks, function(error) {
-  if (error === null) {
-    // Success
-  }
-})
+const btcEngine =
+  abcTxLibBTC.makeEngine(abcTxLibAccess, options, callbacks, function(error) {
+    if (error === null) {
+      // Success
+    }
+  })
 ```
 
 | Param | Type | Description |
@@ -2289,18 +2324,32 @@ Any global information that the TxLib needs to keep should be kept in the [ABCWa
 
 It is recommended the master public keys be keps in the [ABCWallet](#abcwallet) `localDataStore` so they can be accessed for querying the blockchain while not logged in. Local blockchain cache information can be stored in either the [ABCWallet](#abcwallet) or [ABCWallet.abcAccount](#abcaccount) `localDataStore` depending on whether the implementation chooses to hold a global blockchain cache or per wallet information.
 
-### abcTxLibEnableTokens
+### getBlockHeight
+
+(Under Construction)
+
+Retrieve the current block height from the network
+
+```javascript
+// Example
+var blockHeight = btcEngine.getBlockHeight(abcTxLibAccess)
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| abcTxLibAccess | [`ABCTxLibAccess`](#abctxlibaccess) | Object with various parameters to access the wallet and account |
+
+### enableTokens
 
 (Under Construction)
 
 ```javascript
 // Example
-const tokens =
-{
-  enableTokens = [ "XCP, "TATIANACOIN" ]
+const tokens = {
+  tokens: [ "XCP", "TATIANACOIN" ]
 }
 
-abcTxLibEnableTokens(abcTxLibAccess, tokens, function(error) {
+btcEngine.enableTokens(abcTxLibAccess, tokens, function(error) {
   if (error === NULL) {
     // Success
   }
@@ -2318,11 +2367,11 @@ abcTxLibEnableTokens(abcTxLibAccess, tokens, function(error) {
 
 Enable support for meta tokens (ie. counterparty, colored coin, ethereum ERC20). Library should begin checking the blockchain for the specified tokens and triggering the callbacks specified in abcTxLibInit.
 
-### abcTxLibGetBalance
+### getBalance
 
 ```javascript
 // Example
-const balance = abcTxLibGetBalance(abcTxLibAccess, options)
+const balance = btcEngine.getBalance(abcTxLibAccess, options)
 ```
 
 | Param | Type | Description |
@@ -2340,11 +2389,11 @@ const balance = abcTxLibGetBalance(abcTxLibAccess, options)
 
 Get the current balance of this wallet in the currency's smallest denomination (ie. satoshis)
 
-### abcTxLibGetNumTransactions
+### getNumTransactions
 
 ```javascript
 // Example
-const numTransactions = abcTxLibGetNumTransactions(abcTxLibAccess, options)
+const numTransactions = btcEngine.getNumTransactions(abcTxLibAccess, options)
 ```
 
 | Param | Type | Description |
@@ -2362,13 +2411,15 @@ const numTransactions = abcTxLibGetNumTransactions(abcTxLibAccess, options)
 
 Get the number of transactions in the wallet
 
-### abcTxLibGetTransactions
+### getTransactions
 
 ```javascript
-const options = { startIndex: 5,
-                  numEnteries: 50 }
+const options = {
+  startIndex: 5,
+  numEnteries: 50
+}
 
-abcTxLibGetTransactions(abcTxLibAccess, options, function(error, transactions) {
+btcEngine.getTransactions(abcTxLibAccess, options, function(error, transactions) {
   if (error === null) {
     console.log(transactions[0].txid) // => "1209befa09ab3efc039abf09490ac34fe09abc938"
   }
@@ -2397,10 +2448,10 @@ The `options` parameter may include the following:
 | startIndex | `Int` | The starting index into the list of transactions. 0 specifies the newest transaction |
 | numEntries | `Int` |  The number of entries to return. If there aren't enough transactions to return `numEntries`, then the TxLib should return the maximum possible |
 
-### abcTxLibGetFreshAddress
+### getFreshAddress
 
 ```javascript
-const address = abcTxLibGetFreshAddress(abcTxLibAccess, options)
+const address = btcEngine.getFreshAddress(abcTxLibAccess, options)
 ```
 
 | Param | Type | Description |
@@ -2418,10 +2469,10 @@ const address = abcTxLibGetFreshAddress(abcTxLibAccess, options)
 
 Returns an address that has never received funds
 
-### abcTxLibAddGapLimitAddresses
+### addGapLimitAddresses
 
 ```javascript
-const abcError = abcTxLibAddGapLimitAddresses(abcTxLibAccess, addresses, options)
+const abcError = btcEngine.addGapLimitAddresses(abcTxLibAccess, addresses, options)
 ```
 
 | Param | Type | Description |
@@ -2442,10 +2493,10 @@ The `options` parameter may include the following:
 
 When implementing an HD wallet with multiple addresses, wallet implementations typically search for funds by going a limited number of addresses ahead of the last address that has funds received. This is usually about 10 addresses. `abcTxLibAddGapLimitAddresses` allows ABC to specify to the txLib to treat the given addresses as if they had funds received and to forward their gap limit accordingly.
 
-### abcTxLibIsAddressUsed
+### isAddressUsed
 
 ```javascript
-const isUsed = abcTxLibIsAddressUsed(abcTxLibAccess, address, options)
+const isUsed = btcEngine.isAddressUsed(abcTxLibAccess, address, options)
 ```
 
 | Param | Type | Description |
@@ -2464,34 +2515,34 @@ The `options` parameter may include the following:
 | --- | --- | --- |
 | isUsed | `Boolean` | True if address has ever received money |
 
-### abcTxLibMakeSpend
+### makeSpend
 
 ```javascript
-abcTxLibMakeSpend(abcTxLibAccess, abcSpendInfo, function(error, abcTransaction) {
-  // your callback here
-})
-```
-
-### abcTxLibSignTx
-
-```javascript
-abcTxLibSignTx(abcTxLibAccess, abcTransaction, function(error) {
+btcEngine.makeSpend(abcTxLibAccess, abcSpendInfo, function(error, abcTransaction) {
   // your_callback_here
 })
 ```
 
-### abcTxLibBroadcastTx
+### signTx
 
 ```javascript
-abcTxLibBroadcastTx(abcTxLibAccess, abcTransaction, function(error) {
+btcEngine.signTx(abcTxLibAccess, abcTransaction, function(error) {
   // your_callback_here
 })
 ```
 
-### abcTxLibSaveTx
+### broadcastTx
 
 ```javascript
-abcTxLibSaveTx(abcTxLibAccess, abcTransaction, function(error) {
+btcEngine.broadcastTx(abcTxLibAccess, abcTransaction, function(error) {
+  // your_callback_here
+})
+```
+
+### saveTx
+
+```javascript
+btcEngine.saveTx(abcTxLibAccess, abcTransaction, function(error) {
   // your_callback_here
 })
 ```
@@ -2507,10 +2558,10 @@ Various objects needed to save/restore data for the TxLib
 
 ## ABCTxLibCallbacks
 
-### abcTxLibCBTransactionsChanged
+### TransactionsChanged
 
 ```javascript
-abcTxLibCBTransactionsChanged(abcTransactions)
+transactionsChanged(abcTransactions)
 ```
 
 | Param | Type | Description |

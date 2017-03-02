@@ -410,6 +410,8 @@ html, body {
   }
 
   table {
+    display: table;
+    width: 50%;
     margin-bottom: 1em;
     overflow: auto;
     th,td {
@@ -426,10 +428,13 @@ html, body {
 
     td {
       padding: 10px;
+      min-width: 100px;
     }
 
     tr:last-child {
       border-bottom: 1px solid #ccc;
+      word-break: break-all;
+      hyphens: auto;
     }
 
     tr:nth-child(odd)>td {
@@ -599,10 +604,17 @@ html, body {
   table {
     padding: 0 !important;
   }
+  
+  td {
+    word-break: break-all;
+    hyphens: auto;
+  }
+
   code {
     word-break: break-all;
     hyphens: auto;
   }
+
   .dark-box {
     display: none;
   }

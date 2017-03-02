@@ -2538,6 +2538,8 @@ abcTxLibMakeSpend(abcTxLibAccess, abcSpendInfo, function(error, abcTransaction) 
   
 })
 ```
+Given an [ABCSpendInfo](#abcspendinfo) object, returns an unsigned [ABCTransaction](#abctransaction) object. [ABCTransaction](#abctransaction).signedTx should be NULL.
+
 
 ### abcTxLibSignTx
 ```javascript
@@ -2545,7 +2547,7 @@ abcTxLibSignTx(abcTxLibAccess, abcTransaction, function(error) {
   
 })
 ```
-
+Takes an unsigned [ABCTransaction](#abctransaction) object and signs it. This routine will set [ABCTransaction](#abctransaction).signedTx to an Array of bytes corresponding to the complete signed transaction.
 
 ### abcTxLibBroadcastTx
 ```javascript
@@ -2553,6 +2555,7 @@ abcTxLibBroadcastTx(abcTxLibAccess, abcTransaction, function(error) {
   
 })
 ```
+Takes a signed [ABCTransaction](#abctransaction) and broadcasts it to the blockchain network.
 
 ### abcTxLibSaveTx
 ```javascript
@@ -2560,6 +2563,7 @@ abcTxLibSaveTx(abcTxLibAccess, abcTransaction, function(error) {
   
 })
 ```
+Saves an already signed [ABCTransaction](#abctransaction) object to the local cache so that funds are considered spent by the wallet.
 
 ## ABCTxLibAccess
 

@@ -92,7 +92,7 @@ Initialize and create an ABCContext object. Required for functionality of ABC SD
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 | context | [`ABCContext`](#abccontext) | Initialized context |
 
 ### createAccount
@@ -172,7 +172,7 @@ Create and log into a new ABCAccount
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | Error object. `null` if no error |
 | account | [`ABCAccount`](#abcaccount) | Initialized account |
 
 ### getLocalAccount
@@ -192,7 +192,7 @@ abcContext.getLocalAccount("JoeHomey", callbacks,
 })
 ```
 
-Get local account details for a previously logged in account. This returns an ABCAccount object with a NULL `dataStore` object but with a functioning `localDataStore` object. This is effectively getting the non-encrypted account data which can be accessed without the user logging into the device with a password, PIN, or fingerpint. Any [ABCWallet](#abcwallet) objects in the account will also have NULL `dataStore` objects but with functioning `localDataStore` objects. This is commonly used for background processing the accounts/wallets on a device to do querying of cryptocurrency transactions while the user is not logged in.
+Get local account details for a previously logged in account. This returns an ABCAccount object with a `null` `dataStore` object but with a functioning `localDataStore` object. This is effectively getting the non-encrypted account data which can be accessed without the user logging into the device with a password, PIN, or fingerpint. Any [ABCWallet](#abcwallet) objects in the account will also have `null` `dataStore` objects but with functioning `localDataStore` objects. This is commonly used for background processing the accounts/wallets on a device to do querying of cryptocurrency transactions while the user is not logged in.
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -203,7 +203,7 @@ Get local account details for a previously logged in account. This returns an AB
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | Error object. `null` if no error |
 | account | [`ABCAccount`](#abcaccount) | Initialized account |
 
 ### loginWithPassword
@@ -274,7 +274,7 @@ The otpResetToken is only returned if the caller has provided the correct userna
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | Error object. `null` if no error |
 | account | [`ABCAccount`](#abcaccount) | Initialized account |
 
 ### loginWithPIN
@@ -330,7 +330,7 @@ Login to an Airbitz account with PIN. Used to sign into devices that have previo
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | Error object. `null` if no error |
 | account | [`ABCAccount`](#abcaccount) | Initialized account |
 
 
@@ -371,7 +371,7 @@ Check if specified username has a password on the account or if it is a PIN-only
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | Error object. `null` if no error |
 | hasPassword | `Boolean` | True if account has a password |
 
 
@@ -408,7 +408,7 @@ Deletes named account from local device. Account is recoverable if it contains a
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | Error object. `null` if no error |
 | hasPassword | `Boolean` | True if account has a password |
 
 ### pinLoginEnabled
@@ -441,7 +441,7 @@ Checks if PIN login is possible for the given username. This checks if there is 
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | Error object. `null` if no error |
 | enabled | `Boolean` | True if PIN login is enabled |
 
 ### listUsernames
@@ -476,7 +476,7 @@ Get a list of previously logged in usernames on this device
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | Error object. `null` if no error |
 | usernames | `Array` | Array |
 
 ### usernameAvailable
@@ -509,7 +509,7 @@ Checks if PIN login is possible for the given username. This checks if there is 
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | Error object. `null` if no error |
 | enabled | `Boolean` | True if PIN login is enabled |
 
 
@@ -552,7 +552,7 @@ To obtain an otpResetToken, attempt a login into the OTP protected account using
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | Error object. `null` if no error |
 
 ## ABCAccount
 
@@ -620,7 +620,7 @@ Change the password of the currently logged in ABCAccount
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | Error object. `null` if no error |
 
 ### changePIN
 
@@ -660,7 +660,7 @@ Change the PIN of the currently logged in ABCAccount
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | Error object. `null` if no error |
 
 ### checkPassword
 
@@ -693,7 +693,7 @@ Checks if password is the correct password for this account
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 | passwordCorrect | `Boolean` | True if password is correct |
 
 ### enablePINLogin
@@ -727,7 +727,7 @@ Enable or disable PIN login on this account. Set enable = YES to allow PIN login
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 
 
 ### setupOTPKey
@@ -772,7 +772,7 @@ Device B can call getOTPLocalKey and Device A can add the OTP key using setupOTP
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 
 
 ### getOTPLocalKey
@@ -805,7 +805,7 @@ Gets the locally saved OTP key for the current user
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 | key | `String` | OTP key |
 
 
@@ -840,7 +840,7 @@ Reads the OTP configuration from the server. Gets information on whether OTP is 
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 | enabled | `Boolean` | True if OTP is enabled on this accout |
 | timeout | `Number` | Number seconds required after a reset is requested before OTP is disabled (iOS only. Android returns 0) |
 
@@ -879,7 +879,7 @@ Sets up OTP authentication on the server for currently logged in user. This will
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 
 
 ### disableOTP
@@ -912,7 +912,7 @@ Removes the OTP authentication requirement from the server for the currently log
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 
 ### cancelOTPResetRequest
 
@@ -944,7 +944,7 @@ Removes the OTP reset request from the server for the currently logged in user. 
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 
 ### parseUri
 
@@ -1004,7 +1004,7 @@ Sign an arbitrary message with a BitID URI. The URI determines the key derivatio
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 | abcSignature | [`ABCBitIDSignature`](#ABCBitIDSignature) | BitID Signature Object |
 
 ### createWallet
@@ -1032,7 +1032,7 @@ Create a new [ABCWallet](#abcwallet) object and add it to the current account. E
 
 | Callback Params | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 | id | `String` | Strings of wallet ID |
 
 | Wallet Type | Key Name | Description |
@@ -1041,7 +1041,7 @@ Create a new [ABCWallet](#abcwallet) object and add it to the current account. E
 | `wallet:repo:ethereum` | `ethereumKey` | Single address ethereum wallet with base16 private key
 | `wallet:repo:bitcoin-bip44` | `bitcoinKey-BIP44` | HD BIP44 bitcoin wallet with 24 word mnemonic master private key |
 | `wallet:repo:bitcoin-bip44-multisig` | `bitcoinKey-BIP44` | HD BIP44 bitcoin wallet with 24 word mnemonic master private key and upto 15 of 15 multisig support |
-| `wallet:repo:com.mydomain.myapp.myDataStoreType` | `NULL` | Generic data store for your app |
+| `wallet:repo:com.mydomain.myapp.myDataStoreType` | `null` | Generic data store for your app |
 
 Please contact developer@airbitz.co for the addition of new wallet types.
 
@@ -1070,7 +1070,7 @@ Get an [ABCWallet](#abcwallet) object given a `walletId`
 
 | Param | Type | Description |
 | --- | --- | --- |
-| walletId | `String` | Wallet ID from listWallets. NULL if no matching wallet |
+| walletId | `String` | Wallet ID from listWallets. `null` if no matching wallet |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
@@ -1089,12 +1089,12 @@ Get the first [ABCWallet](#abcwallet) object of type `walletType`
 
 | Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 | walletType | `String` | Wallet type |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| abcWallet | [`ABCWallet`](#abcwallet) | (Javascript) Error object. Null if no error |
+| abcWallet | [`ABCWallet`](#abcwallet) | (Javascript) Error object. `null` if no error |
 
 ### shareWallet (proposal)
 
@@ -1120,7 +1120,7 @@ abcAccount.importWallet(shareWalletToken, function(error, abcWallet) {
 
 | Callback Params | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 | shareWalletToken | `String` | Token to use with [importWallet](#importWallet) |
 
 Provides a key that can given to another user/app to share a wallet with that account.
@@ -1149,7 +1149,7 @@ abcAccount.importWallet(shareWalletToken, function(error, abcWallet) {
 
 | Callback Params | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 | shareWalletToken | `String` | Token from [shareWallet](#sharewallet) |
 
 Provides a key that can given to another user/app to share a wallet with that account.
@@ -1187,7 +1187,7 @@ Callback routines that notify application when various changes have occurred in 
 | walletName | `String` | Human readable name of wallet |
 | walletType | `String` | Type of wallet as specified in [createWallet](#createWallet)
 | keys | `Object` | Object with keys placed at createWallet time |
-| dataStore | [`ABCDataStore`](#abcdatastore) | [ABCDataStore](#abcdatastore) object. This datastore object is encrypted by default, backed up to the cloud, and synchronized with any device the user logs into. Data modifications are versioned and can be rolled back but this functionality is not yet exposed via API. dataStore object may NULL if parent [ABCAccount](#abcaccount) has not been logged into yet |
+| dataStore | [`ABCDataStore`](#abcdatastore) | [ABCDataStore](#abcdatastore) object. This datastore object is encrypted by default, backed up to the cloud, and synchronized with any device the user logs into. Data modifications are versioned and can be rolled back but this functionality is not yet exposed via API. dataStore object may `null` if parent [ABCAccount](#abcaccount) has not been logged into yet |
 | localDataStore | [`ABCDataStore`](#abcdatastore) | [ABCDataStore](#abcdatastore) object that only exists on the current device. This data is not encrypted nor backed up. Not to be used for sensitive data but rather as a local cache of network data. Data is not version controlled and has no rollback capability. Common use case will be for local device specific wallet settings, blockchain cache information, and public address cache for use when account/wallet has not yet been decrypted (background processing) |
 | tx | [`ABCWalletTx`](#abcwallettx) | Optional and may be null. Exposes transactional functionality for this wallet. Requires addTxFunctionality to be called |
 
@@ -1212,7 +1212,7 @@ abcWallet.renameWallet("My Wallet", function (error) {
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 
 Returns a list of transactions in the current wallet. Transactions are returned ordered from newest to oldest.
 
@@ -1262,7 +1262,7 @@ abcWallet.addTxFunctionality(abcWalletTxLibrary, callbacks, function (error) {
 
 | Callback Params | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 
 Adds send/receive transaction capability for a specific currency to a wallet. An [ABCWalletTxLibrary](#abcwallettxlibrary) object must be passed in that exposes the entire [ABCWalletTxLibrary](#abcwallettxlibrary) interface. Airbitz includes support for bitcoin transactions through the [`airbitz-core-js-bitcoin`](https://github.com/Airbitz/airbitz-core-js-bitcoin) repository. Once called, the ABCWallet object will expose the [ABCWalletTx](#abcwallettx) interface at [ABCWallet.tx](#abcwallettx). Once the callback returns, ABCWallet.tx will be accessible with previously saved transactions and dataStores.
 
@@ -1293,7 +1293,7 @@ abcWallet.dataStore.writeData("userAddress",
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 
 Writes a string of data to the specified dataStore folder using the given key. `folder` must not include the characters "/". The dataStore object at this point only provides a single depth folder for storing key/value pairs. Keys can be enumerated using the [ABCDataStore.listKeys](#listkeys) method. Data can read back using the [ABCDataStore.readData](#readdata) method.
 
@@ -1320,7 +1320,7 @@ abcWallet.dataStore.readData("userAddress",
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 | value | `String` | data value |
 
 Reads back a string of data from the specified dataStore folder using the given key. `folder` must not include the characters "/". The dataStore object at this point only provides a single depth folder for storing key/value pairs. Keys can be enumerated using the [ABCDataStore.listKeys](#listkeys) method.
@@ -1348,7 +1348,7 @@ abcWallet.dataStore.removeKey("userAddress",
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 
 Removes the specified key/value pair from the dataStore.
 
@@ -1373,7 +1373,7 @@ abcWallet.dataStore.removeFolder("userAddress",
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 
 Removes the specified folder from the dataStore. All key/value pairs in the folder will also be removed.
 
@@ -1397,7 +1397,7 @@ abcWallet.dataStore.listKeys("userAddress",
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 | keys | `Array` | Array of strings of keys in folder |
 
 List the keys in the specified folder
@@ -1452,7 +1452,7 @@ const balance = abcWallet.tx.getBalance("BTC")
 
 | Param | Type | Description |
 | --- | --- | --- |
-| currencyCode | `String` | Selects which currency to return a balance for. If NULL, returns the balance of the primary currency of the wallet's blockchain. ie. "BTC" or "ETH" |
+| currencyCode | `String` | Selects which currency to return a balance for. If `null`, returns the balance of the primary currency of the wallet's blockchain. ie. "BTC" or "ETH" |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
@@ -1489,7 +1489,7 @@ const abcTransactions = abcWallet.tx.getTransactions(options, function(error, ab
 
 | Param | Type | Description |
 | --- | --- | --- |
-| options | `Object` | May be NULL which will return all transactions |
+| options | `Object` | May be `null` which will return all transactions |
 
 | Option Params | Type | Description |
 | --- | --- | --- |
@@ -1503,7 +1503,7 @@ const abcTransactions = abcWallet.tx.getTransactions(options, function(error, ab
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 | transactions | `ABCTransaction` | Array of [ABCTransaction](#abctransaction) objects |
 
 Returns a list of transactions in the current wallet. Options allow pruning of the search to a subset of the transactions in addition to string filtering. Options are applied in the following order:
@@ -1592,7 +1592,7 @@ const abcReceiveAddress = abcWallet.tx.getReceiveAddress(options, , function (er
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 | abcReceiveAddress | `ABCReceiveAddress` | [ABCReceiveAddress](#abcreceiveaddress) |
 
 Returns an [ABCReceiveAddress](#abcreceiveaddress) object. This routine is used to generate a new public address or return a previously request address object.  The `metadata` object
@@ -2024,7 +2024,7 @@ Parameters
 | bitidKYCRequest | `Bool` | True if BitID URI is requesting a KYC token (experimental) |
 
 
-Object contains various parts of a parsed URI depending on the source URI. Any of the properties may be NULL.
+Object contains various parts of a parsed URI depending on the source URI. Any of the properties may be `null`.
 
 ## ABCPaymentProtocolInfo
 
@@ -2067,14 +2067,14 @@ Object represents a signed or unsigned transaction that may or may not be broadc
 | --- | --- | --- |
 | abcWalletTx | [`ABCWalletTx`](#abcwallettx) | [ABCWalletTx](#abcwallettx) this transaction is from |
 | metadata | [`ABCMetadata`](#abcmetadata) | [ABCMetadata](#abcmetadata) of this transaction |
-| txid | `String` | Transaction ID as represented by the wallet's crypto currency. For bitcoin this is base16. This parameter is NULL until [signTx](#signtx) is called. |
-| date | `Date` | Date that transaction was broadcast, detected, or confirmed on the blockchain. If the tx detection date is after the confirmation time, then this is the confirmation time. NULL if transaction has not been broadcast |
+| txid | `String` | Transaction ID as represented by the wallet's crypto currency. For bitcoin this is base16. This parameter is `null` until [signTx](#signtx) is called. |
+| date | `Date` | Date that transaction was broadcast, detected, or confirmed on the blockchain. If the tx detection date is after the confirmation time, then this is the confirmation time. `null` if transaction has not been broadcast |
 | blockHeight | `Int` | Block number that included this transaction |
 | amountSatoshi | `Int` | Amount of fees in denomination of smallest unit of currency |
 | providerFee | `Int` | Additional app provider fees in denomination of smallest unit of currency (ie. Satoshis) |
 | networkFee | `Int` | Fee paid to network (mining fee) in denomination of smallest unit of currency (ie. Satoshis) |
 | runningBalance | `Int` | Running balance of entire wallet as of this transaction |
-| signedTx |`Array` | Buffer of signed transaction data with signature. NULL if transaction is unsigned |
+| signedTx |`Array` | Buffer of signed transaction data with signature. `null` if transaction is unsigned |
 | otherParams |`Object` | Crypto currency specific data |
 
 `otherParams` has the following parameters for bitcoin wallets
@@ -2326,18 +2326,15 @@ It is recommended the master public keys be keps in the [ABCWallet](#abcwallet) 
 
 ### getBlockHeight
 
-(Under Construction)
-
 Retrieve the current block height from the network
 
 ```javascript
 // Example
 var blockHeight = btcEngine.getBlockHeight()
+455487
 ```
 
 ### enableTokens
-
-(Under Construction)
 
 ```javascript
 // Example
@@ -2346,7 +2343,7 @@ const tokens = {
 }
 
 btcEngine.enableTokens(tokens, function(error) {
-  if (error === NULL) {
+  if (error === null) {
     // Success
   }
 })
@@ -2421,7 +2418,7 @@ btcEngine.getTransactions(options, function(error, transactions) {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| options | `Object` | Options for abcTxLibGetTransactions. If NULL, return all transactions |
+| options | `Object` | Options for abcTxLibGetTransactions. If `null`, return all transactions |
 | callback | `Callback` | (Javascript) Callback function |
 
 | Callback Param | Type | Description |
@@ -2616,7 +2613,7 @@ Create an overlay popup where a user can register a new account or login to a pr
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 | account | [`ABCAccount`](#abcaccount) | Airbitz account object |
 
 ![Login UI](#https://airbitz.co/go/wp-content/uploads/2016/08/Screen-Shot-2016-08-26-at-12.50.04-PM.png)
@@ -2638,7 +2635,7 @@ Launch an account management window for changing password, PIN, and recovery que
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. Null if no error |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 
 ![Manage UI](#https://airbitz.co/go/wp-content/uploads/2016/08/Screen-Shot-2016-08-26-at-12.50.26-PM.png)
 

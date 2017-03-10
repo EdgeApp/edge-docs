@@ -2276,6 +2276,10 @@ The `metaTokens` array includes the following params:
 | denominations | `Array` | An array of Objects of the possible denominations for this currency |
 | symbolImage | `String` | Base64 encoded png or jpg image of the currency symbol (optional) |
 
+## ABCTxEngine
+
+An ABCTxEngine contains the following methods, and any needed storage for blockchain interaction
+
 ### makeEngine
 
 ```javascript

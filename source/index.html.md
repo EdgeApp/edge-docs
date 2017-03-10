@@ -2510,6 +2510,8 @@ btcEngine.makeSpend(abcSpendInfo, function(error, abcTransaction) {
 })
 ```
 
+Given an [ABCSpendInfo](#abcspendinfo) object, returns an unsigned [ABCTransaction](#abctransaction) object. [ABCTransaction](#abctransaction).signedTx should be NULL.
+
 ### signTx
 
 ```javascript
@@ -2517,6 +2519,8 @@ btcEngine.signTx(abcTransaction, function(error) {
   // your_callback_here
 })
 ```
+
+This routine will set [ABCTransaction](#abctransaction).signedTx to an Array of bytes corresponding to the complete signed transaction. Takes an unsigned [ABCTransaction](#abctransaction) object and signs it.
 
 ### broadcastTx
 
@@ -2526,6 +2530,8 @@ btcEngine.broadcastTx(abcTransaction, function(error) {
 })
 ```
 
+Takes a signed [ABCTransaction](#abctransaction) and broadcasts it to the blockchain network.
+
 ### saveTx
 
 ```javascript
@@ -2533,6 +2539,8 @@ btcEngine.saveTx(abcTransaction, function(error) {
   // your_callback_here
 })
 ```
+
+Saves an already signed [ABCTransaction](#abctransaction) object to the local cache so that funds are considered spent by the wallet.
 
 ## ABCTxLibAccess
 

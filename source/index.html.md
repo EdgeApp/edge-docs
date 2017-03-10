@@ -36,7 +36,7 @@ See the following Github repos for your various development environments. Instal
 
 [React Native/Javascript](https://github.com/Airbitz/airbitz-core-js)
 
-## Include and initialize the SDK
+### Include and initialize the SDK
 
 ```javascript
 var abc = require('airbitz-core-js')
@@ -2183,7 +2183,7 @@ The repo `airbitz-core-js-bitcoin` exposes this API for bitcoin
 
 This prototype class provides all the necessary API to support a cryptocurrency in Airbitz.
 
-## Include and initialize the library
+### Include and initialize the library
 
 ```javascript
 var abcTxLibBTC = require('abcTxLibBtc')

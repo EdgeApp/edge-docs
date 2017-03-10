@@ -2171,11 +2171,11 @@ Requests the exchange rate from an array of currency pairs. Function should retu
 
 # Currency Plugin API
 
-Cryptocurrency functionality for AirbitzCore is provided by currency API libraries that follow the Currency Plugin API. These libraries can be easily added to Airbitz by providing the following library API for import into an [ABCWallet](#abcwallet). ABC will call into the library [abcTxLibInit](#abctxlibinit) to initialize the library with a set of callbacks.
+Cryptocurrency functionality for AirbitzCore is provided by currency API libraries that follow the Currency Plugin API. These libraries can be easily added to Airbitz by providing the following library API for import into an [ABCWallet](#abcwallet). ABC will call into the library [`abcTxLibBTC.makeEngine`](#makeengine) to initialize the library with a set of callbacks.
 
 To add additional currency functionality, create a library that exposes an API that follows the ABCWalletTxLibrary template below.
 
-[ABCDatastore](#abcdatastore) objects will get passed into [abcTxLibInit](#abctxlibinit), the [walletDataStore](#abcdatastore) allows the txLib to store wallet specific data such as a blockchain cache. If the implementation chooses to hold a global cache of data, use the [accountDataStore](#abcdatastore) object. Both data store objects are local data stores which are not encrypted, revision controlled, or backed up.
+[ABCDatastore](#abcdatastore) objects will get passed into [`abcTxLibBTC.makeEngine`](#makeengine), the [walletDataStore](#abcdatastore) allows the txLib to store wallet specific data such as a blockchain cache. If the implementation chooses to hold a global cache of data, use the [accountDataStore](#abcdatastore) object. Both data store objects are local data stores which are not encrypted, revision controlled, or backed up.
 
 The repo `airbitz-core-js-bitcoin` exposes this API for bitcoin
 
@@ -2304,7 +2304,7 @@ const btcEngine =
 | Param | Type | Description |
 | --- | --- | --- |
 | abcTxLibAccess | [`ABCTxLibAccess`](#abctxlibaccess) | Object with various parameters to access the wallet and account |
-| options | `Object` | Options for abcTxLibInit |
+| options | `Object` | Options for [`abcTxLibBTC.makeEngine`](#makeengine) |
 | callbacks | [`ABCTxLibCallbacks`](#abctxlibcallbacks) | Various callbacks when wallet is updated |
 | callback | `Callback` | (Javascript) Callback function |
 
@@ -2318,7 +2318,7 @@ const btcEngine =
 | --- | --- | --- |
 | abcError | [`ABCError`](#abcerror) | [ABCError](#abcerror) object |
 
-Initialization of the library effectively creates a cryptocurrency wallet within the [ABCWallet](#abcwallet) object. The TxLib should spin up any background tasks necessary to begin querying the blockchain and field any requests for transactions. `abcTxLibInit` will be called once for every wallet of the same or different currency.
+Initialization of the library effectively creates a cryptocurrency wallet within the [ABCWallet](#abcwallet) object. The TxLib should spin up any background tasks necessary to begin querying the blockchain and field any requests for transactions. [`abcTxLibBTC.makeEngine`](#makeengine) will be called once for every wallet of the same or different currency.
 
 Any global information that the TxLib needs to keep should be kept in the [ABCWallet.abcAccount](#abcaccount) using the `dataStore` for encrypted, backed-up data, and using the `localDataStore` for unencrypted, device specific data.
 
@@ -2331,7 +2331,8 @@ Retrieve the current block height from the network
 ```javascript
 // Example
 var blockHeight = btcEngine.getBlockHeight()
-455487
+console.log(blockHeight)
+"455487"
 ```
 
 ### enableTokens
@@ -2357,7 +2358,7 @@ btcEngine.enableTokens(tokens, function(error) {
 | --- | --- | --- |
 | abcError | [`ABCError`](#abcerror) | [ABCError](#abcerror) object |
 
-Enable support for meta tokens (ie. counterparty, colored coin, ethereum ERC20). Library should begin checking the blockchain for the specified tokens and triggering the callbacks specified in abcTxLibInit.
+Enable support for meta tokens (ie. counterparty, colored coin, ethereum ERC20). Library should begin checking the blockchain for the specified tokens and triggering the callbacks specified in [`abcTxLibBTC.makeEngine`](#makeengine).
 
 ### getBalance
 

@@ -2288,9 +2288,8 @@ const callbacks = {
   abcTxLibCBTransactionsChanged
 }
 const options = {
-  accountDataStore,
-  walletDataStore,
-  masterPrivateKey
+  masterPrivateKey,
+  masterPublicKey
 }
 
 const btcEngine =

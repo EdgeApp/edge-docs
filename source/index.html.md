@@ -2276,10 +2276,6 @@ The `metaTokens` array includes the following params:
 | denominations | `Array` | An array of Objects of the possible denominations for this currency |
 | symbolImage | `String` | Base64 encoded png or jpg image of the currency symbol (optional) |
 
-## ABCTxEngine
-
-An ABCTxEngine contains the following methods, and any needed storage for blockchain interaction
-
 ### makeEngine
 
 ```javascript
@@ -2296,7 +2292,7 @@ const options = {
   masterPublicKey
 }
 
-const btcEngine =
+const abcTxEngine =
   abcTxLibBTC.makeEngine(abcTxLibAccess, options, callbacks, function(error) {
     if (error === null) {
       // Success
@@ -2327,13 +2323,17 @@ Any global information that the TxLib needs to keep should be kept in the [ABCWa
 
 It is recommended the master public keys be keps in the [ABCWallet](#abcwallet) `localDataStore` so they can be accessed for querying the blockchain while not logged in. Local blockchain cache information can be stored in either the [ABCWallet](#abcwallet) or [ABCWallet.abcAccount](#abcaccount) `localDataStore` depending on whether the implementation chooses to hold a global blockchain cache or per wallet information.
 
+## ABCTxEngine
+
+An ABCTxEngine contains the following methods, and any needed storage for blockchain interaction
+
 ### getBlockHeight
 
 Retrieve the current block height from the network
 
 ```javascript
 // Example
-var blockHeight = btcEngine.getBlockHeight()
+var blockHeight = abcTxEngine.getBlockHeight()
 console.log(blockHeight)
 "455487"
 ```
@@ -2346,7 +2346,7 @@ const tokens = {
   tokens: [ "XCP", "TATIANACOIN" ]
 }
 
-btcEngine.enableTokens(tokens, function(error) {
+abcTxEngine.enableTokens(tokens, function(error) {
   if (error === null) {
     // Success
   }
@@ -2367,7 +2367,7 @@ Enable support for meta tokens (ie. counterparty, colored coin, ethereum ERC20).
 
 ```javascript
 // Example
-const balance = btcEngine.getBalance(options)
+const balance = abcTxEngine.getBalance(options)
 ```
 
 | Param | Type | Description |
@@ -2388,7 +2388,7 @@ Get the current balance of this wallet in the currency's smallest denomination (
 
 ```javascript
 // Example
-const numTransactions = btcEngine.getNumTransactions(options)
+const numTransactions = abcTxEngine.getNumTransactions(options)
 ```
 
 | Param | Type | Description |
@@ -2413,7 +2413,7 @@ const options = {
   numEnteries: 50
 }
 
-btcEngine.getTransactions(options, function(error, transactions) {
+abcTxEngine.getTransactions(options, function(error, transactions) {
   if (error === null) {
     console.log(transactions[0].txid) // => "1209befa09ab3efc039abf09490ac34fe09abc938"
   }
@@ -2444,7 +2444,7 @@ The `options` parameter may include the following:
 ### getFreshAddress
 
 ```javascript
-const address = btcEngine.getFreshAddress(options)
+const address = abcTxEngine.getFreshAddress(options)
 ```
 
 | Param | Type | Description |
@@ -2464,7 +2464,7 @@ Returns an address that has never received funds
 ### addGapLimitAddresses
 
 ```javascript
-const abcError = btcEngine.addGapLimitAddresses(addresses, options)
+const abcError = abcTxEngine.addGapLimitAddresses(addresses, options)
 ```
 
 | Param | Type | Description |
@@ -2487,7 +2487,7 @@ When implementing an HD wallet with multiple addresses, wallet implementations t
 ### isAddressUsed
 
 ```javascript
-const isUsed = btcEngine.isAddressUsed(address, options)
+const isUsed = abcTxEngine.isAddressUsed(address, options)
 ```
 
 | Param | Type | Description |
@@ -2508,7 +2508,7 @@ The `options` parameter may include the following:
 ### makeSpend
 
 ```javascript
-btcEngine.makeSpend(abcSpendInfo, function(error, abcTransaction) {
+abcTxEngine.makeSpend(abcSpendInfo, function(error, abcTransaction) {
   // your_callback_here
 })
 ```
@@ -2518,7 +2518,7 @@ Given an [ABCSpendInfo](#abcspendinfo) object, returns an unsigned [ABCTransacti
 ### signTx
 
 ```javascript
-btcEngine.signTx(abcTransaction, function(error) {
+abcTxEngine.signTx(abcTransaction, function(error) {
   // your_callback_here
 })
 ```
@@ -2528,7 +2528,7 @@ This routine will set [ABCTransaction](#abctransaction).signedTx to an Array of 
 ### broadcastTx
 
 ```javascript
-btcEngine.broadcastTx(abcTransaction, function(error) {
+abcTxEngine.broadcastTx(abcTransaction, function(error) {
   // your_callback_here
 })
 ```
@@ -2538,7 +2538,7 @@ Takes a signed [ABCTransaction](#abctransaction) and broadcasts it to the blockc
 ### saveTx
 
 ```javascript
-btcEngine.saveTx(abcTransaction, function(error) {
+abcTxEngine.saveTx(abcTransaction, function(error) {
   // your_callback_here
 })
 ```

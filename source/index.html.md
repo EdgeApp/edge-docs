@@ -2171,48 +2171,43 @@ Requests the exchange rate from an array of currency pairs. Function should retu
 
 # Currency Plugin API
 
-Cryptocurrency functionality for AirbitzCore is provided by currency API libraries that follow the Currency Plugin API. These libraries can be easily added to Airbitz by providing the following library API for import into an [ABCWallet](#abcwallet). ABC will call into the library [`abcTxLibBTC.makeEngine`](#makeengine) to initialize the library with a set of callbacks.
+Cryptocurrency functionality for AirbitzCore is provided by currency API libraries that follow the Currency Plugin API. These libraries can be easily added to Airbitz by providing the following library API for import into an [ABCWallet](#abcwallet). ABC will call into the library [`abcTxLib.makeEngine`](#makeengine) to initialize the library with a set of callbacks.
 
 To add additional currency functionality, create a library that exposes an API that follows the ABCWalletTxLibrary template below.
 
-[ABCDatastore](#abcdatastore) objects will get passed into [`abcTxLibBTC.makeEngine`](#makeengine), the [walletDataStore](#abcdatastore) allows the txLib to store wallet specific data such as a blockchain cache. If the implementation chooses to hold a global cache of data, use the [accountDataStore](#abcdatastore) object. Both data store objects are local data stores which are not encrypted, revision controlled, or backed up.
+[ABCDatastore](#abcdatastore) objects will get passed into [`abcTxLib.makeEngine`](#makeengine). The [walletLocalDataStore](#abcdatastore) allows the txLib to store wallet specific data such as a blockchain cache. If the implementation chooses to hold a global cache of data, use the [accountLocalDataStore](#abcdatastore) object. Both data store objects are local data stores which are not encrypted, revision controlled, or backed up.
 
 The repo `airbitz-core-js-bitcoin` exposes this API for bitcoin
 
 ## ABCWalletTxLibrary
 
-This prototype class provides all the necessary API to support a cryptocurrency in Airbitz.
+This prototype class provides all the necessary API to support a cryptocurrency in Airbitz. Each primary blockchain based currency needs a separate `ABCWalletTxLibrary`. A single `ABCWalletTxLibrary` much implement support for any meta-tokens supported by that blockchain. ie, the `ABCWalletTxLibrary` that supports bitcoin much also support Counterparty and Colored Coin. An `ABCWalletTxLibrary` that supports Ethereum must also support it's ERC20 tokens.
+
+The higher level Airbitz Core will require and initialize the library and outlined below.
 
 ### Include and initialize the library
 
 ```javascript
-var abcTxLibBTC = require('abcTxLibBtc')
-
-// Or
-<script src="abcTxLibBtc.js"></script>
-
-// React Native
-var abcTxLibBTC = require('abcTxLibBtc-react-native')
+var abcTxLib = require('abcTxLib')
 ```
 
-Include the proper header files and/or libraries for your language.
+The txLib will be `required` by the higher level Airbitz Core.
 
 ### getInfo
 
-Get details of the crypto currency supported by this library
-
 ```javascript
-const details = abcTxLibBTC.getInfo()
+const details = abcTxLib.getInfo()
 
 console.log(details)
 "
 {
   currencyCode: 'BTC',
-  denominations: [{
-    name: 'bits',
-    multiplier: 100,
-    symbol: 'ƀ'
-  },
+  denominations: [
+    {
+      name: 'bits',
+      multiplier: 100,
+      symbol: 'ƀ'
+    },
     {
       name: 'mBTC',
       multiplier: 100000,
@@ -2225,20 +2220,25 @@ console.log(details)
     }
   ],
   symbolImage: 'qq/2iuhfiu1/3iufhlq249r8yq34tiuhq4giuhaiwughiuaergih/rg',
-  metaTokens: [{
-    currencyCode: 'XCP',
-    denominations: [{
-      name: 'XCP',
-      multiplier: 1
-    }],
-    symbolImage: 'fe/3fthfiu1/3iufhlq249r8yq34tiuhqggiuhaiwughiuaergih/ef'
-  },
+  metaTokens: [
+    {
+      currencyCode: 'XCP',
+      denominations: [
+        {
+          name: 'XCP',
+          multiplier: 1
+        }
+      ],
+      symbolImage: 'fe/3fthfiu1/3iufhlq249r8yq34tiuhqggiuhaiwughiuaergih/ef'
+    },
     {
       currencyCode: 'TATIANACOIN',
-      denominations: [{
-        name: 'TATIANACOIN',
-        multiplier: 1
-      }],
+      denominations: [
+        {
+          name: 'TATIANACOIN',
+          multiplier: 1
+        }
+      ],
       symbolImage: 'qe/3fthfi2fg1/3iufhlq249r8yq34tiuhqggiuhaiwughiuaergih/ef'
     }
   ]
@@ -2276,56 +2276,76 @@ The `metaTokens` array includes the following params:
 | denominations | `Array` | An array of Objects of the possible denominations for this currency |
 | symbolImage | `String` | Base64 encoded png or jpg image of the currency symbol (optional) |
 
+Get details of the crypto currency supported by this library
+
 ### makeEngine
 
 ```javascript
 // Example
-function abcTxLibBTCTransactionsChanged(abcTransactions) {
+function transactionsChanged(abcTransactions) {
   // your_callback_here
 }
 
 const callbacks = {
-  abcTxLibCBTransactionsChanged
+  transactionsChanged,
+  blockHeightChanged
 }
 const options = {
+  walletType = "wallet:repo:bitcoin-bip44",
   masterPrivateKey,
   masterPublicKey
 }
 
-const abcTxEngine =
-  abcTxLibBTC.makeEngine(abcTxLibAccess, options, callbacks, function(error) {
-    if (error === null) {
-      // Success
-    }
-  })
+const abcTxLibAccess = {
+  accountDataStore,
+  accountLocalDataStore,
+  walletDataStore,
+  walletLocalDataStore
+}
+
+abcTxLib.makeEngine(abcTxLibAccess, options, callbacks, function(error, abcTxEngine) {
+  if (error === null) {
+    // Success
+  }
+})
+
 ```
 
 | Param | Type | Description |
 | --- | --- | --- |
 | abcTxLibAccess | [`ABCTxLibAccess`](#abctxlibaccess) | Object with various parameters to access the wallet and account |
-| options | `Object` | Options for [`abcTxLibBTC.makeEngine`](#makeengine) |
+| options | `Object` | Options for [`abcTxLib.makeEngine`](#makeengine) |
 | callbacks | [`ABCTxLibCallbacks`](#abctxlibcallbacks) | Various callbacks when wallet is updated |
 | callback | `Callback` | (Javascript) Callback function |
 
 | Options | Type | Description |
 | --- | --- | --- |
-| masterPrivateKey | `String` | Master private key for wallet in format specific to the wallet type. ie. `wallet:repo:bitcoin-bip44` would have a `masterPrivateKey` in the format of a bip39 12-24 word mnemonic. This parameter may be unspecified, in which case, the TxLibrary should have cached a `masterPublicKey` in `localDataStore` |
-| masterPublicKey | `String` | Master public key for wallet in format specific to the wallet type. ie. `wallet:repo:bitcoin-bip44` would have a `masterPublicKey` in the format of a base58 string starting with "xpub" such as "xpub661MyMwAqRbcFtXgS5sYJABqqG9YLmC4Q1Rdap9gSE8NqtwybGhePY2gZ29ESFjqJoCu1Rupje8YtGqsefD265TMg7usUDFdp6W1EGMcet8". This parameter may be unspecified, in which case, the TxLibrary should have cached a `masterPublicKey` in `localDataStore` |
+| masterPrivateKey | `String` | Master private key for wallet in format specific to the wallet type. ie. `wallet:repo:bitcoin-bip44` would have a `masterPrivateKey` in the format of a bip39 12-24 word mnemonic. This parameter may be unspecified, in which case, the TxLibrary should have cached a `masterPublicKey` in `walletLocalDataStore` |
+| masterPublicKey | `String` | Master public key for wallet in format specific to the wallet type. ie. `wallet:repo:bitcoin-bip44` would have a `masterPublicKey` in the format of a base58 string starting with "xpub" such as "xpub661MyMwAqRbcFtXgS5sYJABqqG9YLmC4Q1Rdap9gSE8NqtwybGhePY2gZ29ESFjqJoCu1Rupje8YtGqsefD265TMg7usUDFdp6W1EGMcet8". This parameter may be unspecified, in which case, the TxLibrary should have cached a `masterPublicKey` in `walletLocalDataStore` |
 
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
 | abcError | [`ABCError`](#abcerror) | [ABCError](#abcerror) object |
+| abcTxEngine | [`ABCTxEngine`](#abctxengine) | [ABCTxEngine](#abctxengine) object |
 
-Initialization of the library effectively creates a cryptocurrency wallet within the [ABCWallet](#abcwallet) object. The TxLib should spin up any background tasks necessary to begin querying the blockchain and field any requests for transactions. [`abcTxLibBTC.makeEngine`](#makeengine) will be called once for every wallet of the same or different currency.
+[`abcTxLib.makeEngine`](#makeengine) initializes the library effectively creating a cryptocurrency wallet within the [ABCWallet](#abcwallet) object. The TxLib should spin up any background tasks necessary to begin querying the blockchain and field any requests for transactions. [`abcTxLib.makeEngine`](#makeengine) will be called once for every wallet of the same or different currency.
 
-Any global information that the TxLib needs to keep should be kept in the [ABCWallet.abcAccount](#abcaccount) using the `dataStore` for encrypted, backed-up data, and using the `localDataStore` for unencrypted, device specific data.
+Any persistent global information that the TxLib needs to keep should be kept in the `accountDataStore` for encrypted, backed-up data, and in the `accountLocalDataStore` for unencrypted, device specific data. Both the dataStores are persisted to disk and survive app shutdown or reboots.
 
-It is recommended the master public keys be keps in the [ABCWallet](#abcwallet) `localDataStore` so they can be accessed for querying the blockchain while not logged in. Local blockchain cache information can be stored in either the [ABCWallet](#abcwallet) or [ABCWallet.abcAccount](#abcaccount) `localDataStore` depending on whether the implementation chooses to hold a global blockchain cache or per wallet information.
+Any persistent wallet-specific information that the TxLib needs to keep should be kept in the `walletDataStore` for encrypted, backed-up data, and in the `walletLocalDataStore` for unencrypted, device specific data. Both the dataStores are persisted to disk and survive app shutdown or reboots.
+
+The TxLib implementation should use the [ABCDataStore](#abcdatastore) API for accessing the above data stores.
+
+Any in-memory values needed by the TxLib should simply be added to the ABCTxEngine object as dynamically added parameters to the object.
+
+It is recommended the master public keys be kept in the `walletLocalDataStore`  so they can be accessed for querying the blockchain while not logged in. Local blockchain cache information can be stored in either the `walletLocalDataStore` or the `accountLocalDataStore` depending on whether the implementation chooses to hold a global blockchain cache or per wallet information.
+
+It is NOT recommended to use the `walletDataStore` or `accountDataStore` for blockchain cache information as these data stores are encrypted, backed up, and revision controlled and are therefore more heavy weight.
 
 ## ABCTxEngine
 
-An ABCTxEngine contains the following methods, and any needed storage for blockchain interaction
+An ABCTxEngine is created by the TxLib and returned to Airbitz Core. It must contain the following methods. Any additional in-memory parameters needed should be dynamically placed into this object before returning it back to Airbitz Core.
 
 ### getBlockHeight
 
@@ -2361,7 +2381,7 @@ abcTxEngine.enableTokens(tokens, function(error) {
 | --- | --- | --- |
 | abcError | [`ABCError`](#abcerror) | [ABCError](#abcerror) object |
 
-Enable support for meta tokens (ie. counterparty, colored coin, ethereum ERC20). Library should begin checking the blockchain for the specified tokens and triggering the callbacks specified in [`abcTxLibBTC.makeEngine`](#makeengine).
+Enable support for meta tokens (ie. counterparty, colored coin, ethereum ERC20). Library should begin checking the blockchain for the specified tokens and triggering the callbacks specified in [`abcTxLib.makeEngine`](#makeengine).
 
 ### getBalance
 
@@ -2513,7 +2533,7 @@ abcTxEngine.makeSpend(abcSpendInfo, function(error, abcTransaction) {
 })
 ```
 
-Given an [ABCSpendInfo](#abcspendinfo) object, returns an unsigned [ABCTransaction](#abctransaction) object. [ABCTransaction](#abctransaction).signedTx should be NULL.
+Given an [ABCSpendInfo](#abcspendinfo) object, returns an unsigned [ABCTransaction](#abctransaction) object. [ABCTransaction](#abctransaction).signedTx should be NULL. `makeSpend` does not need to touch the metaData parameter in the `abcSpendInfo`. `makeSpend` only needs to support the [ABCSpendTarget](#abcspendtarget) parameters `currencyCode`, `publicAddress`, and `amountSatoshi`.
 
 ### signTx
 
@@ -2543,7 +2563,7 @@ abcTxEngine.saveTx(abcTransaction, function(error) {
 })
 ```
 
-Saves an already signed [ABCTransaction](#abctransaction) object to the local cache so that funds are considered spent by the wallet.
+Saves an already signed [ABCTransaction](#abctransaction) object to the local cache so that funds are considered spent by the wallet. Any future calls to [getTransactions](#gettransactions), [getBalance](#getbalance), or [getNumTransactions](#getNumTransactions) should reflect the outcome of this saved transaction. This routine should also trigger the callback [transactionsChanged](#transactionschanged).
 
 ## ABCTxLibAccess
 
@@ -2556,7 +2576,7 @@ Various objects needed to save/restore data for the TxLib
 
 ## ABCTxLibCallbacks
 
-### TransactionsChanged
+### transactionsChanged
 
 ```javascript
 transactionsChanged(abcTransactions)
@@ -2568,6 +2588,19 @@ transactionsChanged(abcTransactions)
 
 Callback fires when the TxLib detects new or updated transactions from the blockchain network. The [ABCTransaction](#abctransaction) objects must have the following fields filled out by the TxLib:
 `abcWalletTx`, `txid`, `date`, `blockHeight`, and `amountSatoshi`. The remaining fields are updated by Airbitz Core.
+
+### blockHeightChanged
+
+```javascript
+blockHeightChanged(blockHeight)
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| blockHeight | `Int` | New block height value |
+
+Callback fires when the TxLib detects a blockheight change for the supported currency.
+
 
 # Account Management UI
 

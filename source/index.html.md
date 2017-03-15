@@ -2569,8 +2569,10 @@ Saves an already signed [ABCTransaction](#abctransaction) object to the local ca
 
 | Param | Type | Description |
 | --- | --- | --- |
-| accountDataStore | [`ABCDataStore`](#abcdatastore) | Local [ABCDataStore](#abcdatastore) for account wide data |
-| walletDataStore | [`ABCDataStore`](#abcdatastore) | Local [ABCDataStore](#abcdatastore) for wallet specific data |
+| accountLocalDataStore | [`ABCDataStore`](#abcdatastore) | Local [ABCDataStore](#abcdatastore) for account wide data |
+| walletLocalDataStore | [`ABCDataStore`](#abcdatastore) | Local [ABCDataStore](#abcdatastore) for wallet specific data |
+| accountDataStore | [`ABCDataStore`](#abcdatastore) | Encrypted and device synced [ABCDataStore](#abcdatastore) for account wide data |
+| walletDataStore | [`ABCDataStore`](#abcdatastore) | Encrypted and device synced [ABCDataStore](#abcdatastore) for wallet specific data |
 
 Various objects needed to save/restore data for the TxLib
 

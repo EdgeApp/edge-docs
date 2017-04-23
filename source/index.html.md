@@ -2347,9 +2347,23 @@ It is NOT recommended to use the `walletDataStore` or `accountDataStore` for blo
 
 An ABCTxEngine is created by the TxLib and returned to Airbitz Core. It must contain the following methods. Any additional in-memory parameters needed should be dynamically placed into this object before returning it back to Airbitz Core.
 
-### getBlockHeight
+### startEngine
 
-Retrieve the current block height from the network
+Starts the TxEngine and causes background processes to start querying for blockchain data. This must be called prior to using any other methods of [ABCTxEngine](#abctxengine)
+
+```javascript
+abcTxEngine.startEngine()
+```
+
+### killEngine
+
+```javascript
+abcTxEngine.killEngine()
+```
+
+Terminate background processes for querying network
+
+### getBlockHeight
 
 ```javascript
 // Example
@@ -2357,6 +2371,8 @@ var blockHeight = abcTxEngine.getBlockHeight()
 console.log(blockHeight)
 "455487"
 ```
+
+Retrieve the current block height from the network
 
 ### enableTokens
 
@@ -2603,6 +2619,16 @@ blockHeightChanged(blockHeight)
 
 Callback fires when the TxLib detects a blockheight change for the supported currency.
 
+### addressesChecked
+
+```javascript
+addressesChecked(progressRatio)
+```
+| Param | Type | Description |
+| --- | --- | --- |
+| progressRatio | `Number` | 0 to 1 value indicating how far along the core is in checking all the wallet addresses for new funds. This is only meaningful after the inital call to [startEngine](#startEngine) |
+
+Callback fires when the TxLib detects a blockheight change for the supported currency.
 
 # Account Management UI
 

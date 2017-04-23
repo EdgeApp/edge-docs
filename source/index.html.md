@@ -2278,14 +2278,14 @@ The `metaTokens` array includes the following params:
 
 Get details of the crypto currency supported by this library
 
-### createMasterPrivateKey
+### createMasterKeys
 
 ```javascript
 // Example
-var masterPrivateKey = abcTxLib.createMasterPrivateKey('bitcoin-bip44')
+var masterKeys = abcTxLib.createMasterKeys('bitcoin-bip44')
 ```
 
-Creates a new randomly generated master private key for the wallet type specified. 
+Creates a new randomly generated master private key and master public key for the wallet type specified. 
 
 ### makeEngine
 
@@ -2297,10 +2297,11 @@ function transactionsChanged(abcTransactions) {
 
 const callbacks = {
   transactionsChanged,
-  blockHeightChanged
+  blockHeightChanged,
+  addressesChecked
 }
 const options = {
-  walletType = "bitcoin-bip44",
+  walletType: "bitcoin-bip44",
   masterPrivateKey,
   masterPublicKey
 }

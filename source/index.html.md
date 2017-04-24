@@ -1647,7 +1647,7 @@ const qrCode = makeAddressQrCode(abcReceiveAddress)
 ### makeAddressUri
 
 ```javascript
-const qrCode = makeAddressUri(abcReceiveAddress)
+const uri = makeAddressUri(abcReceiveAddress)
 ```
 
 | Return | Type | Description |
@@ -2285,7 +2285,7 @@ Get details of the crypto currency supported by this library
 var masterKeys = abcTxLib.createMasterKeys('bitcoin-bip44')
 ```
 
-Creates a new randomly generated master private key and master public key for the wallet type specified. 
+Creates a new randomly generated master private key and master public key for the wallet type specified.
 
 ### makeEngine
 

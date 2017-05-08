@@ -1504,7 +1504,7 @@ const abcTransactions = abcWallet.tx.getTransactions(options, function(error, ab
 | Return Param | Type | Description |
 | --- | --- | --- |
 | error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
-| transactions | `ABCTransaction` | Array of [ABCTransaction](#abctransaction) objects |
+| transactions | `Array` | Array of [ABCTransaction](#abctransaction) objects |
 
 Returns a list of transactions in the current wallet. Options allow pruning of the search to a subset of the transactions in addition to string filtering. Options are applied in the following order:
 

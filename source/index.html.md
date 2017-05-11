@@ -22,7 +22,24 @@ ABC allows developers to apply client-side data security, encrypted such that on
 
 To get started, you’ll first need an API key. Get one at our [developer portal.](https://developer.airbitz.co)
 
-# AirbitzCore API Reference
+# Airbitz Login System
+
+The Airbitz login system provides a way to backup and retrieve encrypted private keys. Users can login in using various methods:
+
+* Password
+* PIN
+* Recovery questions
+* Fingerprint
+* Barcode scan
+
+A single account (username and password) can log into multiple applications, each with its own keys. The application id (or `appId`) determines which keys are visible through this API. The keys provide access to various resources, including:
+
+* Airbitz git repos for account settings
+* Airbitz git repos for wallet metadata
+* Public blockchains, like Bitcoin
+* BitId identities
+
+Airbitz provides a separate wallet API for working with these keys once they've been retrieved by the login system.
 
 ## Install the SDK
 
@@ -34,45 +51,82 @@ See the following Github repos for your various development environments. Instal
 
 [Java/Android](https://github.com/Airbitz/airbitz-core-java)
 
-[React Native/Javascript](https://github.com/Airbitz/airbitz-core-js)
-
-### Include and initialize the SDK
-
-```javascript
-var abc = require('airbitz-core-js')
-
-// Or
-<script src="abc.js"></script>
-
-// React Native
-var abc = require('airbitz-core-react-native')
-```
-
 ```objc
 #import "ABCContext.h"
 ```
 
-Include the proper header files and/or libraries for your language.
+## Platform-specific IO
+
+(Javascript only) The Airbitz login system runs in many different environments, including the web, Node.js and React Native. To handle the differences between these platforms, the login system talks to the outside world through an `io` object. Before intializing the login API, you need an `io` object for your particular platform.
+
+### makeFakeIos
+
+```javascript
+const abc = require('airbitz-core-js')
+
+const [io1, io2] = abc.makeFakeIos(2)
+const context1 = abc.makeContext({ io: io1 })
+const context2 = abc.makeContext({ io: io2 })
+```
+
+Creates an array of virtual IO objects with a simulated server and storage. This is useful for unit testing. All objects share the same virtual server, which makes it possible to simulate multi-phone login scenarios.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| count | `number` | Number of `io` objects to create
+
+### makeBrowserIo
+
+```javascript
+const abc = require('airbitz-core-js')
+
+const io = abc.makeBrowserIo()
+const context = abc.makeContext({ io })
+```
+
+Gathers the various browser API's into an IO object. This allows Airbitz to work on the web.
+
+### airbitz-io-node-js
+
+```javascript
+const abc = require('airbitz-core-js')
+const abcNode = require('airbitz-io-node-js')
+
+const io = abcNode.makeNodeIo(path)
+const context = abc.makeContext({ io })
+```
+
+Gathers various Node.js API's into an IO object.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| path | `string` | The filesystem path to save files to
+
+### react-native-airbitz-io
+
+```javascript
+const abc = require('airbitz-core-js')
+const abcReact = require('react-native-airbitz-io')
+
+abcReact.makeReactNativeIo().then(io => abc.makeContext({ io }))
+```
+
+Gathers various React Native API's into an IO object. This is an asynchronous function, and returns a `Promise`.
 
 ## ABCContext
 
 Starting point of Airbitz Core SDK. Used for operations that do not require a logged in ABCAccount
 
-### makeABCContext
+### makeContext
 
 ```javascript
-abc.makeABCContext(apiKey, type, hbitsKey, callback)
-const abcContext = abc.makeABCContext(apiKey, type, hbitsKey)
+const abc = require('airbitz-core-js')
 
-// Example
-const abcContext = abc.makeABCContext('your-api-key-here',
-                                      'account:repo:com.mydomain.myapp',
-                                      null)
-
-// React Native version
-const abcContext = abc.makeABCContextRN('your-api-key-here',
-                                        'account:repo:com.mydomain.myapp',
-                                         null)
+const abcContext = abc.makeContext({
+  apiKey: '178a732cacebed37...',
+  appId: 'com.yourname.yourapp',
+  io: myPlatformSpecificIo
+})
 ```
 
 ```objc
@@ -86,13 +140,11 @@ Initialize and create an ABCContext object. Required for functionality of ABC SD
 | Param | Type | Description |
 | --- | --- | --- |
 | apiKey | `string` | Get an API Key from <https://developer.airbitz.co> |
-| type | `string` | Type of account that this application will be accessing. Type is of the format `"account:repo:com.domain.app"`. At this moment, all types must begin with "account:repo:" and developers should add their reverse domain and application afterwards. This 'type' is what allows a singleSignOn login to access the same account object for this particular application. ie. User's using Edge Login (SingleSignOn) in application type `"account:repo:com.domain.app"` will get a different account repository when logged into an app with type `"account:repo:com.domain2.app"`. |
-| hbitsKey | `string` | (Optional) Unique key used to encrypt private keys for use as implementation specific "gift cards" that are only redeemable by applications using this implementation.|
-| callback | `Callback` | (Javascript) Callback function when routine completes |
+| appId | `string` | Type of account that this application will be accessing. This should be in reverse-domain format, like `"com.domain.app"`. The `appId` determines which keys are available to your application, so a login performed by `"com.domain.app1"` will receive different keys from `"com.domain.app2"`. |
+| io | `object` | (Optional) Platform-specifc io resources. Defaults to browser IO if not provided. |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 | context | [`ABCContext`](#abccontext) | Initialized context |
 
 ### createAccount

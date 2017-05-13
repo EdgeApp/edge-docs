@@ -2070,7 +2070,7 @@ Object represents a signed or unsigned transaction that may or may not be broadc
 | txid | `String` | Transaction ID as represented by the wallet's crypto currency. For bitcoin this is base16. This parameter is `null` until [signTx](#signtx) is called. |
 | date | `Date` | Date that transaction was broadcast, detected, or confirmed on the blockchain. If the tx detection date is after the confirmation time, then this is the confirmation time. `null` if transaction has not been broadcast |
 | blockHeight | `Int` | Block number that included this transaction |
-| amountSatoshi | `Int` | Amount of fees in denomination of smallest unit of currency |
+| amountSatoshi | `Int` | Amount of transaction in denomination of smallest unit of currency. Incoming funds are positive numbers. Outgoing funds are negative. Outgoing amounts should include the providerFee and networkFee. In the case of a transaction that both spends from the current wallet to the current wallet, the amount should be the net effect on the balance of the wallet. |
 | providerFee | `Int` | Additional app provider fees in denomination of smallest unit of currency (ie. Satoshis) |
 | networkFee | `Int` | Fee paid to network (mining fee) in denomination of smallest unit of currency (ie. Satoshis) |
 | runningBalance | `Int` | Running balance of entire wallet as of this transaction |

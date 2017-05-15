@@ -18,7 +18,7 @@ search: true
 
 AirbitzCore (ABC) is a Javascript/ObjC/Java client-side blockchain and Edge Security SDK providing auto-encrypted and auto-backed up accounts and wallets with zero-knowledge security and privacy. All blockchain/bitcoin private and public keys are fully encrypted by the users' credentials before being backed up on to peer to peer servers.
 
-ABC allows developers to apply client-side data security, encrypted such that only the end-user can access the data. [ABCDataStore](#abcdatastore) object in the Airbitz ABCAccount object allows developers to store arbitrary Edge-Secured data on the user’s account which is automatically encrypted, automatically backed up, and automatically synchronized between the user’s authenticated devices.
+ABC allows developers to apply client-side data security, encrypted such that only the end-user can access the data. The Airbitz ABCAccount object allows developers to store arbitrary Edge-Secured data on the user’s account which is automatically encrypted, automatically backed up, and automatically synchronized between the user’s authenticated devices.
 
 To get started, you’ll first need an API key. Get one at our [developer portal.](https://developer.airbitz.co)
 
@@ -2447,7 +2447,7 @@ Any persistent global information that the TxLib needs to keep should be kept in
 
 Any persistent wallet-specific information that the TxLib needs to keep should be kept in the `walletDataStore` for encrypted, backed-up data, and in the `walletLocalDataStore` for unencrypted, device specific data. Both the dataStores are persisted to disk and survive app shutdown or reboots.
 
-The TxLib implementation should use the [ABCDataStore](#abcdatastore) API for accessing the above data stores.
+The TxLib implementation should use the [Disklet](https://www.npmjs.com/package/disklet) API for accessing the above data stores.
 
 Any in-memory values needed by the TxLib should simply be added to the ABCTxEngine object as dynamically added parameters to the object.
 
@@ -2697,10 +2697,10 @@ Saves an already signed [ABCTransaction](#abctransaction) object to the local ca
 
 | Param | Type | Description |
 | --- | --- | --- |
-| accountLocalDataStore | [`ABCDataStore`](#abcdatastore) | Local [ABCDataStore](#abcdatastore) for account wide data |
-| walletLocalDataStore | [`ABCDataStore`](#abcdatastore) | Local [ABCDataStore](#abcdatastore) for wallet specific data |
-| accountDataStore | [`ABCDataStore`](#abcdatastore) | Encrypted and device synced [ABCDataStore](#abcdatastore) for account wide data |
-| walletDataStore | [`ABCDataStore`](#abcdatastore) | Encrypted and device synced [ABCDataStore](#abcdatastore) for wallet specific data |
+| walletFolder | `Folder` | Encrypted and backed-up (Disklet)[https://www.npmjs.com/package/disklet] folder for wallet specific data |
+| walletLocalFolder | `Folder` | Local (Disklet)[https://www.npmjs.com/package/disklet] forlder for for wallet-specific data |
+| accountFolder | `Folder` | Encrypted and backed-up (Disklet)[https://www.npmjs.com/package/disklet] folder for account wide data |
+| accountLocalFolder | `Folder` | Local (Disklet)[https://www.npmjs.com/package/disklet] folder for account-wide data |
 
 Various objects needed to save/restore data for the TxLib
 

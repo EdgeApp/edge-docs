@@ -633,6 +633,13 @@ Logout the currently logged in ABCAccount
 | account | [`ABCAccount`](#abcaccount) | Account object |
 | callback | `Callback` | (Javascript) Callback function |
 
+### allKeys
+
+```javascript
+keys = abcAccount.allKeys
+```
+
+This read-only property contains a `Array` of all keys visible to the account, including keys that may belong to other applications (i.e. child logins).
 
 ### changePassword
 
@@ -1229,6 +1236,49 @@ Callback routines that notify application when various changes have occurred in 
 | address | `String` | Public address of private key used to sign |
 | signature | `String` | Public address of private key used to sign |
 
+## ABCKeyInfo
+
+| Property | Type | Description |
+| --- | --- | --- |
+| id | `String` | The globally-unique key ID. A 256-bit base64-encoded integer. |
+| type | `String` | The type of resource these keys unlock. |
+| keys | `Object` | The contents of this object depend on the key type. See the documentation for the key types below. |
+
+### Storage Keys
+
+Many different key types include access to Git repo for storage. In all cases, the `keys` property will have the following members:
+
+| Property | Type | Description |
+| --- | --- | --- |
+| dataKey | `String` | The data encryption key. A 256-bit base64-encoded integer. |
+| syncKey | `String` | The git repo identity. A 160-bit base64-encoded integer. |
+
+In the future, Airbitz may introduce a `readKey`, which provides only read-only access to the sync server. This would be something like `sha256(syncKey)`. In that case, the `keys` object would contain one, the other, or both of `syncKey` and `readKey`.
+
+### wallet:bitcoin
+
+A BIP-32 Bitcoin wallet. The key derivation follows the same scheme specified in the original BIP 32 spec.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| bitcoinKey | `String` | The master entropy according to the BIP 32 spec. A 256-bit base64-encoded integer. |
+| dataKey | `String` | See [Storage Keys](#storage-keys). |
+| syncKey | `String` | See [Storage Keys](#storage-keys). |
+
+### wallet:ethereum
+
+An Ethereum wallet.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| ethereumKey | `String` | A hex-encoded 256-bit Ethereum private key. |
+| dataKey | `String` | See [Storage Keys](#storage-keys). |
+| syncKey | `String` | See [Storage Keys](#storage-keys). |
+
+### account:&lt;appId&gt;
+
+A git repo for an app. See the [Storage Keys](#storage-keys) section for the contents.
+
 ## ABCWallet
 
 ### Class Properties
@@ -1454,7 +1504,7 @@ abcWallet.dataStore.listKeys("userAddress",
 
 List the keys in the specified folder
 
-# ABC Currency Transactions
+# Wallet API
 
 ```javascript
 var abcTxLibrary = require('airbitz-core-js-bitcoin').txLib

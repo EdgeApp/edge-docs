@@ -1279,95 +1279,6 @@ An Ethereum wallet.
 
 A git repo for an app. See the [Storage Keys](#storage-keys) section for the contents.
 
-## ABCWallet
-
-### Class Properties
-
-| Property | Type | Description |
-| --- | --- | --- |
-| walletId | `String` | Unique ID for wallet |
-| walletName | `String` | Human readable name of wallet |
-| walletType | `String` | Type of wallet as specified in [createWallet](#createWallet)
-| keys | `Object` | Object with keys placed at createWallet time |
-| dataStore | [`ABCDataStore`](#abcdatastore) | [ABCDataStore](#abcdatastore) object. This datastore object is encrypted by default, backed up to the cloud, and synchronized with any device the user logs into. Data modifications are versioned and can be rolled back but this functionality is not yet exposed via API. dataStore object may `null` if parent [ABCAccount](#abcaccount) has not been logged into yet |
-| localDataStore | [`ABCDataStore`](#abcdatastore) | [ABCDataStore](#abcdatastore) object that only exists on the current device. This data is not encrypted nor backed up. Not to be used for sensitive data but rather as a local cache of network data. Data is not version controlled and has no rollback capability. Common use case will be for local device specific wallet settings, blockchain cache information, and public address cache for use when account/wallet has not yet been decrypted (background processing) |
-| tx | [`ABCWalletTx`](#abcwallettx) | Optional and may be null. Exposes transactional functionality for this wallet. Requires addTxFunctionality to be called |
-
-### renameWallet
-
-```javascript
-
-abcWallet.renameWallet(name, callback)
-
-// Example
-abcWallet.renameWallet("My Wallet", function (error) {
-  if (!error) {
-    // Success
-  }
-})
-```
-
-| Param | Type | Description |
-| --- | --- | --- |
-| name | `String` | New wallet name |
-| callback | `Callback` | (Javascript) Callback function |
-
-| Callback Param | Type | Description |
-| --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
-
-Returns a list of transactions in the current wallet. Transactions are returned ordered from newest to oldest.
-
-### addTxFunctionality
-
-```javascript
-
-abcWallet.addTxFunctionality(ABCWalletTxLibrary, callbacks, callback)
-
-// Example
-var abcWalletTxLibrary = require('airbitz-core-js-bitcoin`).txLib
-
-function abcWalletTxAddressesChecked(abcWalletTx, progressRatio) { }
-function abcWalletTxBalanceChanged(abcWalletTx) { }
-function abcWalletTxTransactionsChanged(Array) { }
-function abcWalletTxNewTransactions(Array) { }
-function abcWalletTxBlockHeightChanged(abcWalletTx, height) { }
-
-var callbacks = {
-  abcWalletTxAddressesChecked,
-  abcWalletTxBalanceChanged,
-  abcWalletTxTransactionsChanged,
-  abcWalletTxNewTransactions,
-  abcWalletTxBlockHeightChanged
-}
-
-abcWallet.addTxFunctionality(abcWalletTxLibrary, callbacks, function (error) {
-  if (error === null) {
-    // Success
-  }
-})
-```
-
-| Param | Type | Description |
-| --- | --- | --- |
-| abcWalletTxLibrary | [`ABCWalletTxLibrary`](#abcwallettxlibrary) | Object that exposes the [ABCWalletTxLibrary](#abcwallettxlibrary) functions |
-| callbacks | `Object` | Object with callback functions |
-| callback | `Function` | (Javascript) Callback function |
-
-| Callback name | Type | Description |
-| --- | --- | --- |
-| abcWalletTxAddressesChecked(ABCWalletTx, progressRatio) | `Function` | Wallet has been fully updated with latest transactions from the network |
-| abcWalletTxBalanceChanged(ABCWalletTx) | `Function` | Wallet balance has changed due to transactions already detected from other devices, from new transactions, or from dropped transactions |
-| abcWalletTxNewTransactions(Array) | `Function` | Array of new ABCTransaction objects. These are new funds that the GUI should show as a notificatino to the user |
-| abcWalletTxTransactionsChanged(Array) | `Function` | Array of ABCTransaction objects. These transactions are either previously recognized funds from a new device that have now synced to this device, or updates to previously seen transactions such as a change in the block number this transaction was confirmed in. |
-| abcWalletTxBlockHeightChanged(ABCWalletTx, height) | `Function` | Blockchain height changed. This is unused for sub wallets |
-
-| Callback Params | Type | Description |
-| --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
-
-Adds send/receive transaction capability for a specific currency to a wallet. An [ABCWalletTxLibrary](#abcwallettxlibrary) object must be passed in that exposes the entire [ABCWalletTxLibrary](#abcwallettxlibrary) interface. Airbitz includes support for bitcoin transactions through the [`airbitz-core-js-bitcoin`](https://github.com/Airbitz/airbitz-core-js-bitcoin) repository. Once called, the ABCWallet object will expose the [ABCWalletTx](#abcwallettx) interface at [ABCWallet.tx](#abcwallettx). Once the callback returns, ABCWallet.tx will be accessible with previously saved transactions and dataStores.
-
 ## ABCDataStore
 
 ### writeData
@@ -1506,21 +1417,141 @@ List the keys in the specified folder
 
 # Wallet API
 
-```javascript
-var abcTxLibrary = require('airbitz-core-js-bitcoin').txLib
+Once the user has logged in and retrieved their keys, there are serveral things that may take place with those keys, including:
 
-var success = abcWallet.addTxFunctionality(abcTxLibrary)
+* Accessing encrypted storage
+* Sending and receiving digital currencies
+* Signing BitId requests
+
+The Airbitz SDK includes several helper classes which perform these capabilities on your behalf, using a set of provided keys.
+
+## ABCStorageWallet
+
+This wallet type handles encrypted and synced data. This is the base class for several other wallet types, including `ABCCurrencyWallet`. You can also use it directly if your application requires multiple encrypted and backed-up data stores. Bear in mind that each account also has its own data store, so you may not need this class unless you are doing something involving key sharing.
+
+### makeStorageWallet
+
+```javascript
+const abc = require('airbitz-core-js')
+
+// Select some keys, using any approach you find useful:
+const storageWalletKeys = abcAccount.allKeys.find(keyInfo => {
+  return keyInfo.type === 'account:myApp'
+})
+
+// Access synced data:
+abc
+  .makeStorageWallet(storageWalletKeys, { account: abcAccount })
+  .then(function (abcStorageWallet) {})
 ```
 
-AirbitzCore can be extended to allow wallets to have transactional capabilities such as sending and receiving bitcoin and other digital currencies. To add transaction capabilities, import an [ABCWalletTxLibrary](#abcwallettxlibrary) object and call [ABCWallet.addTxFunctionality](#addtxfunctionality). This will add an ABCWalletTx object to the [ABCWallet](#abcwallet) which contains a majority of the transactional routines needed to send/receive funds.
+This function creates an instance of the storage wallet class. 
 
-## ABCWalletTx
+| Param | Type | Description |
+| --- | --- | --- |
+| keys | `String` | An [`ABCKeyInfo`](#abckeyinfo) structure from the account. |
+| opts.account | `Object` | The [`ABCAccount`](#abcaccount) object that these keys belong to. |
+| opts.onDataChange | `Function` | Called when the data changes as part of a sync operation. |
 
-Each ABCWalletTx represents a single or HD cryptocurrency wallet tied to one specific blockchain such as bitcoin or ethereum. Various methods and fields in ABCWalletTx are arrays or accept an index which selects which token system in the wallet is being referenced.
+### Class Properties
 
 | Property | Type | Description |
 | --- | --- | --- |
-| abcWallet | [`ABCWallet`](#abcwallet) | Parent [ABCWallet](#abcwallet) object |
+| id | `String` | The `id` property of the account-level [ABCKeyInfo](#abckeyinfo) |
+| type | `String` | The `type` property of the account-level [ABCKeyInfo](#abckeyinfo) |
+| keys | `Object` | The `keys` property of the account-level [ABCKeyInfo](#abckeyinfo) |
+| name | `String` | Human readable name of wallet. May be `null` if the wallet has no name. |
+| folder | `Folder` | A [`Disklet`](https://www.npmjs.com/package/disklet) folder. This datastore object is encrypted by default, backed up to the cloud, and synchronized with any device the user logs into. Data modifications are versioned and can be rolled back but this functionality is not yet exposed via API. dataStore object may `null` if parent [ABCAccount](#abcaccount) has not been logged into yet |
+| localFolder | `Folder` | A [`Disklet`](https://www.npmjs.com/package/disklet) folder that only exists on the current device. This data is not encrypted nor backed up. Not to be used for sensitive data but rather as a local cache of network data. Data is not version controlled and has no rollback capability. Common use case will be for local device specific wallet settings, blockchain cache information, and public address cache for use when account/wallet has not yet been decrypted (background processing) |
+
+### renameWallet
+
+```javascript
+abcStorageWallet.renameWallet(name, callback)
+
+// Example
+abcStorageWallet.renameWallet("My Wallet", function (error) {
+  if (!error) {
+    // Success
+  }
+})
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | `String` | New wallet name |
+| callback | `Callback` | (Javascript) Callback function |
+
+| Callback Param | Type | Description |
+| --- | --- | --- |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
+
+Returns a list of transactions in the current wallet. Transactions are returned ordered from newest to oldest.
+
+## ABCCurrencyWallet
+
+Each ABCCurrencyWallet represents a single or HD cryptocurrency wallet tied to one specific blockchain such as bitcoin or ethereum. Various methods and fields in ABCCurrencyWallet are arrays or accept an index which selects which token system in the wallet is being referenced.
+
+This class also includes all the methods and callbacks of [`ABCStorageWallet`](#abcstoragewallet).
+
+### makeCurrencyWallet
+
+```javascript
+const abc = require('airbitz-core-js')
+const abcBitcoin = require('airbitz-currency-bitcoin')
+
+function abcWalletTxAddressesChecked (abcCurrencyWallet, progressRatio) {}
+function abcWalletTxBalanceChanged (abcCurrencyWallet) {}
+function abcWalletTxTransactionsChanged (abcCurrencyWallet, Array) {}
+function abcWalletTxNewTransactions (abcCurrencyWallet, Array) {}
+function abcWalletTxBlockHeightChanged (abcCurrencyWallet, height) {}
+
+// Select some keys, using any approach you find useful:
+const bitcoinWalletKeys = abcAccount.allKeys.find(
+  keyInfo => keyInfo.type === 'wallet:bitcoin'
+)
+
+// Access synced data and transactions:
+abc
+  .makeCurrencyWallet(bitcoinWalletKeys, {
+    account: abcAccount,
+    plugin: abcBitcoin.txLib,
+    callbacks: {
+      onAddressesChecked: abcWalletTxAddressesChecked,
+      onBalanceChanged: abcWalletTxBalanceChanged,
+      onTransactionsChanged: abcWalletTxTransactionsChanged,
+      onNewTransactions: abcWalletTxNewTransactions,
+      onBlockHeightChanged: abcWalletTxBlockHeightChanged
+    }
+  })
+  .then(abcBitcoinWallet => {})
+```
+
+Creates a wallet capable of send and receive functionality. An [ABCWalletTxLibrary](#abcwallettxlibrary) object must be passed in that exposes the entire [ABCWalletTxLibrary](#abcwallettxlibrary) interface.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| keys | `ABCKeyInfo` | The key info obtained from the account |
+| opts.account | `ABCAccount` | The account object this wallet belongs to. |
+| opts.plugin | `ABCWalletTxLibrary` |  Object that exposes the [ABCWalletTxLibrary](#abcwallettxlibrary) functions |
+| opts.callbacks | `ABCWalletTxLibrary` | `Object` | Object with callback functions |
+
+(Javascript) Returns a `Promise` for an ABCCurrencyWallet type.
+
+| Callback name | Type | Description |
+| --- | --- | --- |
+| onAddressesChecked(ABCWalletTx, progressRatio) | `Function` | Wallet has been fully updated with latest transactions from the network |
+| onBalanceChanged(ABCWalletTx) | `Function` | Wallet balance has changed due to transactions already detected from other devices, from new transactions, or from dropped transactions |
+| onTransactionsChanged(Array) | `Function` | Array of new ABCTransaction objects. These are new funds that the GUI should show as a notificatino to the user |
+| onNewTransactions(Array) | `Function` | Array of ABCTransaction objects. These transactions are either previously recognized funds from a new device that have now synced to this device, or updates to previously seen transactions such as a change in the block number this transaction was confirmed in. |
+| onBlockHeightChanged(ABCWalletTx, height) | `Function` | Blockchain height changed. This is unused for sub wallets |
+
+This class also includes all callbacks of [`ABCStorageWallet`](#abcstoragewallet).
+
+### Class Properties
+
+| Property | Type | Description |
+| --- | --- | --- |
 | fiatCurrencyCode | `String` | 3 character fiat currency code |
 | cryptoCurrencyCodes | `Array` | Array of Strings of crypto currency code. ie "BTC" |
 | primaryCryptoCurrencyCode | `String` | String of primary crypto currency code. ie "BTC". Other codes in `cryptoCurrencyCodes` will reference meta-tokens of this currency's blockchain. |

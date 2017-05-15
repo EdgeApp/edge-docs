@@ -1527,14 +1527,14 @@ abc
   .then(abcBitcoinWallet => {})
 ```
 
-Creates a wallet capable of send and receive functionality. An [ABCWalletTxLibrary](#abcwallettxlibrary) object must be passed in that exposes the entire [ABCWalletTxLibrary](#abcwallettxlibrary) interface.
+Creates a wallet capable of send and receive functionality. An [ABCCurrencyPlugin](#abccurrencyplugin) object must be passed in that exposes the entire [ABCCurrencyPlugin](#abccurrencyplugin) interface.
 
 | Param | Type | Description |
 | --- | --- | --- |
 | keys | `ABCKeyInfo` | The key info obtained from the account |
 | opts.account | `ABCAccount` | The account object this wallet belongs to. |
-| opts.plugin | `ABCWalletTxLibrary` |  Object that exposes the [ABCWalletTxLibrary](#abcwallettxlibrary) functions |
-| opts.callbacks | `ABCWalletTxLibrary` | `Object` | Object with callback functions |
+| opts.plugin | `ABCCurrencyPlugin` |  Object that exposes the [ABCCurrencyPlugin](#abccurrencyplugin) functions |
+| opts.callbacks | `ABCCurrencyPlugin` | `Object` | Object with callback functions |
 
 (Javascript) Returns a `Promise` for an ABCCurrencyWallet type.
 
@@ -2304,32 +2304,32 @@ Requests the exchange rate from an array of currency pairs. Function should retu
 
 # Currency Plugin API
 
-Cryptocurrency functionality for AirbitzCore is provided by currency API libraries that follow the Currency Plugin API. These libraries can be easily added to Airbitz by providing the following library API for import into an [ABCWallet](#abcwallet). ABC will call into the library [`abcTxLib.makeEngine`](#makeengine) to initialize the library with a set of callbacks.
+Cryptocurrency functionality for [`ABCCurrencyWallet`](#abccurrencywallet) is provided by currency plugins that follow the Currency Plugin API. These libraries can be easily added to Airbitz by providing the following library API for import into [`makeCurrencyWallet`](#makeCurrencyWallet). This function will call [`currencyPlugin.makeEngine`](#makeengine) to initialize the library with a set of callbacks.
 
-To add additional currency functionality, create a library that exposes an API that follows the ABCWalletTxLibrary template below.
+To add additional currency functionality, create a library that exposes an API that follows the ABCCurrencyPlugin template below.
 
-[ABCDatastore](#abcdatastore) objects will get passed into [`abcTxLib.makeEngine`](#makeengine). The [walletLocalDataStore](#abcdatastore) allows the txLib to store wallet specific data such as a blockchain cache. If the implementation chooses to hold a global cache of data, use the [accountLocalDataStore](#abcdatastore) object. Both data store objects are local data stores which are not encrypted, revision controlled, or backed up.
+[Disklet](https://www.npmjs.com/package/disklet) folders will be passed into [`currencyPlugin.makeEngine`](#makeengine). The `walletLocalFolder` allows the txLib to store wallet specific data such as a blockchain cache. If the implementation chooses to hold a global cache of data, use the `accountLocalFolder` object. Neither local folder is encrypted, revision controlled, or backed up.
 
-The repo `airbitz-core-js-bitcoin` exposes this API for bitcoin
+The repo `airbitz-currency-bitcoin` exposes this API for bitcoin.
 
-## ABCWalletTxLibrary
+## ABCCurrencyPlugin
 
-This prototype class provides all the necessary API to support a cryptocurrency in Airbitz. Each primary blockchain based currency needs a separate `ABCWalletTxLibrary`. A single `ABCWalletTxLibrary` much implement support for any meta-tokens supported by that blockchain. ie, the `ABCWalletTxLibrary` that supports bitcoin much also support Counterparty and Colored Coin. An `ABCWalletTxLibrary` that supports Ethereum must also support it's ERC20 tokens.
+This prototype class provides all the necessary API to support a cryptocurrency in Airbitz. Each primary blockchain based currency needs a separate `ABCCurrencyPlugin`. A single `ABCCurrencyPlugin` much implement support for any meta-tokens supported by that blockchain. For example, the `ABCCurrencyPlugin` that supports bitcoin might also support Counterparty and Colored Coin. An `ABCCurrencyPlugin` that supports Ethereum might also support its ERC20 tokens.
 
-The higher level Airbitz Core will require and initialize the library and outlined below.
+The higher level [`makeCurrencyWallet`](#makecurrencywallet) will initialize the library as outlined below. Your application code must `require` the plugin and initialize it appropriately.
 
 ### Include and initialize the library
 
 ```javascript
-var abcTxLib = require('abcTxLib')
+var currencyPlugin = require('airbitz-currency-bitcoin')
 ```
 
-The txLib will be `required` by the higher level Airbitz Core.
+The plugin must be `required` by your application code.
 
 ### getInfo
 
 ```javascript
-const details = abcTxLib.getInfo()
+const details = currencyPlugin.getInfo()
 
 console.log(details)
 "
@@ -2415,7 +2415,7 @@ Get details of the crypto currency supported by this library
 
 ```javascript
 // Example
-var masterKeys = abcTxLib.createMasterKeys('bitcoin-bip44')
+var masterKeys = currencyPlugin.createMasterKeys('bitcoin-bip44')
 ```
 
 Creates a new randomly generated master private key and master public key for the wallet type specified.
@@ -2446,7 +2446,7 @@ const abcTxLibAccess = {
   walletLocalDataStore
 }
 
-abcTxLib.makeEngine(abcTxLibAccess, options, callbacks, function(error, abcTxEngine) {
+currencyPlugin.makeEngine(abcTxLibAccess, options, callbacks, function(error, abcTxEngine) {
   if (error === null) {
     // Success
   }
@@ -2457,7 +2457,7 @@ abcTxLib.makeEngine(abcTxLibAccess, options, callbacks, function(error, abcTxEng
 | Param | Type | Description |
 | --- | --- | --- |
 | abcTxLibAccess | [`ABCTxLibAccess`](#abctxlibaccess) | Object with various parameters to access the wallet and account |
-| options | `Object` | Options for [`abcTxLib.makeEngine`](#makeengine) |
+| options | `Object` | Options for [`currencyPlugin.makeEngine`](#makeengine) |
 | callbacks | [`ABCTxLibCallbacks`](#abctxlibcallbacks) | Various callbacks when wallet is updated |
 | callback | `Callback` | (Javascript) Callback function |
 
@@ -2472,7 +2472,7 @@ abcTxLib.makeEngine(abcTxLibAccess, options, callbacks, function(error, abcTxEng
 | abcError | [`ABCError`](#abcerror) | [ABCError](#abcerror) object |
 | abcTxEngine | [`ABCTxEngine`](#abctxengine) | [ABCTxEngine](#abctxengine) object |
 
-[`abcTxLib.makeEngine`](#makeengine) initializes the library effectively creating a cryptocurrency wallet within the [ABCWallet](#abcwallet) object. The TxLib should spin up any background tasks necessary to begin querying the blockchain and field any requests for transactions. [`abcTxLib.makeEngine`](#makeengine) will be called once for every wallet of the same or different currency.
+[`currencyPlugin.makeEngine`](#makeengine) initializes the library effectively creating a cryptocurrency wallet within the [ABCWallet](#abcwallet) object. The TxLib should spin up any background tasks necessary to begin querying the blockchain and field any requests for transactions. [`currencyPlugin.makeEngine`](#makeengine) will be called once for every wallet of the same or different currency.
 
 Any persistent global information that the TxLib needs to keep should be kept in the `accountDataStore` for encrypted, backed-up data, and in the `accountLocalDataStore` for unencrypted, device specific data. Both the dataStores are persisted to disk and survive app shutdown or reboots.
 
@@ -2540,7 +2540,7 @@ abcTxEngine.enableTokens(tokens, function(error) {
 | --- | --- | --- |
 | abcError | [`ABCError`](#abcerror) | [ABCError](#abcerror) object |
 
-Enable support for meta tokens (ie. counterparty, colored coin, ethereum ERC20). Library should begin checking the blockchain for the specified tokens and triggering the callbacks specified in [`abcTxLib.makeEngine`](#makeengine).
+Enable support for meta tokens (ie. counterparty, colored coin, ethereum ERC20). Library should begin checking the blockchain for the specified tokens and triggering the callbacks specified in [`currencyPlugin.makeEngine`](#makeengine).
 
 ### getBalance
 
@@ -2601,7 +2601,7 @@ abcTxEngine.getTransactions(options, function(error, transactions) {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| options | `Object` | Options for abcTxLibGetTransactions. If `null`, return all transactions |
+| options | `Object` | Options for getTransactions. If `null`, return all transactions |
 | callback | `Callback` | (Javascript) Callback function |
 
 | Callback Param | Type | Description |
@@ -2661,7 +2661,7 @@ The `options` parameter may include the following:
 | --- | --- | --- |
 | abcError | [`ABCError`](#abcerror) | [ABCError](#abcerror) object |
 
-When implementing an HD wallet with multiple addresses, wallet implementations typically search for funds by going a limited number of addresses ahead of the last address that has funds received. This is usually about 10 addresses. `abcTxLibAddGapLimitAddresses` allows ABC to specify to the txLib to treat the given addresses as if they had funds received and to forward their gap limit accordingly.
+When implementing an HD wallet with multiple addresses, wallet implementations typically search for funds by going a limited number of addresses ahead of the last address that has funds received. This is usually about 10 addresses. `addGapLimitAddresses` allows ABC to specify to the txLib to treat the given addresses as if they had funds received and to forward their gap limit accordingly.
 
 ### isAddressUsed
 

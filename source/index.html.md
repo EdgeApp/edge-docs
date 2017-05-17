@@ -2323,10 +2323,14 @@ The higher level [`makeCurrencyWallet`](#makecurrencywallet) will initialize the
 ### Include and initialize the library
 
 ```javascript
-var currencyPlugin = require('airbitz-currency-bitcoin')
+import { makeBitcoinPlugin } from 'airbitz-currency-bitcoin'
+
+const bitcoinPlugin = makeBitcoinPlugin({
+  io: yourPlatformSpecificIo
+})
 ```
 
-The plugin must be `required` by your application code.
+Each plugin should export a `make<Name>Plugin` or similarly-named function, which initializes the plugin with any needed options. This will typically include the [platform-specific IO resources](#platform-specific-io) via an `io` property. If a plugin supports muliple chains, custom servers, or other weird currency-specific  things, this would also be the place to provide those options. Please see the plugin's documentation for any additional options.
 
 ### getInfo
 

@@ -1576,7 +1576,7 @@ var abcSetupContractOptions = [
   { numRequiredKeys: 2 }
 ]
 
-abcWallet.tx.setupContract(abcSetupContractOptions)
+abcCurrencyWallet.setupContract(abcSetupContractOptions)
 ```
 
 Setup the script/contract for this wallet. This is used to setup basic multisig wallets under currencies like bitcoin and ethereum.
@@ -1584,10 +1584,10 @@ Setup the script/contract for this wallet. This is used to setup basic multisig 
 ### getBalance
 
 ```javascript
-abcWallet.tx.getBalance(currencyCode)
+abcCurrencyWallet.getBalance(currencyCode)
 
 // Example
-const balance = abcWallet.tx.getBalance("BTC")
+const balance = abcCurrencyWallet.getBalance("BTC")
 ```
 
 | Param | Type | Description |
@@ -1603,7 +1603,7 @@ Gets the current balance of the wallet denominated in the smallest unit of the c
 ### getTransactions
 
 ```javascript
-abcWallet.tx.getTransactions(options, callback)
+abcCurrencyWallet.getTransactions(options, callback)
 
 // Example
 // Create query that looks in the first 100 transactions filtered to the past 2 days that have meta data matching the string "Mom". Then returns the first 10 of those transactions
@@ -1622,7 +1622,7 @@ const options = {
   returnEntries: 10
 }
 
-const abcTransactions = abcWallet.tx.getTransactions(options, function(error, abcTransactions) {
+const abcTransactions = abcCurrencyWallet.getTransactions(options, function(error, abcTransactions) {
   const abcTransaction = abcTransactions[0]
 })
 ```
@@ -1660,10 +1660,10 @@ Transactions are returned ordered from newest to oldest.
 ### getBlockHeight
 
 ```javascript
-abcWallet.tx.getBlockHeight()
+abcCurrencyWallet.getBlockHeight()
 
 // Example
-const height = abcWallet.tx.getBlockHeight()
+const height = abcCurrencyWallet.getBlockHeight()
 ```
 
 | Param | Type | Description |
@@ -1679,17 +1679,17 @@ Gets the current blockchain height of the wallet's cryptocurrency. This is expec
 ### getReceiveAddress
 
 ```javascript
-abcWallet.tx.getReceiveAddress(options, callback)
+abcCurrencyWallet.getReceiveAddress(options, callback)
 
 // Example to simply return an unused address
-const abcReceiveAddress = abcWallet.tx.getReceiveAddress(null, function (error, abcReceiveAddress) {
+const abcReceiveAddress = abcCurrencyWallet.getReceiveAddress(null, function (error, abcReceiveAddress) {
   if (!error) {
     // Success
   }
 })
 
 // Example to return an unused address with the tag "QRCODE"
-const abcReceiveAddress = abcWallet.tx.getReceiveAddress({'addressTag': 'QRCODE'}, function (error, abcReceiveAddress) {
+const abcReceiveAddress = abcCurrencyWallet.getReceiveAddress({'addressTag': 'QRCODE'}, function (error, abcReceiveAddress) {
   if (!error) {
     // Success
   }
@@ -1700,7 +1700,7 @@ const options = {
   'addressTag': 'QRCODE',
   'currencyCode': 'REP'
 }
-const abcReceiveAddress = abcWallet.tx.getReceiveAddress(options, function (error, abcReceiveAddress) {
+const abcReceiveAddress = abcCurrencyWallet.getReceiveAddress(options, function (error, abcReceiveAddress) {
   if (!error) {
     // Success
   }
@@ -1712,7 +1712,7 @@ const options = {
   publicAddress: '1FVBrmeuEeAxbNcj2EL4v2XsfBDbv7A9aE'
 }
 
-const abcReceiveAddress = abcWallet.tx.getReceiveAddress(options, , function (error, abcReceiveAddress) {
+const abcReceiveAddress = abcCurrencyWallet.getReceiveAddress(options, , function (error, abcReceiveAddress) {
   if (!error) {
     // Success
   }
@@ -1740,10 +1740,10 @@ Returns an [ABCReceiveAddress](#abcreceiveaddress) object. This routine is used 
 ### saveReceiveAddress
 
 ```javascript
-abcWallet.tx.saveReceiveAddress(abcReceiveAddress, callback)
+abcCurrencyWallet.saveReceiveAddress(abcReceiveAddress, callback)
 
 // Example
-abcWallet.tx.getReceiveAddress(null, function (error) {
+abcCurrencyWallet.getReceiveAddress(null, function (error) {
   if (!error) {
     // Success
     console.log("My bitcoin address: " + abcReceiveAddress.publicAddress)
@@ -1762,10 +1762,10 @@ Updates the internal database of `metadata` corresponding to this `receiveAddres
 ### lockReceiveAddress
 
 ```javascript
-abcWallet.tx.lockReceiveAddress(callback)
+abcCurrencyWallet.lockReceiveAddress(callback)
 
 // Example
-abcWallet.tx.lockReceiveAddress(function (error) {
+abcCurrencyWallet.lockReceiveAddress(function (error) {
   if (!error) {
     // Success
   }
@@ -1818,8 +1818,8 @@ const abcSpendInfo = {
   ]
 }
 
-const abcTransaction = abcWallet.tx.makeSpend(abcSpendInfo)
-abcWallet.tx.signBroadcastAndSave(abcTransaction, function(error, abcTransaction) {
+const abcTransaction = abcCurrencyWallet.makeSpend(abcSpendInfo)
+abcCurrencyWallet.signBroadcastAndSave(abcTransaction, function(error, abcTransaction) {
   if (!error) {
     // Success, transaction sent
     console.log("Sent transaction with ID = " + abcTransaction.txid)
@@ -1829,7 +1829,7 @@ abcWallet.tx.signBroadcastAndSave(abcTransaction, function(error, abcTransaction
 // Example to spend to a BIP70 payment request
 const abcParsedUri = abcAccount.parseUri("bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.000000&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X")
 
-abcWallet.tx.getPaymentProtocolInfo(abcParsedUri.paymentProtocolURL, function(error, spendTarget) {
+abcCurrencyWallet.getPaymentProtocolInfo(abcParsedUri.paymentProtocolURL, function(error, spendTarget) {
   abcSpendInfo = {
     networkFeeOption: 'high',
     metadata: {
@@ -1839,8 +1839,8 @@ abcWallet.tx.getPaymentProtocolInfo(abcParsedUri.paymentProtocolURL, function(er
     spendTargets: [ spendTarget ]
   }
 
-  const abcTransaction = abcWallet.tx.makeSpend(abcSpendInfo)
-  abcWallet.tx.signBroadcastAndSave(abcTransaction, function(error, abcTransaction) {
+  const abcTransaction = abcCurrencyWallet.makeSpend(abcSpendInfo)
+  abcCurrencyWallet.signBroadcastAndSave(abcTransaction, function(error, abcTransaction) {
     if (!error) {
       // Success, transaction sent
       console.log("Sent transaction with ID = " + abcTransaction.txid)
@@ -1889,10 +1889,10 @@ Creates an unsigned [ABCTransaction](#abctransaction) object which can be then b
 ### signTx
 
 ```javascript
-abcWallet.tx.signTx(abcTransaction, callback)
+abcCurrencyWallet.signTx(abcTransaction, callback)
 
 // Example
-abcWallet.tx.signTx(abcTransaction, function(error) {
+abcCurrencyWallet.signTx(abcTransaction, function(error) {
   if (!error) {
     // Success, transaction signed
     console.log("Signed transaction with txId = " + abcTransaction.txid)
@@ -1916,10 +1916,10 @@ Call [ABCTransaction.broadcastTx](#broadcasttx) followed by [ABCTransaction.save
 ### broadcastTx
 
 ```javascript
-abcWallet.tx.broadcastTx(abcTransaction, callback)
+abcCurrencyWallet.broadcastTx(abcTransaction, callback)
 
 // Example
-abcWallet.tx.broadcastTx(abcTransaction, function(error) {
+abcCurrencyWallet.broadcastTx(abcTransaction, function(error) {
   if (!error) {
     // Success, transaction sent
     console.log("Sent transaction with ID = " + abcTransaction.txid)
@@ -1941,10 +1941,10 @@ Broadcasts transaction to the blockchain.
 ### saveTx
 
 ```javascript
-abcWallet.tx.saveTx(abcTransaction, callback)
+abcCurrencyWallet.saveTx(abcTransaction, callback)
 
 // Example
-abcWallet.tx.saveTx(abcTransaction, function(error) {
+abcCurrencyWallet.saveTx(abcTransaction, function(error) {
   if (!error) {
     // Success, transaction saved
     console.log("Saved transaction with ID = " + abcTransaction.txid)
@@ -1961,15 +1961,15 @@ abcWallet.tx.saveTx(abcTransaction, function(error) {
 | --- | --- | --- |
 | abcError | [`ABCError`](#abcerror) | [ABCError](#abcerror) object |
 
-Saves transaction to local cache. This will cause the transaction to show in calls to [ABCWallet.tx.getTransactions](#gettransactions).
+Saves transaction to local cache. This will cause the transaction to show in calls to [abcCurrencyWallet.getTransactions](#gettransactions).
 
 ### signBroadcastAndSave
 
 ```javascript
-abcWallet.tx.signBroadcastAndSave(abcTransaction, callback)
+abcCurrencyWallet.signBroadcastAndSave(abcTransaction, callback)
 
 // Example
-abcWallet.tx.signBroadcastAndSave(abcTransaction, function(error) {
+abcCurrencyWallet.signBroadcastAndSave(abcTransaction, function(error) {
   if (!error) {
     // Success, transaction sent
     console.log("Sent transaction with ID = " + abcTransaction.txid)
@@ -1994,7 +1994,7 @@ Convenience routine to do `signTx`, `broadcastTx`, then `saveTx` in one call.
 // Example
 const abcParsedUri = abcAccount.parseUri("bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.000000&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X")
 
-abcWallet.tx.getPaymentProtocolInfo(abcParsedUri.paymentProtocolURL, function(error, paymentProtocolInfo) {
+abcCurrencyWallet.getPaymentProtocolInfo(abcParsedUri.paymentProtocolURL, function(error, paymentProtocolInfo) {
   abcSpendInfo = {
     networkFeeOption: 'high',
     metadata: {
@@ -2004,8 +2004,8 @@ abcWallet.tx.getPaymentProtocolInfo(abcParsedUri.paymentProtocolURL, function(er
     spendTargets: [ paymentProtocolInfo.spendTarget ]
   }
 
-  const abcTransaction = abcWallet.tx.makeSpend(abcSpendInfo)
-  abcWallet.tx.signBroadcastAndSave(abcTransaction, function(error, abcTransaction) {
+  const abcTransaction = abcCurrencyWallet.makeSpend(abcSpendInfo)
+  abcCurrencyWallet.signBroadcastAndSave(abcTransaction, function(error, abcTransaction) {
     if (!error) {
       // Success, transaction sent
       console.log("Sent transaction with ID = " + abcTransaction.txid)
@@ -2044,7 +2044,7 @@ const abcSpendInfo = {
   ]
 }
 
-abcWallet.tx.getMaxSpendable(abcSpendInfo, function(error, maxAmountSatoshi) {
+abcCurrencyWallet.getMaxSpendable(abcSpendInfo, function(error, maxAmountSatoshi) {
   if (error === null) {
     console.log(maxAmountSatoshi)
   }
@@ -2115,7 +2115,7 @@ const spendTarget =
 // Example to spend to a BIP70 payment request
 const abcParsedUri = abcAccount.parseUri("bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.000000&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X")
 
-abcWallet.tx.getPaymentProtocolInfo(abcParsedUri.paymentProtocolURL, function(error, paymentProtocolInfo) {
+abcCurrencyWallet.getPaymentProtocolInfo(abcParsedUri.paymentProtocolURL, function(error, paymentProtocolInfo) {
   abcSpendInfo = {
     networkFeeOption: 'high',
     metadata: {
@@ -2125,7 +2125,7 @@ abcWallet.tx.getPaymentProtocolInfo(abcParsedUri.paymentProtocolURL, function(er
     spendTargets: [ paymentProtocolInfo.spendTarget ]
   }
 
-  const abcSpend = abcWallet.tx.makeSpend(abcSpendInfo)
+  const abcSpend = abcCurrencyWallet.makeSpend(abcSpendInfo)
   abcSpend.signBroadcastAndSave(function(error, abcTransaction) {
     if (!error) {
       // Success, transaction sent
@@ -2193,7 +2193,7 @@ Non-blockchain transaction meta data associated to an [ABCTransaction](#abctrans
 | Property | Type | Description |
 | --- | --- | --- |
 | payeeName | `String` | Name of external recipient or sender of funds |
-| category | `String` | Transaction category of format "Expense:Food & Dining". Category must be of the form [Category]:[Sub Category] where category is one of "Income", "Expense", "Transfer", or "Exchange". Income refers to incoming funds such as payroll or business sales. Expense is the purchase of goods or services. Transfer is a transfer of funds to/from another wallet or exchange account owned by the user. Exchange is the change of funds from one type of currency to another. If ABCWallet.tx is of type bitcoin, an incoming transaction from the purchase of bitcoin with USD should be categorized as "Exchange:Buy Bitcoin". |
+| category | `String` | Transaction category of format "Expense:Food & Dining". Category must be of the form [Category]:[Sub Category] where category is one of "Income", "Expense", "Transfer", or "Exchange". Income refers to incoming funds such as payroll or business sales. Expense is the purchase of goods or services. Transfer is a transfer of funds to/from another wallet or exchange account owned by the user. Exchange is the change of funds from one type of currency to another. If abcCurrencyWallet is of type bitcoin, an incoming transaction from the purchase of bitcoin with USD should be categorized as "Exchange:Buy Bitcoin". |
 | notes | `String` | Misc notes field |
 | amountFiat | `Float` | Amount of transaction in the wallet's fiat currency at the time of the transaction |
 | bizId | `Int` | Unique bizId associated to a business listing in the Airbitz Business Directory |

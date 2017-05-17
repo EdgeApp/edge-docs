@@ -1507,11 +1507,11 @@ const bitcoinPlugin = abcBitcoin.makeBitcoinPlugin({
   io: yourPlatformSpecificIo
 })
 
-function abcWalletTxAddressesChecked (abcCurrencyWallet, progressRatio) {}
-function abcWalletTxBalanceChanged (abcCurrencyWallet) {}
-function abcWalletTxTransactionsChanged (abcCurrencyWallet, Array) {}
-function abcWalletTxNewTransactions (abcCurrencyWallet, Array) {}
-function abcWalletTxBlockHeightChanged (abcCurrencyWallet, height) {}
+function onAddressesChecked (progressRatio) {}
+function onBalanceChanged (balance) {}
+function onTransactionsChanged (transactionArray) {}
+function onNewTransactions (transactionArray) {}
+function onBlockHeightChanged (height) {}
 
 // Select some keys, using any approach you find useful:
 const bitcoinWalletKeys = abcAccount.allKeys.find(
@@ -1524,11 +1524,11 @@ abc
     account: abcAccount,
     plugin: bitcoinPlugin,
     callbacks: {
-      onAddressesChecked: abcWalletTxAddressesChecked,
-      onBalanceChanged: abcWalletTxBalanceChanged,
-      onTransactionsChanged: abcWalletTxTransactionsChanged,
-      onNewTransactions: abcWalletTxNewTransactions,
-      onBlockHeightChanged: abcWalletTxBlockHeightChanged
+      onAddressesChecked,
+      onBalanceChanged,
+      onTransactionsChanged,
+      onNewTransactions,
+      onBlockHeightChanged
     }
   })
   .then(abcBitcoinWallet => {})
@@ -1547,11 +1547,11 @@ Creates a wallet capable of send and receive functionality. An [ABCCurrencyPlugi
 
 | Callback name | Type | Description |
 | --- | --- | --- |
-| onAddressesChecked(ABCWalletTx, progressRatio) | `Function` | Wallet has been fully updated with latest transactions from the network |
-| onBalanceChanged(ABCWalletTx) | `Function` | Wallet balance has changed due to transactions already detected from other devices, from new transactions, or from dropped transactions |
-| onTransactionsChanged(Array) | `Function` | Array of new ABCTransaction objects. These are new funds that the GUI should show as a notificatino to the user |
-| onNewTransactions(Array) | `Function` | Array of ABCTransaction objects. These transactions are either previously recognized funds from a new device that have now synced to this device, or updates to previously seen transactions such as a change in the block number this transaction was confirmed in. |
-| onBlockHeightChanged(ABCWalletTx, height) | `Function` | Blockchain height changed. This is unused for sub wallets |
+| onAddressesChecked(progressRatio) | `Function` | Wallet has been fully updated with latest transactions from the network |
+| onBalanceChanged(balance) | `Function` | Wallet balance has changed due to transactions already detected from other devices, from new transactions, or from dropped transactions |
+| onTransactionsChanged(transactionArray) | `Function` | Array of new ABCTransaction objects. These are new funds that the GUI should show as a notificatino to the user |
+| onNewTransactions(transactionArray) | `Function` | Array of ABCTransaction objects. These transactions are either previously recognized funds from a new device that have now synced to this device, or updates to previously seen transactions such as a change in the block number this transaction was confirmed in. |
+| onBlockHeightChanged(height) | `Function` | Blockchain height changed. This is unused for sub wallets |
 
 This class also includes all callbacks of [`ABCStorageWallet`](#abcstoragewallet).
 
@@ -1772,7 +1772,7 @@ abcWallet.tx.lockReceiveAddress(function (error) {
 })
 ```
 
-Locks this `receiveAddress` so that any future calls to [ABCWalletTx.getReceiveAddress](#getreceiveaddress), without the `publicAddress` specified, will no longer return this address. Funds can still be received on this address. Use [ABCWalletTx.getReceiveAddress](#getreceiveaddress) with `publicAddress` specified to get back this object in the future.
+Locks this `receiveAddress` so that any future calls to [ABCCurrencyWallet.getReceiveAddress](#getreceiveaddress), without the `publicAddress` specified, will no longer return this address. Funds can still be received on this address. Use [ABCCurrencyWallet.getReceiveAddress](#getreceiveaddress) with `publicAddress` specified to get back this object in the future.
 
 ### makeAddressQrCode
 
@@ -2205,7 +2205,7 @@ Object represents a signed or unsigned transaction that may or may not be broadc
 
 | Property | Type | Description |
 | --- | --- | --- |
-| abcWalletTx | [`ABCWalletTx`](#abcwallettx) | [ABCWalletTx](#abcwallettx) this transaction is from |
+| wallet | [`ABCCurrencyWallet`](#abccurrencywallet) | [ABCCurrencyWallet](#abccurrencywallet) this transaction is from |
 | metadata | [`ABCMetadata`](#abcmetadata) | [ABCMetadata](#abcmetadata) of this transaction |
 | txid | `String` | Transaction ID as represented by the wallet's crypto currency. For bitcoin this is base16. This parameter is `null` until [signTx](#signtx) is called. |
 | date | `Date` | Date that transaction was broadcast, detected, or confirmed on the blockchain. If the tx detection date is after the confirmation time, then this is the confirmation time. `null` if transaction has not been broadcast |

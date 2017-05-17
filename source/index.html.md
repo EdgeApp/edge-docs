@@ -92,7 +92,7 @@ Gathers the various browser API's into an IO object. This allows Airbitz to work
 const abc = require('airbitz-core-js')
 const abcNode = require('airbitz-io-node-js')
 
-const io = abcNode.makeNodeIo(path)
+const io = abcNode.makeNodeIo('/home/username/.config/appname')
 const context = abc.makeContext({ io })
 ```
 
@@ -108,7 +108,9 @@ Gathers various Node.js API's into an IO object.
 const abc = require('airbitz-core-js')
 const abcReact = require('react-native-airbitz-io')
 
-abcReact.makeReactNativeIo().then(io => abc.makeContext({ io }))
+abcReact.makeReactNativeIo().then(io => {
+  const context = abc.makeContext({ io })
+})
 ```
 
 Gathers various React Native API's into an IO object. This is an asynchronous function, and returns a `Promise`.
@@ -137,7 +139,7 @@ ABCContext *abcContext = [ABCContext makeABCContext:@"your-api-key-here" type:@"
 
 Initialize and create an ABCContext object. Required for functionality of ABC SDK.
 
-| Param | Type | Description |
+| Option | Type | Description |
 | --- | --- | --- |
 | apiKey | `string` | Get an API Key from <https://developer.airbitz.co> |
 | appId | `string` | Type of account that this application will be accessing. This should be in reverse-domain format, like `"com.domain.app"`. The `appId` determines which keys are available to your application, so a login performed by `"com.domain.app1"` will receive different keys from `"com.domain.app2"`. |

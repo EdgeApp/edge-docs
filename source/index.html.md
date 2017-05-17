@@ -1502,6 +1502,11 @@ This class also includes all the methods and callbacks of [`ABCStorageWallet`](#
 const abc = require('airbitz-core-js')
 const abcBitcoin = require('airbitz-currency-bitcoin')
 
+// This should probably happen once when the app first boots:
+const bitcoinPlugin = abcBitcoin.makeBitcoinPlugin({
+  io: yourPlatformSpecificIo
+})
+
 function abcWalletTxAddressesChecked (abcCurrencyWallet, progressRatio) {}
 function abcWalletTxBalanceChanged (abcCurrencyWallet) {}
 function abcWalletTxTransactionsChanged (abcCurrencyWallet, Array) {}
@@ -1517,7 +1522,7 @@ const bitcoinWalletKeys = abcAccount.allKeys.find(
 abc
   .makeCurrencyWallet(bitcoinWalletKeys, {
     account: abcAccount,
-    plugin: abcBitcoin.txLib,
+    plugin: bitcoinPlugin,
     callbacks: {
       onAddressesChecked: abcWalletTxAddressesChecked,
       onBalanceChanged: abcWalletTxBalanceChanged,
@@ -2310,7 +2315,7 @@ Cryptocurrency functionality for [`ABCCurrencyWallet`](#abccurrencywallet) is pr
 
 To add additional currency functionality, create a library that exposes an API that follows the ABCCurrencyPlugin template below.
 
-[Disklet](https://www.npmjs.com/package/disklet) folders will be passed into [`currencyPlugin.makeEngine`](#makeengine). The `walletLocalFolder` allows the txLib to store wallet specific data such as a blockchain cache. If the implementation chooses to hold a global cache of data, use the `accountLocalFolder` object. Neither local folder is encrypted, revision controlled, or backed up.
+[Disklet](https://www.npmjs.com/package/disklet) folders will be passed into [`currencyPlugin.makeEngine`](#makeengine). The `walletLocalFolder` allows the plugin to store wallet specific data such as a blockchain cache. If the implementation chooses to hold a global cache of data, use the `accountLocalFolder` object. Neither local folder is encrypted, revision controlled, or backed up.
 
 The repo `airbitz-currency-bitcoin` exposes this API for bitcoin.
 
@@ -2470,15 +2475,15 @@ currencyPlugin.makeEngine(keyInfo, options, function(error, abcTxEngine) {
 | abcError | [`ABCError`](#abcerror) | [ABCError](#abcerror) object |
 | abcTxEngine | [`ABCTxEngine`](#abctxengine) | [ABCTxEngine](#abctxengine) object |
 
-[`currencyPlugin.makeEngine`](#makeengine) initializes the library effectively creating a cryptocurrency wallet within the [ABCWallet](#abcwallet) object. The TxLib should spin up any background tasks necessary to begin querying the blockchain and field any requests for transactions. [`currencyPlugin.makeEngine`](#makeengine) will be called once for every wallet of the same or different currency.
+[`currencyPlugin.makeEngine`](#makeengine) initializes the library effectively creating a cryptocurrency wallet within the [ABCWallet](#abcwallet) object. The plugin should spin up any background tasks necessary to begin querying the blockchain and field any requests for transactions. [`currencyPlugin.makeEngine`](#makeengine) will be called once for every wallet of the same or different currency.
 
-Any persistent global information that the TxLib needs to keep should be kept in the `accountDataStore` for encrypted, backed-up data, and in the `accountLocalDataStore` for unencrypted, device specific data. Both the dataStores are persisted to disk and survive app shutdown or reboots.
+Any persistent global information that the plugin needs to keep should be kept in the `accountDataStore` for encrypted, backed-up data, and in the `accountLocalDataStore` for unencrypted, device specific data. Both the dataStores are persisted to disk and survive app shutdown or reboots.
 
-Any persistent wallet-specific information that the TxLib needs to keep should be kept in the `walletFolder` for encrypted, backed-up data, and in the `walletLocalFolder` for unencrypted, device specific data. Both the dataStores are persisted to disk and survive app shutdown or reboots.
+Any persistent wallet-specific information that the plugin needs to keep should be kept in the `walletFolder` for encrypted, backed-up data, and in the `walletLocalFolder` for unencrypted, device specific data. Both the dataStores are persisted to disk and survive app shutdown or reboots.
 
-The TxLib implementation should use the [Disklet](https://www.npmjs.com/package/disklet) API for accessing the above data stores.
+The plugin implementation should use the [Disklet](https://www.npmjs.com/package/disklet) API for accessing the above data stores.
 
-Any in-memory values needed by the TxLib should simply be added to the ABCTxEngine object as dynamically added parameters to the object.
+Any in-memory values needed by the plugin should simply be added to the ABCTxEngine object as dynamically added parameters to the object.
 
 It is recommended the master public keys be kept in the `walletLocalFolder`  so they can be accessed for querying the blockchain while not logged in. Local blockchain cache information can be stored in either the `walletLocalFolder` or the `accountLocalDataStore` depending on whether the implementation chooses to hold a global blockchain cache or per wallet information.
 
@@ -2486,7 +2491,7 @@ It is NOT recommended to use the `walletFolder` or `accountDataStore` for blockc
 
 ## ABCTxEngine
 
-An ABCTxEngine is created by the TxLib and returned to Airbitz Core. It must contain the following methods. Any additional in-memory parameters needed should be dynamically placed into this object before returning it back to Airbitz Core.
+An ABCTxEngine is created by the plugin and returned to Airbitz Core. It must contain the following methods. Any additional in-memory parameters needed should be dynamically placed into this object before returning it back to Airbitz Core.
 
 ### startEngine
 
@@ -2623,7 +2628,7 @@ The `options` parameter may include the following:
 | --- | --- | --- |
 | currencyCode | `String` | Currency code to use. ie "REP", "LTBCOIN". If not specified, uses the wallet's primary currency. ie. "BTC", or "ETH" |
 | startIndex | `Int` | The starting index into the list of transactions. 0 specifies the newest transaction |
-| numEntries | `Int` |  The number of entries to return. If there aren't enough transactions to return `numEntries`, then the TxLib should return the maximum possible |
+| numEntries | `Int` |  The number of entries to return. If there aren't enough transactions to return `numEntries`, then the plugin should return the maximum possible |
 
 ### getFreshAddress
 
@@ -2666,7 +2671,7 @@ The `options` parameter may include the following:
 | --- | --- | --- |
 | abcError | [`ABCError`](#abcerror) | [ABCError](#abcerror) object |
 
-When implementing an HD wallet with multiple addresses, wallet implementations typically search for funds by going a limited number of addresses ahead of the last address that has funds received. This is usually about 10 addresses. `addGapLimitAddresses` allows ABC to specify to the txLib to treat the given addresses as if they had funds received and to forward their gap limit accordingly.
+When implementing an HD wallet with multiple addresses, wallet implementations typically search for funds by going a limited number of addresses ahead of the last address that has funds received. This is usually about 10 addresses. `addGapLimitAddresses` allows ABC to specify to the plugin to treat the given addresses as if they had funds received and to forward their gap limit accordingly.
 
 ### isAddressUsed
 
@@ -2741,7 +2746,7 @@ transactionsChanged(abcTransactions)
 | --- | --- | --- |
 | abcTransactions | `Array` | Array of [ABCTransaction](#abctransaction) objects which are new or have changed. Changes may include the block height when this transaction was confirmed |
 
-Callback fires when the TxLib detects new or updated transactions from the blockchain network. The plugin must fill in the following [ABCTransaction](#abctransaction) fields:
+Callback fires when the plugin detects new or updated transactions from the blockchain network. The plugin must fill in the following [ABCTransaction](#abctransaction) fields:
 
 * `txid`
 * `date`
@@ -2759,7 +2764,7 @@ blockHeightChanged(blockHeight)
 | --- | --- | --- |
 | blockHeight | `Int` | New block height value |
 
-Callback fires when the TxLib detects a blockheight change for the supported currency.
+Callback fires when the plugin detects a blockheight change for the supported currency.
 
 ### addressesChecked
 
@@ -2770,7 +2775,7 @@ addressesChecked(progressRatio)
 | --- | --- | --- |
 | progressRatio | `Number` | 0 to 1 value indicating how far along the core is in checking all the wallet addresses for new funds. This is only meaningful after the inital call to [startEngine](#startEngine) |
 
-Callback fires when the TxLib detects a blockheight change for the supported currency.
+Callback fires when the plugin detects a blockheight change for the supported currency.
 
 # Account Management UI
 

@@ -1637,7 +1637,7 @@ const abcTransactions = abcWallet.tx.getTransactions(options, function(error, ab
 | startEntries | `Int` | Number of entries to return from start of index. `startIndex` must be specified |
 | startDate | `Date` | Date object, in local time, when to start returning transactions. If unspecified, transactions are not filtered by date and search passes on to `searchString` |
 | endDate | `Date` | Date object, in local time, when to stop returning transactions. Must be later than `startDate` and `startDate` must be specified |
-| searchString | `String` | Include only transactions that have metaData that matches `searchString`. (Optional) |
+| searchString | `String` | Include only transactions that have metadata that matches `searchString`. (Optional) |
 | returnIndex | `Int` | Index into the filtered list of transactions. If unspecified, no transactions are filtered and current results are returned.  Index 0 refers to the most recent transaction. |
 | returnEntries | `Int` | Number of entries to return from index of filtered transactions. `returnEntries` must be specified |
 
@@ -1748,8 +1748,8 @@ abcWallet.tx.getReceiveAddress(null, function (error) {
     // Success
     console.log("My bitcoin address: " + abcReceiveAddress.publicAddress)
     abcReceiveAddress.amountSatoshi = 150000000 // 1.5 BTC
-    abcReceiveAddress.metaData.payeeName = "Johnny Be Good"
-    abcReceiveAddress.metaData.category = "Income:Rent"
+    abcReceiveAddress.metadata.payeeName = "Johnny Be Good"
+    abcReceiveAddress.metadata.category = "Income:Rent"
     abcReceiveAddress.saveReceiveAddress(function(error) {
       // Meta data for this address has been saved
     })
@@ -1757,7 +1757,7 @@ abcWallet.tx.getReceiveAddress(null, function (error) {
 })
 ```
 
-Updates the internal database of `metaData` corresponding to this `receiveAddress`. Any transactions that are received in this address are automatically tagged with the `metaData` from this `receiveAddress`.
+Updates the internal database of `metadata` corresponding to this `receiveAddress`. Any transactions that are received in this address are automatically tagged with the `metadata` from this `receiveAddress`.
 
 ### lockReceiveAddress
 
@@ -2184,7 +2184,7 @@ Object provides basic UI displayable info about a BIP70 payment request. Also in
 | --- | --- | --- |
 | publicAddress | `String` | Raw public address in native format of wallet currency type. (ie. base58 for bitcoin, base16 for ethereum) |
 | amountSatoshi | `Int` | Amount of request denominated in the smallest unit of this wallet's currency (ie. bitcoin satoshis) |
-| metaData | `ABCMetadata` | [ABCMetadata](#abcmetadata) object corresponding to this address. Any transactions receiving funds into this address will automatically have this metadata in the [ABCTransaction](#abctransaction) object.
+| metadata | `ABCMetadata` | [ABCMetadata](#abcmetadata) object corresponding to this address. Any transactions receiving funds into this address will automatically have this metadata in the [ABCTransaction](#abctransaction) object.
 
 ## ABCMetadata
 
@@ -2702,7 +2702,7 @@ abcTxEngine.makeSpend(abcSpendInfo, function(error, abcTransaction) {
 })
 ```
 
-Given an [ABCSpendInfo](#abcspendinfo) object, returns an unsigned [ABCTransaction](#abctransaction) object. [ABCTransaction](#abctransaction).signedTx should be NULL. `makeSpend` does not need to touch the metaData parameter in the `abcSpendInfo`. `makeSpend` only needs to support the [ABCSpendTarget](#abcspendtarget) parameters `currencyCode`, `publicAddress`, and `amountSatoshi`.
+Given an [ABCSpendInfo](#abcspendinfo) object, returns an unsigned [ABCTransaction](#abctransaction) object. [ABCTransaction](#abctransaction).signedTx should be NULL. `makeSpend` does not need to touch the metadata parameter in the `abcSpendInfo`. `makeSpend` only needs to support the [ABCSpendTarget](#abcspendtarget) parameters `currencyCode`, `publicAddress`, and `amountSatoshi`.
 
 ### signTx
 

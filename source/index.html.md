@@ -2607,8 +2607,15 @@ abcTxEngine.getTransactions(options, function(error, transactions) {
 | abcError | [`ABCError`](#abcerror) | [ABCError](#abcerror) object |
 | transactions | `Array` | Array of [ABCTransaction](#abctransaction) objects |
 
-Returns an array of transactions matching the options specified. The [ABCTransaction](#abctransaction) must have the following fields filled out by the TxLib:
-`abcWallet`, `txid`, `date`, `blockHeight`, and `amountSatoshi`. The remaining fields are updated by Airbitz Core.
+Returns an array of transactions matching the options specified. The plugin must fill in the following [ABCTransaction](#abctransaction) fields:
+
+* `txid`
+* `date`
+* `networkFee`
+* `blockHeight` (may be 0)
+* `amountSatoshi`
+
+The remaining fields are updated by Airbitz Core.
 
 The `options` parameter may include the following:
 
@@ -2734,8 +2741,13 @@ transactionsChanged(abcTransactions)
 | --- | --- | --- |
 | abcTransactions | `Array` | Array of [ABCTransaction](#abctransaction) objects which are new or have changed. Changes may include the block height when this transaction was confirmed |
 
-Callback fires when the TxLib detects new or updated transactions from the blockchain network. The [ABCTransaction](#abctransaction) objects must have the following fields filled out by the TxLib:
-`abcWalletTx`, `txid`, `date`, `blockHeight`, and `amountSatoshi`. The remaining fields are updated by Airbitz Core.
+Callback fires when the TxLib detects new or updated transactions from the blockchain network. The plugin must fill in the following [ABCTransaction](#abctransaction) fields:
+
+* `txid`
+* `date`
+* `networkFee`
+* `blockHeight` (may be 0)
+* `amountSatoshi`
 
 ### blockHeightChanged
 

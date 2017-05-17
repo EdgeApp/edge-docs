@@ -2440,19 +2440,12 @@ const callbacks = {
   addressesChecked
 }
 const options = {
-  walletType: "bitcoin-bip44",
-  masterPrivateKey,
-  masterPublicKey
+  callbacks,
+  walletFolder,
+  walletLocalFolder
 }
 
-const abcTxLibAccess = {
-  accountDataStore,
-  accountLocalDataStore,
-  walletDataStore,
-  walletLocalDataStore
-}
-
-currencyPlugin.makeEngine(abcTxLibAccess, options, callbacks, function(error, abcTxEngine) {
+currencyPlugin.makeEngine(keyInfo, options, function(error, abcTxEngine) {
   if (error === null) {
     // Success
   }
@@ -2462,16 +2455,15 @@ currencyPlugin.makeEngine(abcTxLibAccess, options, callbacks, function(error, ab
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcTxLibAccess | [`ABCTxLibAccess`](#abctxlibaccess) | Object with various parameters to access the wallet and account |
+| keyInfo | [`ABCKeyInfo`](#abckeyinfo) | The keys to the wallet. This may include just the pubic key (no private key) in read-only scenarios. |
 | options | `Object` | Options for [`currencyPlugin.makeEngine`](#makeengine) |
-| callbacks | [`ABCTxLibCallbacks`](#abctxlibcallbacks) | Various callbacks when wallet is updated |
 | callback | `Callback` | (Javascript) Callback function |
 
 | Options | Type | Description |
 | --- | --- | --- |
-| masterPrivateKey | `String` | Master private key for wallet in format specific to the wallet type. ie. `wallet:repo:bitcoin-bip44` would have a `masterPrivateKey` in the format of a bip39 12-24 word mnemonic. This parameter may be unspecified, in which case, the TxLibrary should have cached a `masterPublicKey` in `walletLocalDataStore` |
-| masterPublicKey | `String` | Master public key for wallet in format specific to the wallet type. ie. `wallet:repo:bitcoin-bip44` would have a `masterPublicKey` in the format of a base58 string starting with "xpub" such as "xpub661MyMwAqRbcFtXgS5sYJABqqG9YLmC4Q1Rdap9gSE8NqtwybGhePY2gZ29ESFjqJoCu1Rupje8YtGqsefD265TMg7usUDFdp6W1EGMcet8". This parameter may be unspecified, in which case, the TxLibrary should have cached a `masterPublicKey` in `walletLocalDataStore` |
-
+| callbacks | [`ABCTxLibCallbacks`](#abctxlibcallbacks) | Various callbacks when wallet is updated. |
+| walletFolder | `Folder` | [Disklet](https://www.npmjs.com/package/disklet) folder for synced and encrypted data. May not be present in certain read-only scenarios. |
+| walletLocalFolder | `Folder` | [Disklet](https://www.npmjs.com/package/disklet) folder for non-encrypted, device-only data. |
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
@@ -2482,15 +2474,15 @@ currencyPlugin.makeEngine(abcTxLibAccess, options, callbacks, function(error, ab
 
 Any persistent global information that the TxLib needs to keep should be kept in the `accountDataStore` for encrypted, backed-up data, and in the `accountLocalDataStore` for unencrypted, device specific data. Both the dataStores are persisted to disk and survive app shutdown or reboots.
 
-Any persistent wallet-specific information that the TxLib needs to keep should be kept in the `walletDataStore` for encrypted, backed-up data, and in the `walletLocalDataStore` for unencrypted, device specific data. Both the dataStores are persisted to disk and survive app shutdown or reboots.
+Any persistent wallet-specific information that the TxLib needs to keep should be kept in the `walletFolder` for encrypted, backed-up data, and in the `walletLocalFolder` for unencrypted, device specific data. Both the dataStores are persisted to disk and survive app shutdown or reboots.
 
 The TxLib implementation should use the [Disklet](https://www.npmjs.com/package/disklet) API for accessing the above data stores.
 
 Any in-memory values needed by the TxLib should simply be added to the ABCTxEngine object as dynamically added parameters to the object.
 
-It is recommended the master public keys be kept in the `walletLocalDataStore`  so they can be accessed for querying the blockchain while not logged in. Local blockchain cache information can be stored in either the `walletLocalDataStore` or the `accountLocalDataStore` depending on whether the implementation chooses to hold a global blockchain cache or per wallet information.
+It is recommended the master public keys be kept in the `walletLocalFolder`  so they can be accessed for querying the blockchain while not logged in. Local blockchain cache information can be stored in either the `walletLocalFolder` or the `accountLocalDataStore` depending on whether the implementation chooses to hold a global blockchain cache or per wallet information.
 
-It is NOT recommended to use the `walletDataStore` or `accountDataStore` for blockchain cache information as these data stores are encrypted, backed up, and revision controlled and are therefore more heavy weight.
+It is NOT recommended to use the `walletFolder` or `accountDataStore` for blockchain cache information as these data stores are encrypted, backed up, and revision controlled and are therefore more heavy weight.
 
 ## ABCTxEngine
 
@@ -2729,17 +2721,6 @@ abcTxEngine.saveTx(abcTransaction, function(error) {
 ```
 
 Saves an already signed [ABCTransaction](#abctransaction) object to the local cache so that funds are considered spent by the wallet. Any future calls to [getTransactions](#gettransactions), [getBalance](#getbalance), or [getNumTransactions](#getNumTransactions) should reflect the outcome of this saved transaction. This routine should also trigger the callback [transactionsChanged](#transactionschanged).
-
-## ABCTxLibAccess
-
-| Param | Type | Description |
-| --- | --- | --- |
-| walletFolder | `Folder` | Encrypted and backed-up (Disklet)[https://www.npmjs.com/package/disklet] folder for wallet specific data |
-| walletLocalFolder | `Folder` | Local (Disklet)[https://www.npmjs.com/package/disklet] forlder for for wallet-specific data |
-| accountFolder | `Folder` | Encrypted and backed-up (Disklet)[https://www.npmjs.com/package/disklet] folder for account wide data |
-| accountLocalFolder | `Folder` | Local (Disklet)[https://www.npmjs.com/package/disklet] folder for account-wide data |
-
-Various objects needed to save/restore data for the TxLib
 
 ## ABCTxLibCallbacks
 

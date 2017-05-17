@@ -1247,6 +1247,8 @@ Callback routines that notify application when various changes have occurred in 
 | type | `String` | The type of resource these keys unlock. |
 | keys | `Object` | The contents of this object depend on the key type. See the documentation for the key types below. |
 
+Some supported key types are documented in the sections below:
+
 ### Storage Keys
 
 Many different key types include access to Git repo for storage. In all cases, the `keys` property will have the following members:
@@ -2416,14 +2418,34 @@ The `metaTokens` array includes the following params:
 
 Get details of the crypto currency supported by this library
 
-### createMasterKeys
+### createPrivateKeyInfo
 
 ```javascript
 // Example
-var masterKeys = currencyPlugin.createMasterKeys('bitcoin-bip44')
+var keyInfo = currencyPlugin.createPrivateKeyInfo('wallet:bitcoin')
 ```
 
-Creates a new randomly generated master private key and master public key for the wallet type specified.
+Creates a new random master private key, and returns it in an [`ABCKeyInfo`](#abckeyinfo) structure. This is used to create new wallets. If the plugin leaves the `id` field blank, the core will fill it in.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| type | `string` | The type of key to create. See [`ABCKeyInfo`](#abckeyinfo) for types. |
+
+### derivePublicKeyInfo
+
+```javascript
+// Example
+var publicKeyInfo = currencyPlugin.derivePublicKeyInfo(privateKeyInfo)
+```
+
+Derives a master public key from a private key. The provided [`ABCKeyInfo`](#abckeyinfo) structure holds the private key, as well as encryption keys, storage keys, and other potentially sensitive information. This function should create a new [`ABCKeyInfo`](#abckeyinfo) structure holding just the keys needed to check for incoming funds. This has multiple uses:
+
+1. Saving a wallet on the local device for offline balance checks.
+2. Sharing a wallet with another user is a watch-only mode.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| keyInfo | [`ABCKeyInfo`](#abckeyinfo) | The private keys to the wallet. |
 
 ### makeEngine
 

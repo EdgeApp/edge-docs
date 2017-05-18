@@ -1223,11 +1223,12 @@ Callback routines that notify application when various changes have occurred in 
 
 | Property | Type | Description |
 | --- | --- | --- |
-| abcAccountRemotePasswordChange | `Function` | Account password has been changed by a remote device. |
-| abcAccountLoggedOut | `Function` | Account has been logged out |
-| abcAccountOTPRequired | `Function` | Account has OTP enabled and this device does not have the correct OTP token |
-| abcAccountOTPSkew | `Function` | Account has OTP enabled and this device has a time skew with the server |
-| abcAccountAccountChanged | `Function` | Account dataStore has changed |
+| onDataChanged() | `Function` | The account's synced data has changed in any way. If the GUI is storing settings or other information in the account repo, it should refresh those. |
+| onKeyListChanged() | `Function` | The user has changed the key list in some way, including adding, deleting, archiving, or sorting. The GUI should refresh its wallets list. |
+| onLoggedOut() | `Function` | Account has been logged out. Not used. |
+| onOTPRequired() | `Function` | Another device has enabled OTP, and this device does not have the correct OTP token. The GUI should notify the user and give them an opportunity to scan the OTP barcode if they desire. |
+| onOTPSkew() | `Function` | This device's clock is out-of-sync with the Airbitz servers. The user should be notified to fix their clock. Otherwise, if the skew gets worse, they may not be able to log in again. |
+| onRemotePasswordChange() | `Function` | The account password has been changed by a remote device. The GUI should notify the user and give them an opportunity to log in again, which will activate the change on this device as well. Otherwise, this device will continue to have the old password. |
 
 ## ABCBitIDSignature
 
@@ -1547,11 +1548,12 @@ Creates a wallet capable of send and receive functionality. An [ABCCurrencyPlugi
 
 | Callback name | Type | Description |
 | --- | --- | --- |
-| onAddressesChecked(progressRatio) | `Function` | Wallet has been fully updated with latest transactions from the network |
-| onBalanceChanged(balance) | `Function` | Wallet balance has changed due to transactions already detected from other devices, from new transactions, or from dropped transactions |
-| onTransactionsChanged(transactionArray) | `Function` | Array of new ABCTransaction objects. These are new funds that the GUI should show as a notificatino to the user |
-| onNewTransactions(transactionArray) | `Function` | Array of ABCTransaction objects. These transactions are either previously recognized funds from a new device that have now synced to this device, or updates to previously seen transactions such as a change in the block number this transaction was confirmed in. |
-| onBlockHeightChanged(height) | `Function` | Blockchain height changed. This is unused for sub wallets |
+| onAddressesChecked(progressRatio) | `Function` | Called as the engine checks addresses. If money has arrived while the app was shut down, this process will eventually detect it. The balance and history may be incomplete until `progressRatio` reaches 100%. |
+| onBalanceChanged(balance) | `Function` | The spendable balance has changed, either from newly-detected transactions or from dropped transactions. |
+| onBlockHeightChanged(height) | `Function` | Blockchain height changed. This is unused for sub wallets. The confirmation status of each transaction is `chainHeight - transactionHeight`, so this affects all confirmed transactions. |
+| onNewTransactions(transactionArray) | `Function` | Array of ABCTransaction objects. These transactions are either previously-recognized funds that are being synced to this device for the first time, or updates to previously-seen transactions such as new metadata or confirmation status. |
+| onTransactionsChanged(transactionArray) | `Function` | Array of never-before-seen ABCTransaction objects. These are new funds that the GUI should notify the user about. |
+| onWalletNameChanged(name) | `Function` | The user has changed the wallet name, either on this device or on another device. |
 
 This class also includes all callbacks of [`ABCStorageWallet`](#abcstoragewallet).
 

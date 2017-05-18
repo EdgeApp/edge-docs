@@ -1818,12 +1818,10 @@ const abcSpendInfo = {
   ]
 }
 
-const abcTransaction = abcCurrencyWallet.makeSpend(abcSpendInfo)
-abcCurrencyWallet.signBroadcastAndSave(abcTransaction, function(error, abcTransaction) {
-  if (!error) {
-    // Success, transaction sent
+abcCurrencyWallet.makeSpend(abcSpendInfo).then(abcTransaction => {
+  abcCurrencyWallet.signBroadcastAndSave(abcTransaction).then(() => {
     console.log("Sent transaction with ID = " + abcTransaction.txid)
-  }
+  })
 })
 
 // Example to spend to a BIP70 payment request
@@ -1839,14 +1837,11 @@ abcCurrencyWallet.getPaymentProtocolInfo(abcParsedUri.paymentProtocolURL, functi
     spendTargets: [ spendTarget ]
   }
 
-  const abcTransaction = abcCurrencyWallet.makeSpend(abcSpendInfo)
-  abcCurrencyWallet.signBroadcastAndSave(abcTransaction, function(error, abcTransaction) {
-    if (!error) {
-      // Success, transaction sent
-      console.log("Sent transaction with ID = " + abcTransaction.txid)
-    }
+abcCurrencyWallet.makeSpend(abcSpendInfo).then(abcTransaction => {
+  abcCurrencyWallet.signBroadcastAndSave(abcTransaction).then(() => {
+    console.log("Sent transaction with ID = " + abcTransaction.txid)
   })
-}
+})
 
 // Example wallet to wallet transfer
 const walletIds = abcAccount.listWalletIds()
@@ -1867,20 +1862,19 @@ const abcSpendInfo = {
   ]
 }
 
-const abcTransaction = srcWallet.tx.makeSpend(abcSpendInfo)
-srcWallet.tx.signBroadcastAndSave(abcTransaction, function(error, abcTransaction) {
-  if (!error) {
-    // Success, transaction sent
+abcCurrencyWallet.makeSpend(abcSpendInfo).then(abcTransaction => {
+  abcCurrencyWallet.signBroadcastAndSave(abcTransaction).then(() => {
     console.log("Sent transaction with ID = " + abcTransaction.txid)
-  }
+  })
 })
 ```
 
 | Param | Type | Description |
 | --- | --- | --- |
 | abcSpendInfo | [`ABCSpendInfo`](#abcspendinfo) | [ABCSpendInfo](#abcspendinfo) object with various parameters for a spend operation including output addresses, amounts, or payment protocol payment objects (BIP70) |
+| callback | `Callback` | (Javascript) Callback function |
 
-| Return Param | Type | Description |
+| Callback Param | Type | Description |
 | --- | --- | --- |
 | abcTransaction | [`ABCTransaction`](#abctransaction) | Unsigned [ABCTransaction](#abctransaction) object |
 
@@ -2125,12 +2119,10 @@ abcCurrencyWallet.getPaymentProtocolInfo(abcParsedUri.paymentProtocolURL, functi
     spendTargets: [ paymentProtocolInfo.spendTarget ]
   }
 
-  const abcSpend = abcCurrencyWallet.makeSpend(abcSpendInfo)
-  abcSpend.signBroadcastAndSave(function(error, abcTransaction) {
-    if (!error) {
-      // Success, transaction sent
+  abcCurrencyWallet.makeSpend(abcSpendInfo).then(abcTransaction => {
+    abcCurrencyWallet.signBroadcastAndSave(abcTransaction).then(() => {
       console.log("Sent transaction with ID = " + abcTransaction.txid)
-    }
+    })
   })
 }
 ```

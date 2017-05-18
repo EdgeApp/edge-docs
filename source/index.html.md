@@ -2443,12 +2443,7 @@ const options = {
   walletLocalFolder
 }
 
-currencyPlugin.makeEngine(keyInfo, options, function(error, abcTxEngine) {
-  if (error === null) {
-    // Success
-  }
-})
-
+const abcTxEngine = currencyPlugin.makeEngine(keyInfo, options)
 ```
 
 | Param | Type | Description |
@@ -2463,10 +2458,9 @@ currencyPlugin.makeEngine(keyInfo, options, function(error, abcTxEngine) {
 | walletFolder | `Folder` | [Disklet](https://www.npmjs.com/package/disklet) folder for synced and encrypted data. May not be present in certain read-only scenarios. |
 | walletLocalFolder | `Folder` | [Disklet](https://www.npmjs.com/package/disklet) folder for non-encrypted, device-only data. |
 
-| Callback Param | Type | Description |
+| Return | Type | Description |
 | --- | --- | --- |
-| abcError | [`ABCError`](#abcerror) | [ABCError](#abcerror) object |
-| abcTxEngine | [`ABCTxEngine`](#abctxengine) | [ABCTxEngine](#abctxengine) object |
+| engine | [`ABCTxEngine`](#abctxengine) | A promise that will resolve to the requested engine, or an error. |
 
 [`currencyPlugin.makeEngine`](#makeengine) initializes the library effectively creating a cryptocurrency wallet within the [ABCWallet](#abcwallet) object. The plugin should spin up any background tasks necessary to begin querying the blockchain and field any requests for transactions. [`currencyPlugin.makeEngine`](#makeengine) will be called once for every wallet of the same or different currency.
 
@@ -2488,11 +2482,15 @@ An ABCTxEngine is created by the plugin and returned to Airbitz Core. It must co
 
 ### startEngine
 
-Starts the TxEngine and causes background processes to start querying for blockchain data. This must be called prior to using any other methods of [ABCTxEngine](#abctxengine)
-
 ```javascript
 abcTxEngine.startEngine()
 ```
+
+Starts the TxEngine and causes background processes to start querying for blockchain data. This must be called prior to using any other methods of [ABCTxEngine](#abctxengine)
+
+| Return | Type | Description |
+| --- | --- | --- |
+| promise | `Promise<void>` | A promise that resolves when the engine has fully initialized. |
 
 ### killEngine
 
@@ -2500,7 +2498,7 @@ abcTxEngine.startEngine()
 abcTxEngine.killEngine()
 ```
 
-Terminate background processes for querying network
+Terminate background processes for querying network.
 
 ### getBlockHeight
 
@@ -2521,20 +2519,16 @@ const tokens = {
   tokens: [ "XCP", "TATIANACOIN" ]
 }
 
-abcTxEngine.enableTokens(tokens, function(error) {
-  if (error === null) {
-    // Success
-  }
-})
+abcTxEngine.enableTokens(tokens).catch(handleError)
 ```
 
 | Param | Type | Description |
 | --- | --- | --- |
 | tokens | `Array` | Array of strings specifying the currency codes of tokens to enable in this wallet |
 
-| Callback Param | Type | Description |
+| Return | Type | Description |
 | --- | --- | --- |
-| abcError | [`ABCError`](#abcerror) | [ABCError](#abcerror) object |
+| promise | `Promise<void>` | A promise that resolves when the tokens are ready to use. |
 
 Enable support for meta tokens (ie. counterparty, colored coin, ethereum ERC20). Library should begin checking the blockchain for the specified tokens and triggering the callbacks specified in [`currencyPlugin.makeEngine`](#makeengine).
 
@@ -2588,11 +2582,11 @@ const options = {
   numEnteries: 50
 }
 
-abcTxEngine.getTransactions(options, function(error, transactions) {
-  if (error === null) {
+abcTxEngine.getTransactions(options)
+  .then(transaction => {
     console.log(transactions[0].txid) // => "1209befa09ab3efc039abf09490ac34fe09abc938"
-  }
-})
+  })
+  .catch(handleError)
 ```
 
 | Param | Type | Description |
@@ -2600,10 +2594,9 @@ abcTxEngine.getTransactions(options, function(error, transactions) {
 | options | `Object` | Options for getTransactions. If `null`, return all transactions |
 | callback | `Callback` | (Javascript) Callback function |
 
-| Callback Param | Type | Description |
+| Return Param | Type | Description |
 | --- | --- | --- |
-| abcError | [`ABCError`](#abcerror) | [ABCError](#abcerror) object |
-| transactions | `Array` | Array of [ABCTransaction](#abctransaction) objects |
+| transactions | `Promise<Array<ABCTransaction>>` | A promise that resolves to an array of [ABCTransaction](#abctransaction) objects |
 
 Returns an array of transactions matching the options specified. The plugin must fill in the following [ABCTransaction](#abctransaction) fields:
 
@@ -2690,9 +2683,11 @@ The `options` parameter may include the following:
 ### makeSpend
 
 ```javascript
-abcTxEngine.makeSpend(abcSpendInfo, function(error, abcTransaction) {
-  // your_callback_here
-})
+abcTxEngine.makeSpend(abcSpendInfo)
+  .then(abcTransaction => {
+    // your logic here
+  })
+  .catch(handleError)
 ```
 
 Given an [ABCSpendInfo](#abcspendinfo) object, returns an unsigned [ABCTransaction](#abctransaction) object. [ABCTransaction](#abctransaction).signedTx should be NULL. `makeSpend` does not need to touch the metadata parameter in the `abcSpendInfo`. `makeSpend` only needs to support the [ABCSpendTarget](#abcspendtarget) parameters `currencyCode`, `publicAddress`, and `amountSatoshi`.
@@ -2700,9 +2695,11 @@ Given an [ABCSpendInfo](#abcspendinfo) object, returns an unsigned [ABCTransacti
 ### signTx
 
 ```javascript
-abcTxEngine.signTx(abcTransaction, function(error) {
-  // your_callback_here
-})
+abcTxEngine.signTx(abcTransaction)
+  .then(()) => {
+    // your logic here
+  })
+  .catch(handleError)
 ```
 
 This routine will set [ABCTransaction](#abctransaction).signedTx to an Array of bytes corresponding to the complete signed transaction. Takes an unsigned [ABCTransaction](#abctransaction) object and signs it.
@@ -2710,9 +2707,11 @@ This routine will set [ABCTransaction](#abctransaction).signedTx to an Array of 
 ### broadcastTx
 
 ```javascript
-abcTxEngine.broadcastTx(abcTransaction, function(error) {
-  // your_callback_here
-})
+abcTxEngine.broadcastTx(abcTransaction)
+  .then(()) => {
+    // your logic here
+  })
+  .catch(handleError)
 ```
 
 Takes a signed [ABCTransaction](#abctransaction) and broadcasts it to the blockchain network.
@@ -2720,9 +2719,11 @@ Takes a signed [ABCTransaction](#abctransaction) and broadcasts it to the blockc
 ### saveTx
 
 ```javascript
-abcTxEngine.saveTx(abcTransaction, function(error) {
-  // your_callback_here
-})
+abcTxEngine.saveTx(abcTransaction)
+  .then(()) => {
+    // your logic here
+  })
+  .catch(handleError)
 ```
 
 Saves an already signed [ABCTransaction](#abctransaction) object to the local cache so that funds are considered spent by the wallet. Any future calls to [getTransactions](#gettransactions), [getBalance](#getbalance), or [getNumTransactions](#getNumTransactions) should reflect the outcome of this saved transaction. This routine should also trigger the callback [transactionsChanged](#transactionschanged).

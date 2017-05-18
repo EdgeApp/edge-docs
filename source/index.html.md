@@ -2432,9 +2432,10 @@ function transactionsChanged(abcTransactions) {
 }
 
 const callbacks = {
-  transactionsChanged,
-  blockHeightChanged,
-  addressesChecked
+  onAddressesChecked,
+  onBalanceChanged,
+  onBlockHeightChanged,
+  onTransactionsChanged,
 }
 const options = {
   callbacks,
@@ -2728,10 +2729,44 @@ Saves an already signed [ABCTransaction](#abctransaction) object to the local ca
 
 ## ABCTxLibCallbacks
 
-### transactionsChanged
+### onAddressesChecked
 
 ```javascript
-transactionsChanged(abcTransactions)
+onAddressesChecked(progressRatio)
+```
+| Param | Type | Description |
+| --- | --- | --- |
+| progressRatio | `Number` | 0 to 1 value indicating how far along the core is in checking all the wallet addresses for new funds. This is only meaningful after the inital call to [startEngine](#startEngine) |
+
+Callback fires when the plugin detects a blockheight change for the supported currency.
+
+### onBalanceChanged
+
+```javascript
+onBalanceChanged(progressRatio)
+```
+| Param | Type | Description |
+| --- | --- | --- |
+| balance | `Number` | The new spendable balance, in the smallest units the currency supports. |
+
+Callback fires when the plugin detects a blockheight change for the supported currency.
+
+### onBlockHeightChanged
+
+```javascript
+onBlockHeightChanged(blockHeight)
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| blockHeight | `Int` | New block height value |
+
+Callback fires when the plugin detects a blockheight change for the supported currency.
+
+### onTransactionsChanged
+
+```javascript
+onTransactionsChanged(abcTransactions)
 ```
 
 | Param | Type | Description |
@@ -2745,29 +2780,6 @@ Callback fires when the plugin detects new or updated transactions from the bloc
 * `networkFee`
 * `blockHeight` (may be 0)
 * `amountSatoshi`
-
-### blockHeightChanged
-
-```javascript
-blockHeightChanged(blockHeight)
-```
-
-| Param | Type | Description |
-| --- | --- | --- |
-| blockHeight | `Int` | New block height value |
-
-Callback fires when the plugin detects a blockheight change for the supported currency.
-
-### addressesChecked
-
-```javascript
-addressesChecked(progressRatio)
-```
-| Param | Type | Description |
-| --- | --- | --- |
-| progressRatio | `Number` | 0 to 1 value indicating how far along the core is in checking all the wallet addresses for new funds. This is only meaningful after the inital call to [startEngine](#startEngine) |
-
-Callback fires when the plugin detects a blockheight change for the supported currency.
 
 # Account Management UI
 

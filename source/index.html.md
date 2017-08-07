@@ -1752,7 +1752,7 @@ abcCurrencyWallet.getReceiveAddress(null, function (error) {
     // Success
     console.log("My bitcoin address: " + abcReceiveAddress.publicAddress)
     abcReceiveAddress.amountSatoshi = 150000000 // 1.5 BTC
-    abcReceiveAddress.metadata.payeeName = "Johnny Be Good"
+    abcReceiveAddress.metadata.name = "Johnny Be Good"
     abcReceiveAddress.metadata.category = "Income:Rent"
     abcReceiveAddress.saveReceiveAddress(function(error) {
       // Meta data for this address has been saved
@@ -1806,7 +1806,7 @@ const uri = makeAddressUri(abcReceiveAddress)
 const abcSpendInfo = {
   networkFeeOption: 'high',
   metadata: {
-    payeeName: 'Tyra CPA',
+    name: 'Tyra CPA',
     category: 'Expense:Professional Services'
   },
   spendTargets: [
@@ -1835,7 +1835,7 @@ abcCurrencyWallet.getPaymentProtocolInfo(abcParsedUri.paymentProtocolURL, functi
   abcSpendInfo = {
     networkFeeOption: 'high',
     metadata: {
-      payeeName: 'Tyra CPA',
+      name: 'Tyra CPA',
       category: 'Expense:Professional Services'
     },
     spendTargets: [ spendTarget ]
@@ -1855,7 +1855,7 @@ const destWallet = abcAccount.getWallet(walletId[1]) // Add check for null and c
 const abcSpendInfo = {
   networkFeeOption: 'high',
   metadata: {
-    payeeName: 'Transfer to College Fund',
+    name: 'Transfer to College Fund',
     category: 'Transfer:Wallet:College Fund'
   },
   spendTargets: [
@@ -1996,7 +1996,7 @@ abcCurrencyWallet.getPaymentProtocolInfo(abcParsedUri.paymentProtocolURL, functi
   abcSpendInfo = {
     networkFeeOption: 'high',
     metadata: {
-      payeeName: paymentProtocolInfo.merchant,
+      name: paymentProtocolInfo.merchant,
       category: 'Expense:Professional Services'
     },
     spendTargets: [ paymentProtocolInfo.spendTarget ]
@@ -2032,7 +2032,7 @@ Communicates over network with BIP70 payment request URL to get exact payment pa
 const abcSpendInfo = {
   networkFeeOption: 'standard',
   metadata: {
-    payeeName: 'Tyra CPA',
+    name: 'Tyra CPA',
     category: 'Expense:Professional Services',
   },
   spendTargets: [
@@ -2074,7 +2074,7 @@ const destWallet = abcAccount.getWallet(walletId[1]) // Add check for null and c
 abcSpendInfo = {
   networkFeeOption: 'high',
   metadata:  {
-    payeeName: 'Transfer to College Fund',
+    name: 'Transfer to College Fund',
     category: 'Transfer:Wallet:College Fund',
   },
   spendTargets: [
@@ -2117,7 +2117,7 @@ abcCurrencyWallet.getPaymentProtocolInfo(abcParsedUri.paymentProtocolURL, functi
   abcSpendInfo = {
     networkFeeOption: 'high',
     metadata: {
-      payeeName: paymentProtocolInfo.merchant,
+      name: paymentProtocolInfo.merchant,
       category: 'Expense:Professional Services'
     },
     spendTargets: [ paymentProtocolInfo.spendTarget ]
@@ -2188,7 +2188,7 @@ Non-blockchain transaction meta data associated to an [ABCTransaction](#abctrans
 
 | Property | Type | Description |
 | --- | --- | --- |
-| payeeName | `String` | Name of external recipient or sender of funds |
+| name | `String` | Name of external recipient or sender of funds |
 | category | `String` | Transaction category of format "Expense:Food & Dining". Category must be of the form [Category]:[Sub Category] where category is one of "Income", "Expense", "Transfer", or "Exchange". Income refers to incoming funds such as payroll or business sales. Expense is the purchase of goods or services. Transfer is a transfer of funds to/from another wallet or exchange account owned by the user. Exchange is the change of funds from one type of currency to another. If abcCurrencyWallet is of type bitcoin, an incoming transaction from the purchase of bitcoin with USD should be categorized as "Exchange:Buy Bitcoin". |
 | notes | `String` | Misc notes field |
 | amountFiat | `Float` | Amount of transaction in the wallet's fiat currency at the time of the transaction |

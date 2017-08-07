@@ -1588,15 +1588,18 @@ Setup the script/contract for this wallet. This is used to setup basic multisig 
 ### getBalance
 
 ```javascript
-abcCurrencyWallet.getBalance(currencyCode)
+abcCurrencyWallet.getBalance(opts)
 
 // Example
-const balance = abcCurrencyWallet.getBalance("BTC")
+const balance = abcCurrencyWallet.getBalance({ curencyCode: "BTC" })
 ```
-
 | Param | Type | Description |
 | --- | --- | --- |
-| currencyCode | `String` | Selects which currency to return a balance for. If `null`, returns the balance of the primary currency of the wallet's blockchain. ie. "BTC" or "ETH" |
+| options | `Object` | May be `null` which will return the balance of the wallet's primary currency. |
+
+| Option | Type | Description |
+| --- | --- | --- |
+| currencyCode | `String` | Selects which currency to return a balance for. |
 
 | Return Param | Type | Description |
 | --- | --- | --- |

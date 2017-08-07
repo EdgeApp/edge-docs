@@ -1664,6 +1664,36 @@ Note that all indices start with the most recent transaction and work downwards 
 
 Transactions are returned ordered from newest to oldest.
 
+### saveTxMetadata
+
+```javascript
+abcCurrencyWallet.saveTxMetadata(txid, currencyCode, metadata)
+
+// Example
+const txid = someTransaction.txid
+const metadata = {
+  name: "City Tacos",
+  category: "Expense:Food & Dining"
+}
+
+abcCurrencyWallet.saveTxMetadata(txid, "BTC", metadata).then(() => {
+  console.log("Transaction successfully updated")
+})
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| txid | `String` | The txid of an [`ABCTransaction`](#abctransaction) object |
+| currencyCode | `String` | Which crypto-currency this metadata applies to, for wallets with multiple token support. |
+| metadata | [`ABCMetadata`](#abcmetadata) | The metadata to save with the transaction. |
+| callback | `Callback` | Called when the save is completed. |
+
+| Callback Param | Type | Description |
+| --- | --- | --- |
+| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
+
+Updates the metadata saved with a transaction.
+
 ### getBlockHeight
 
 ```javascript

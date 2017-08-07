@@ -1013,7 +1013,7 @@ Removes the OTP reset request from the server for the currently logged in user. 
 const abcParsedUri = abcAccount.parseUri("bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.2345&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X")
 
 console.log(abcParsedUri.publicAddress) // -> 1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs
-console.log(abcParsedUri.amountSatoshi) // -> 123456700
+console.log(abcParsedUri.nativeAmount) // -> '123456700'
 console.log(abcParsedUri.paymentProtocolURL) // -> https://bitpay.com/i/7TEzdBg6rvsDVtWjNQ3C3X
 ```
 
@@ -1784,7 +1784,7 @@ abcCurrencyWallet.getReceiveAddress(null, function (error) {
   if (!error) {
     // Success
     console.log("My bitcoin address: " + abcReceiveAddress.publicAddress)
-    abcReceiveAddress.amountSatoshi = 150000000 // 1.5 BTC
+    abcReceiveAddress.nativeAmount = '150000000' // 1.5 BTC
     abcReceiveAddress.metadata.name = "Johnny Be Good"
     abcReceiveAddress.metadata.category = "Income:Rent"
     abcReceiveAddress.saveReceiveAddress(function(error) {
@@ -1845,12 +1845,12 @@ const abcSpendInfo = {
   spendTargets: [
     {
       publicAddress: '12xZEQL72YnGEbtW7bA4FPA1BUEHkxQoWN',
-      amountSatoshi: 210000000 // 2.1 BTC
+      nativeAmount: '210000000' // 2.1 BTC
     },
     {
-      currencyCode: 'LTBCOIN'
+      currencyCode: 'LTBCOIN',
       publicAddress: '1FSxyn9AbBMwGusKAFqvyS63763tM8KiA2',
-      amountSatoshi: 120 // 120 LTBCOIN
+      nativeAmount: '120' // 120 LTBCOIN
     }
   ]
 }
@@ -1894,7 +1894,7 @@ const abcSpendInfo = {
   spendTargets: [
     {
       destWallet,
-      amountSatoshi: 210000000 // 2.1 BTC
+      nativeAmount: '210000000' // 2.1 BTC
     }
   ]
 }
@@ -2075,14 +2075,14 @@ const abcSpendInfo = {
   ]
 }
 
-abcCurrencyWallet.getMaxSpendable(abcSpendInfo, function(error, maxAmountSatoshi) {
+abcCurrencyWallet.getMaxSpendable(abcSpendInfo, function(error, maxNativeAmount) {
   if (error === null) {
-    console.log(maxAmountSatoshi)
+    console.log(maxNativeAmount)
   }
 })
 ```
 
-Get the maximum amount spendable from this wallet given the parameters of an [ABCSpendInfo](#abcspendinfo) object. The [ABCSpendInfo.spendTargets](#abcspendtarget) amountSatoshi values are ignored when calculating the max spendable amount. This only ever returns the max spendable of the primary currency of the wallet. Any meta-tokens of the wallet will always have a max spendable equal to the number of meta-tokens in the wallet determined by [getBalance](#getbalance).
+Get the maximum amount spendable from this wallet given the parameters of an [ABCSpendInfo](#abcspendinfo) object. The [ABCSpendInfo.spendTargets](#abcspendtarget) `nativeAmount` values are ignored when calculating the max spendable amount. This only ever returns the max spendable of the primary currency of the wallet. Any meta-tokens of the wallet will always have a max spendable equal to the number of meta-tokens in the wallet determined by [getBalance](#getbalance).
 
 ### sweepPrivateKey
 
@@ -2113,7 +2113,7 @@ abcSpendInfo = {
   spendTargets: [
     {
       destWallet,
-      amountSatoshi: 210000000, // 2.1 BTC
+      nativeAmount: '210000000' // 2.1 BTC
     },
   ]
 }
@@ -2140,7 +2140,7 @@ const spendTarget =
   {
     currencyCode: 'BTC',
     publicAddress: '1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs',
-    amountSatoshi: 210000000 // 2.1 BTC
+    nativeAmount: '210000000' // 2.1 BTC
   }
 
 // Example to spend to a BIP70 payment request
@@ -2169,9 +2169,9 @@ Parameters
 | Param | Type | Description |
 | --- | --- | --- |
 | currencyCode | `String` | (Optional) Chooses the currency or meta-token type for the destination receiving address or wallet. If not specified, uses the primary currency of this wallet |
-| publicAddress | `String` | Public address in the format of the current wallet's currency. This requires the `amountSatoshi` field to be set. Must not set both `publicAddress` and `destWallet` |
-| amountSatoshi | `Int` | Amount to send in the smallest denomination of the source wallet's currency. ie Satoshis |
-| destWallet | [`ABCWallet`](#abcwallet) | Destination wallet to transfer funds to. Must also set `amountSatoshi`. Must not set both `publicAddress` and `destWallet` |
+| publicAddress | `String` | Public address in the format of the current wallet's currency. This requires the `nativeAmount` field to be set. Must not set both `publicAddress` and `destWallet` |
+| nativeAmount | `String` | Amount to send in the smallest denomination of the source wallet's currency, as a string. ie Satoshis or Wei |
+| destWallet | [`ABCWallet`](#abcwallet) | Destination wallet to transfer funds to. Must also set `nativeAmount`. Must not set both `publicAddress` and `destWallet` |
 | destMetadata | [`ABCMetadata`](#abcmetadata) | [ABCMetadata](#abcmetadata) object with which will tag the transaction in the destination wallet. Must only be used when `destWallet` is set. |
 
 
@@ -2185,7 +2185,7 @@ Parameters
 | bitIDDomain | `String` | Domain name portion of BitID URI |
 | bitIDCallbackURI | `String` | BitID Callback URI |
 | paymentProtocolURL | `String` | BIP70 Payment Request URL |
-| amountSatoshi | `Int` | Amount in the currency's smallest denomination (satoshis)
+| nativeAmount | `String` | Amount in the currency's smallest denomination, as a string (i.e. Satoshis or Wei)
 | metadata | [`ABCMetadata`](#abcmetadata) | [ABCMetadata](#abcmetadata) object with info extracted from URI |
 | returnURI | `String` | URI to send user after URI/payment has been processed |
 | bitidPaymentAddress | `Bool` | True if BitID URI is requesting a payment address (experimental)|
@@ -2202,7 +2202,7 @@ Object provides basic UI displayable info about a BIP70 payment request. Also in
 | Property | Type | Description |
 | --- | --- | --- |
 | domain | `String` | DNS name of originator of request |
-| amountSatoshi | `Int` | Amount of request |
+| nativeAmount | `String` | Amount of request, as a string |
 | memo | `String` | Memo field returned by merchant |
 | merchant | `String` | Name of merchat (may be blank) |
 | abcSpendTarget | [`ABCSpendTarget`](#abcspendtarget) | [ABCSpendTarget](#abcspendtarget) object that can be used in an [ABCSpendInfo](#abcspendinfo) |
@@ -2212,7 +2212,7 @@ Object provides basic UI displayable info about a BIP70 payment request. Also in
 | Property | Type | Description |
 | --- | --- | --- |
 | publicAddress | `String` | Raw public address in native format of wallet currency type. (ie. base58 for bitcoin, base16 for ethereum) |
-| amountSatoshi | `Int` | Amount of request denominated in the smallest unit of this wallet's currency (ie. bitcoin satoshis) |
+| nativeAmount | `String` | Amount of request denominated in the smallest unit of this wallet's currency, as a string (i.e. Satoshis or Wei) |
 | metadata | `ABCMetadata` | [ABCMetadata](#abcmetadata) object corresponding to this address. Any transactions receiving funds into this address will automatically have this metadata in the [ABCTransaction](#abctransaction) object.
 
 ## ABCMetadata
@@ -2235,11 +2235,12 @@ Object represents a signed or unsigned transaction that may or may not be broadc
 | Property | Type | Description |
 | --- | --- | --- |
 | wallet | [`ABCCurrencyWallet`](#abccurrencywallet) | [ABCCurrencyWallet](#abccurrencywallet) this transaction is from |
+| currencyCode | `String` | Which blockchain currency or token this transaction applies to. |
 | metadata | [`ABCMetadata`](#abcmetadata) | [ABCMetadata](#abcmetadata) of this transaction |
 | txid | `String` | Transaction ID as represented by the wallet's crypto currency. For bitcoin this is base16. This parameter is `null` until [signTx](#signtx) is called. |
 | date | `Date` | Date that transaction was broadcast, detected, or confirmed on the blockchain. If the tx detection date is after the confirmation time, then this is the confirmation time. `null` if transaction has not been broadcast |
 | blockHeight | `Int` | Block number that included this transaction |
-| amountSatoshi | `Int` | Amount of transaction in denomination of smallest unit of currency. Incoming funds are positive numbers. Outgoing funds are negative. Outgoing amounts should include the providerFee and networkFee. In the case of a transaction that both spends from the current wallet to the current wallet, the amount should be the net effect on the balance of the wallet. |
+| nativeAmount | `String` | Amount of transaction in denomination of smallest unit of currency, as a string. Incoming funds are positive numbers. Outgoing funds are negative. Outgoing amounts should include the providerFee and networkFee. In the case of a transaction that both spends from the current wallet to the current wallet, the amount should be the net effect on the balance of the wallet. |
 | providerFee | `Int` | Additional app provider fees in denomination of smallest unit of currency (ie. Satoshis) |
 | networkFee | `Int` | Fee paid to network (mining fee) in denomination of smallest unit of currency (ie. Satoshis) |
 | runningBalance | `Int` | Running balance of entire wallet as of this transaction |
@@ -2661,7 +2662,7 @@ Returns an array of transactions matching the options specified. The plugin must
 * `date`
 * `networkFee`
 * `blockHeight` (may be 0)
-* `amountSatoshi`
+* `nativeAmount`
 
 The remaining fields are updated by Airbitz Core.
 
@@ -2747,7 +2748,7 @@ abcTxEngine.makeSpend(abcSpendInfo)
   .catch(handleError)
 ```
 
-Given an [ABCSpendInfo](#abcspendinfo) object, returns an unsigned [ABCTransaction](#abctransaction) object. [ABCTransaction](#abctransaction).signedTx should be NULL. `makeSpend` does not need to touch the metadata parameter in the `abcSpendInfo`. `makeSpend` only needs to support the [ABCSpendTarget](#abcspendtarget) parameters `currencyCode`, `publicAddress`, and `amountSatoshi`.
+Given an [ABCSpendInfo](#abcspendinfo) object, returns an unsigned [ABCTransaction](#abctransaction) object. [ABCTransaction](#abctransaction).signedTx should be NULL. `makeSpend` does not need to touch the metadata parameter in the `abcSpendInfo`. `makeSpend` only needs to support the [ABCSpendTarget](#abcspendtarget) parameters `currencyCode`, `publicAddress`, and `nativeAmount`.
 
 ### signTx
 
@@ -2837,7 +2838,7 @@ Callback fires when the plugin detects new or updated transactions from the bloc
 * `date`
 * `networkFee`
 * `blockHeight` (may be 0)
-* `amountSatoshi`
+* `nativeAmount`
 
 # Account Management UI
 

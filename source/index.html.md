@@ -1553,7 +1553,33 @@ The Airbitz SDK includes several helper classes which perform these capabilities
 
 ## ABCStorageWallet
 
+```javascript
+// Save a JSON file:
+const text = JSON.stringify(settingsJson)
+abcStorageWallet.folder.file('settings.json').setText(text)
+
+// Load a JSON file:
+const text = await abcStorageWallet.folder.file('settings.json').getText()
+const settingsJson = JSON.parse(text)
+
+// Save a binary file:
+const image = new Uint8Array(bytes)
+abcStorageWallet.folder.file('avatar.png').setData(image)
+
+// Save a text file in a folder:
+abcStorageWallet.folder.folder('articles').file('blog.md').setText(article)
+
+// Iterate over the files in a folder:
+import { mapFiles } from 'disklet'
+
+mapFiles(abcStorageWallet.folder.folder('articles'), async file => {
+  console.log(await file.getText())
+})
+```
+
 This wallet type handles encrypted and synced data. This is the base class for several other wallet types, including `ABCCurrencyWallet`. You can also use it directly if your application requires multiple encrypted and backed-up data stores. Bear in mind that each account also has its own data store, so you may not need this class unless you are doing something involving key sharing.
+
+See the [Disklet](https://www.npmjs.com/package/disklet) documentation for information on the filesystem API.
 
 ### makeStorageWallet
 

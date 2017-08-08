@@ -1157,6 +1157,39 @@ Get the first [ABCWallet](#abcwallet) object of type `walletType`
 | --- | --- | --- |
 | abcWallet | [`ABCWallet`](#abcwallet) | (Javascript) Error object. `null` if no error |
 
+### changeKeyStates
+
+```javascript
+const keyStates = {
+  "wallet-id-1": {
+    archived: false,
+    deleted: false,
+    sortIndex: 0
+  },
+  "wallet-id-2": {
+    archived: true,
+    sort: 2
+  }
+}
+
+await account.changeKeyStates(keyStates)
+```
+
+Keys (which represent wallets) can have associated metadata. This method makes it possible to change the metadata for one or more wallets.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| keyInfos | `Object` | An object mapping from key ID's (or wallet ID's) to the new metadata. All properties are optional, and unspecified properties will remain unchanged. |
+| callback | `Callback` | (Javascript) Callback function |
+
+The metadata structure looks like this:
+
+| Property | Type | Description |
+| --- | --- | --- |
+| archived | `boolean` | Marks the wallet as "archived". Archived wallets are still visible, but do not regularly poll the network. |
+| deleted | `boolean` | Marks the wallet as "deleted". Deleted wallets are completely invisible to the user. |
+| sortIndex | `number` | Used to place the wallets in a particular order in the user interface. Lower indices should sort first. |
+
 ### shareWallet (proposal)
 
 ```javascript

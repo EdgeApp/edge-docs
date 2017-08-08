@@ -1286,6 +1286,8 @@ A git repo for an app. See the [Storage Keys](#storage-keys) section for the con
 
 ## ABCDataStore
 
+This API is no longer used. Please see [ABCStorageWallet](#abcstoragewallet).
+
 ### writeData
 
 ```javascript
@@ -1419,6 +1421,76 @@ abcWallet.dataStore.listKeys("userAddress",
 | keys | `Array` | Array of strings of keys in folder |
 
 List the keys in the specified folder
+
+## Errors
+
+```javascript
+import { error } from 'airbitz-core-js'
+
+try {
+  // Something went wrong!
+  throw new error.NetworkError('Cannot reach the Ethereum network')
+
+  // Later...
+} catch (e) {
+  if (e.name === error.NetworkError.name) {
+    console.log('Check your network cable!')
+  }
+}
+```
+
+All Airbitz API's use one of the standard Javascript error-reporting mechanisms:
+
+* Throwing an exception
+* Rejecting a promise
+* Passing an error to a callback (for Node.js style API's)
+
+Regardless of the reporting mechanism, the returned object will always be an instance of the built-in `Error` object. To determine the exact type of error, use the error object's `name` property.
+
+The `airbitz-core-js` defines a number of error names with special meaning, documented below. The library also exports constructor functions in the `error` namespace, which can be used to create instances of all these error types and to access their name constants in a consistent way.
+
+### NetworkError
+
+A server was unreachable.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| name | `String` | "NetworkError" |
+
+### ObsoleteApiError
+
+The app is attempting to reach a server endpoint that no longer exists, which implies that the app needs to be upgraded.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| name | `String` | "ObsoleteApiError" |
+
+### OtpError
+
+The user provided the correct login credentials, but did not provide a 2-factor token.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| name | `String` | "OtpError" |
+| resetToken | `String` | Use this token to request a 2-factor reset, if the user requests one. |
+| resetDate | `Date` | If a 2-factor reset is pending, gives the reset time. |
+
+### PasswordError
+
+The user has entered an invalid password, PIN, or recovery answers.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| name | `String` | "PasswordError" |
+| wait | `Number` | Number of seconds the user must wait before trying again |
+
+### UsernameError
+
+The user has entered an invalid username, or the username already exists for account creation.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| name | `String` | "UsernameError" |
 
 # Wallet API
 

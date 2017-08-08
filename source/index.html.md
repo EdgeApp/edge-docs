@@ -2127,7 +2127,7 @@ Parameters
 | noUnconfirmed | `Boolean` | (Optional) If set to TRUE, this will not spend from any unconfirmed funds. Default is FALSE |
 | spendTargets | `Array` | Array of [ABCSpendTarget](#abcspendtarget) objects |
 | networkFeeOption | `String` | Adjusts network fee amount. Must be either "low", "standard", "high", or "custom". If unspecified, the default is "standard" |
-| customNetworkFee | `Int` | Amount of per byte network fee if `networkFeeOption` is set to `custom`. Should be specified as smallest denomination of currency. ie Satoshis |
+| customNetworkFee | `String` | Amount of per byte network fee if `networkFeeOption` is set to `custom`. Should be specified as smallest denomination of currency, as a string (i.e. Satoshis or Wei) |
 | metadata | [`ABCMetadata`](#abcMetadata) | [ABCMetadata](#abcMetadata) object. Outgoing transaction will have the specified metadata copied to the [ABCTransaction](#abctransaction) object |
 
 Parameter object used for creating an [ABCSpend](#abcspend) object.
@@ -2241,9 +2241,9 @@ Object represents a signed or unsigned transaction that may or may not be broadc
 | date | `Date` | Date that transaction was broadcast, detected, or confirmed on the blockchain. If the tx detection date is after the confirmation time, then this is the confirmation time. `null` if transaction has not been broadcast |
 | blockHeight | `Int` | Block number that included this transaction |
 | nativeAmount | `String` | Amount of transaction in denomination of smallest unit of currency, as a string. Incoming funds are positive numbers. Outgoing funds are negative. Outgoing amounts should include the providerFee and networkFee. In the case of a transaction that both spends from the current wallet to the current wallet, the amount should be the net effect on the balance of the wallet. |
-| providerFee | `Int` | Additional app provider fees in denomination of smallest unit of currency (ie. Satoshis) |
-| networkFee | `Int` | Fee paid to network (mining fee) in denomination of smallest unit of currency (ie. Satoshis) |
-| runningBalance | `Int` | Running balance of entire wallet as of this transaction |
+| providerFee | `String` | Additional app provider fees in denomination of smallest unit of currency, as a string (i.e. Satoshis or Wei) |
+| networkFee | `String` | Fee paid to network (mining fee) in denomination of smallest unit of currency, as a string (i.e. Satoshis or Wei) |
+| runningBalance | `String` | Running balance of entire wallet as of this transaction in the smallest unit of currency, as a string (i.e. Satoshis or Wei) |
 | signedTx |`Array` | Buffer of signed transaction data with signature. `null` if transaction is unsigned |
 | otherParams |`Object` | Crypto currency specific data |
 

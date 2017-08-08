@@ -1449,6 +1449,22 @@ Regardless of the reporting mechanism, the returned object will always be an ins
 
 The `airbitz-core-js` defines a number of error names with special meaning, documented below. The library also exports constructor functions in the `error` namespace, which can be used to create instances of all these error types and to access their name constants in a consistent way.
 
+### DustSpendError
+
+Trying to send an uneconomically small amount of money.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| name | `String` | "DustSpendError" |
+
+### InsufficientFundsError
+
+Trying to send more money than the wallet has available.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| name | `String` | "InsufficientFundsError" |
+
 ### NetworkError
 
 A server was unreachable.
@@ -1988,6 +2004,8 @@ abcCurrencyWallet.makeSpend(abcSpendInfo).then(abcTransaction => {
 | abcTransaction | [`ABCTransaction`](#abctransaction) | Unsigned [ABCTransaction](#abctransaction) object |
 
 Creates an unsigned [ABCTransaction](#abctransaction) object which can be then be signed and broadcast to the network. Complete the spend by calling [ABCTransaction.signBroadcastAndSave](#signbroadcastandsave). Estimated fees can be determined by reading back [ABCTransaction.networkFee](#abctransaction)
+
+May produce an [InsufficientFundsError](#insufficientfundserror) if the amount is too large, or a [DustSpendError](#dustspenderror) if the amount is too small.
 
 ### signTx
 
@@ -2821,6 +2839,8 @@ abcTxEngine.makeSpend(abcSpendInfo)
 ```
 
 Given an [ABCSpendInfo](#abcspendinfo) object, returns an unsigned [ABCTransaction](#abctransaction) object. [ABCTransaction](#abctransaction).signedTx should be NULL. `makeSpend` does not need to touch the metadata parameter in the `abcSpendInfo`. `makeSpend` only needs to support the [ABCSpendTarget](#abcspendtarget) parameters `currencyCode`, `publicAddress`, and `nativeAmount`.
+
+Should produce an [InsufficientFundsError](#insufficientfundserror) if the amount is too large, or a [DustSpendError](#dustspenderror) if the amount is too small.
 
 ### signTx
 

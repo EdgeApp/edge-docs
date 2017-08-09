@@ -2444,82 +2444,84 @@ const priceofBitcoin = convertCurrency(1, "BTC", "USD")
 
 Converts one currency value into another using exchange rate cache. Returns 0 if the currency pair cannot be converted due to missing support from exchange rate sources or if sources cannot be reached.
 
-## ABCExchangeRateLib
-
-Exchange rate info is provided to AirbitzCore via exchange source plugins that provide the following API. Plugins are not expected to spin up background tasks but to instead initiate a server connection immediately upon receiving a call to [getCurrencyPairs](#getcurrencypairs).
-
-### getName
-
-Returns the name of the exchange rate source in a human friendly String. ie ("Bitstamp")
+# Core Plugin API
 
 ```javascript
-name = getName()
+import { coinbasePlugin } from 'airbitz-exchange-plugins'
+import { ethereumPlugin } from 'airbitz-currency-ethereum'
+
+const context = makeContext({
+  plugins: [coinbasePlugin, ethereumPlugin]
+})
 ```
+
+The Airbitz core library accepts an array of plugins in its `createContext` function. These plugins can provide the following functionality:
+
+* Send and receive new currencies
+* Lookup exchange rates from new sources
+
+All core plugins begin in a common format, `ABCCorePlugin`, which describes the type of the plugin and provides an initialization funtion. The initialization function returns either the `ABCCurrencyPlugin` or an `ABCExchangePlugin` object that implements the actual functionality.
+
+## ABCCorePlugin
+
+```javascript
+export const myPlugin = {
+  pluginType: 'exchange',
+
+  async makePlugin(opts) {
+    return new MyExchangePlugin(opts.io)
+  }
+}
+```
+
+This is a the basic wrapper type for all plugins.
+
+### pluginType
+
+Either `exchange` or `currency`
+
+### makePlugin
+
+Returns either an `ABCCurrencyPlugin` or `ABCExchangePlugin` object instance, depending on the `pluginType` property described above. This is an async method.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| opts | `Object` | Options for the plugin |
+
+The options are as follows:
+
+| Property | Type | Description |
+| --- | --- | --- |
+| io | `Object` | Platform-specific resources |
 
 | Return | Type | Description |
 | --- | --- | --- |
-| name | `String` | Name of the exchange rate source |
+| plugin | `Promise<ABCCurrencyPlugin or ABCExchangePlugin>` | A promise that resolves to the inner plugin instance |
 
-### getCurrencyPairs
-
-```javascript
-getCurrencyPairs(pairs, callback)
-
-// Example
-const pairs =
-[
-  { source: "BTC", dest: "USD" },
-  { source: "BTC", dest: "EUR" },
-  { source: "LTC", dest: "GBP" }
-]
-
-getCurrencyPairs(pairs, function(returnPairs) {
-  console.log(returnPairs)
-})
-
-For a source that cannot convert LTC, the output could be =>
-"
-[
-  { source: "BTC", dest: "USD", value: 890.23 },
-  { source: "BTC", dest: "EUR", value: 870.12 },
-]
-"
-```
-
-Requests the exchange rate from an array of currency pairs. Function should return an array of currency pairs that it is able to provide along with the current exchange rate.
-
-# Currency Plugin API
-
-Cryptocurrency functionality for [`ABCCurrencyWallet`](#abccurrencywallet) is provided by currency plugins that follow the Currency Plugin API. These libraries can be easily added to Airbitz by providing the following library API for import into [`makeCurrencyWallet`](#makeCurrencyWallet). This function will call [`currencyPlugin.makeEngine`](#makeengine) to initialize the library with a set of callbacks.
-
-To add additional currency functionality, create a library that exposes an API that follows the ABCCurrencyPlugin template below.
-
-[Disklet](https://www.npmjs.com/package/disklet) folders will be passed into [`currencyPlugin.makeEngine`](#makeengine). The `walletLocalFolder` allows the plugin to store wallet specific data such as a blockchain cache. If the implementation chooses to hold a global cache of data, use the `accountLocalFolder` object. Neither local folder is encrypted, revision controlled, or backed up.
-
-The repo `airbitz-currency-bitcoin` exposes this API for bitcoin.
+Note: The `io` object passed in the `options` structure contains a `folder` member. This is a [Disklet](https://www.npmjs.com/package/disklet) folder, and can be used to store app-wide information. A currency plugin might use this forlder to store generic blockchain information such as the last block height or supported tokens, for example.
 
 ## ABCCurrencyPlugin
 
-This prototype class provides all the necessary API to support a cryptocurrency in Airbitz. Each primary blockchain based currency needs a separate `ABCCurrencyPlugin`. A single `ABCCurrencyPlugin` much implement support for any meta-tokens supported by that blockchain. For example, the `ABCCurrencyPlugin` that supports bitcoin might also support Counterparty and Colored Coin. An `ABCCurrencyPlugin` that supports Ethereum might also support its ERC20 tokens.
-
-The higher level [`makeCurrencyWallet`](#makecurrencywallet) will initialize the library as outlined below. Your application code must `require` the plugin and initialize it appropriately.
-
-### Include and initialize the library
-
 ```javascript
-import { makeBitcoinPlugin } from 'airbitz-currency-bitcoin'
+// SDK users should do this:
+import { ethereumPlugin } from 'airbitz-currency-ethereum'
 
-const bitcoinPlugin = makeBitcoinPlugin({
-  io: yourPlatformSpecificIo
+const context = makeContext({
+  plugins: [ethereumPlugin]
 })
+
+// Inside the `makeContext` function, this is what happens:
+const currencyPlugin = await ethereumPlugin.makePlugin({ io })
 ```
 
-Each plugin should export a `make<Name>Plugin` or similarly-named function, which initializes the plugin with any needed options. This will typically include the [platform-specific IO resources](#platform-specific-io) via an `io` property. If a plugin supports muliple chains, custom servers, or other weird currency-specific  things, this would also be the place to provide those options. Please see the plugin's documentation for any additional options.
+Cryptocurrency functionality for [`ABCCurrencyWallet`](#abccurrencywallet) is provided by currency plugins. These begin life as a generic [ABCCorePlugin](#abccoreplugin) that returns an `ABCCurrencyPlugin` instance from is `createPlugin` method.
 
-### getInfo
+The `ABCCurrencyPlugin` object provides all the functionality needed to integrate the currency into the user interface, manage keys, and handle URI's. It also provides the ability to create `ABCTxEngine` objects, which provide the send, receive, and transaction history functionality for individual wallets.
+
+### currencyInfo
 
 ```javascript
-const details = currencyPlugin.getInfo()
+const details = currencyPlugin.currencyInfo
 
 console.log(details)
 "
@@ -2543,6 +2545,7 @@ console.log(details)
     }
   ],
   symbolImage: 'qq/2iuhfiu1/3iufhlq249r8yq34tiuhq4giuhaiwughiuaergih/rg',
+  keyTypes: ['wallet:ethereum'],
   metaTokens: [
     {
       currencyCode: 'XCP',
@@ -2569,46 +2572,43 @@ console.log(details)
 "
 ```
 
-| Return Param | Type | Description |
-| --- | --- | --- |
-| details | `Object` | Details of supported currency |
+The `currencyInfo` property should be an object with the following properties describing the currency:
 
-The `details` object includes the following params:
-
-| Param | Type | Description |
+| Property | Type | Description |
 | --- | --- | --- |
 | currencyCode | `String` | The 3 character code for the currency |
 | denominations | `Array` | An array of Objects of the possible denominations for this currency |
 | symbolImage | `String` | Base64 encoded png or jpg image of the currency symbol (optional) |
 | metaTokens | `Array` | Array of objects describing the supported metatokens |
+| keyTypes | `Array` | Array of strings listing the key types that this currency can handle. Any [ABCKeyInfo](#abckeyinfo) object with a `type` that matches this array can be passed to `makeEngine`. |
 
-The `denominations` object includes the following params:
+The `denominations` object includes the following properties:
 
-| Param | Type | Description |
+| Property | Type | Description |
 | --- | --- | --- |
 | name | `String` | The human readable string to describe the denomination. |
 | multiplier | `Int` | The value to multiply the smallest unit of currency to get to the denomination. |
 | symbol | `String` | The human readable 1-3 character symbol of the currency. ie. "Ƀ" |
 | font | `String` | (Optional) The font required to display the symbol specified above. If not given, will use the default system font. |
 
-The `metaTokens` array includes the following params:
+The `metaTokens` array includes the following properties:
 
-| Param | Type | Description |
+| Property | Type | Description |
 | --- | --- | --- |
 | currencyCode | `String` | The human readable string to describe the denomination. |
 | denominations | `Array` | An array of Objects of the possible denominations for this currency |
 | symbolImage | `String` | Base64 encoded png or jpg image of the currency symbol (optional) |
 
-Get details of the crypto currency supported by this library
-
 ### createPrivateKeyInfo
 
 ```javascript
 // Example
-var keyInfo = currencyPlugin.createPrivateKeyInfo('wallet:bitcoin')
+const keyInfo = currencyPlugin.createPrivateKeyInfo('wallet:bitcoin')
 ```
 
-Creates a new random master private key, and returns it in an [`ABCKeyInfo`](#abckeyinfo) structure. This is used to create new wallets. If the plugin leaves the `id` field blank, the core will fill it in.
+Creates a new random master private key, and returns it in an [`ABCKeyInfo`](#abckeyinfo) structure. This is used to create new wallets.
+
+If the returned `ABCKeyInfo` structure has a blank `id` field, the core will fill it in.
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -2618,12 +2618,12 @@ Creates a new random master private key, and returns it in an [`ABCKeyInfo`](#ab
 
 ```javascript
 // Example
-var publicKeyInfo = currencyPlugin.derivePublicKeyInfo(privateKeyInfo)
+const publicKeyInfo = currencyPlugin.derivePublicKeyInfo(privateKeyInfo)
 ```
 
 Derives a master public key from a private key. The provided [`ABCKeyInfo`](#abckeyinfo) structure holds the private key, as well as encryption keys, storage keys, and other potentially sensitive information. This function should create a new [`ABCKeyInfo`](#abckeyinfo) structure holding just the keys needed to check for incoming funds. This has multiple uses:
 
-1. Saving a wallet on the local device for offline balance checks.
+1. Saving a unencrypted wallet on the local device for offline balance checks.
 2. Sharing a wallet with another user is a watch-only mode.
 
 | Param | Type | Description |
@@ -2634,7 +2634,7 @@ Derives a master public key from a private key. The provided [`ABCKeyInfo`](#abc
 
 ```javascript
 // Example
-function transactionsChanged(abcTransactions) {
+function onTransactionsChanged(txids) {
   // your_callback_here
 }
 
@@ -2642,7 +2642,7 @@ const callbacks = {
   onAddressesChecked,
   onBalanceChanged,
   onBlockHeightChanged,
-  onTransactionsChanged,
+  onTransactionsChanged
 }
 const options = {
   callbacks,
@@ -2650,14 +2650,15 @@ const options = {
   walletLocalFolder
 }
 
-const abcTxEngine = currencyPlugin.makeEngine(keyInfo, options)
+const abcTxEngine = await currencyPlugin.makeEngine(keyInfo, options)
 ```
+
+This function creates an [`ABCTxEngine`](#abctxengine) object to send, receive, and list transactions for an individual wallet instance.
 
 | Param | Type | Description |
 | --- | --- | --- |
 | keyInfo | [`ABCKeyInfo`](#abckeyinfo) | The keys to the wallet. This may include just the pubic key (no private key) in read-only scenarios. |
 | options | `Object` | Options for [`currencyPlugin.makeEngine`](#makeengine) |
-| callback | `Callback` | (Javascript) Callback function |
 
 | Options | Type | Description |
 | --- | --- | --- |
@@ -2667,33 +2668,31 @@ const abcTxEngine = currencyPlugin.makeEngine(keyInfo, options)
 
 | Return | Type | Description |
 | --- | --- | --- |
-| engine | [`ABCTxEngine`](#abctxengine) | A promise that will resolve to the requested engine, or an error. |
+| engine | `Promise<ABCTxEngine>` | A promise that will resolve to the requested engine, or an error. |
 
-[`currencyPlugin.makeEngine`](#makeengine) initializes the library effectively creating a cryptocurrency wallet within the [ABCWallet](#abcwallet) object. The plugin should spin up any background tasks necessary to begin querying the blockchain and field any requests for transactions. [`currencyPlugin.makeEngine`](#makeengine) will be called once for every wallet of the same or different currency.
+The fresh [`ABCTxEngine`](#abctxengine) instance should either load cached transactions from disk, if available, or start with a blank transaction list if this is its first time running for a particular wallet. This makes the [`ABCTxEngine`](#abctxengine) usable right away, creating a fast start-up experience.
 
-Any persistent global information that the plugin needs to keep should be kept in the `accountDataStore` for encrypted, backed-up data, and in the `accountLocalDataStore` for unencrypted, device specific data. Both the dataStores are persisted to disk and survive app shutdown or reboots.
+The [`ABCTxEngine`](#abctxengine) instance should only start querying the blockchain for transactions after the core calls `startEngine`. There are cases where the user will want to view their cached transactions without hitting the network, such as with archived walles. In these cases, the core will never call `startEngine`.
 
-Any persistent wallet-specific information that the plugin needs to keep should be kept in the `walletFolder` for encrypted, backed-up data, and in the `walletLocalFolder` for unencrypted, device specific data. Both the dataStores are persisted to disk and survive app shutdown or reboots.
+The engine should store its per-wallet transaction cache inside the provided `walletLocalFolder`. This location is unencrypted, so the plugin must never cache private keys in here.
 
-The plugin implementation should use the [Disklet](https://www.npmjs.com/package/disklet) API for accessing the above data stores.
+Multiple engines may be watching the same blockchain. If these engines would like to share common chain informaiton, such as the last block height or SPV headers, they can maintain a shared cache in the `opts.io.folder` folder passed to the [ABCCorePlugin](#abccoreplugin)'s `createPlugin` method. This is an unencrypted app-wide location.
 
-Any in-memory values needed by the plugin should simply be added to the ABCTxEngine object as dynamically added parameters to the object.
+The `walletFolder` location should never be used for normal currencies. This location is for encrypted and backed-up metadata. There are proposals such as payment channels that may require metadata in the future, but normal currencies don't need this.
 
-It is recommended the master public keys be kept in the `walletLocalFolder`  so they can be accessed for querying the blockchain while not logged in. Local blockchain cache information can be stored in either the `walletLocalFolder` or the `accountLocalDataStore` depending on whether the implementation chooses to hold a global blockchain cache or per wallet information.
-
-It is NOT recommended to use the `walletFolder` or `accountDataStore` for blockchain cache information as these data stores are encrypted, backed up, and revision controlled and are therefore more heavy weight.
+All these locations are [Disklet](https://www.npmjs.com/package/disklet) folders. Please see the Disklet documentation for examples of how to access them, or see the sample code for [ABCStorageWallet](#abcstoragewallet).
 
 ## ABCTxEngine
 
-An ABCTxEngine is created by the plugin and returned to Airbitz Core. It must contain the following methods. Any additional in-memory parameters needed should be dynamically placed into this object before returning it back to Airbitz Core.
+An `ABCTxEngine` object sends, receives, and lists transactions for a single user wallet. The [ABCCurrencyPlugin](#abccurrencyplugin) object creates `ABCTxEngine` instances through its `makeEngine` method.
 
 ### startEngine
 
 ```javascript
-abcTxEngine.startEngine()
+await abcTxEngine.startEngine()
 ```
 
-Starts the TxEngine and causes background processes to start querying for blockchain data. This must be called prior to using any other methods of [ABCTxEngine](#abctxengine)
+Begins checking the blockchain for incoming transactions. Prior to this method, the engine should simply return whatever cached data it has (or nothing, if this is the first run).
 
 | Return | Type | Description |
 | --- | --- | --- |
@@ -2702,21 +2701,14 @@ Starts the TxEngine and causes background processes to start querying for blockc
 ### killEngine
 
 ```javascript
-abcTxEngine.killEngine()
+await abcTxEngine.killEngine()
 ```
 
-Terminate background processes for querying network.
+Stops checking the blockchain for new transactions, and flushes any caches to disk. It should be safe to shut down the app once this method completes.
 
-### getBlockHeight
-
-```javascript
-// Example
-var blockHeight = abcTxEngine.getBlockHeight()
-console.log(blockHeight)
-"455487"
-```
-
-Retrieve the current block height from the network
+| Return | Type | Description |
+| --- | --- | --- |
+| promise | `Promise<void>` | A promise that resolves when the engine has fully shut down. |
 
 ### enableTokens
 
@@ -2738,6 +2730,17 @@ abcTxEngine.enableTokens(tokens).catch(handleError)
 | promise | `Promise<void>` | A promise that resolves when the tokens are ready to use. |
 
 Enable support for meta tokens (ie. counterparty, colored coin, ethereum ERC20). Library should begin checking the blockchain for the specified tokens and triggering the callbacks specified in [`currencyPlugin.makeEngine`](#makeengine).
+
+### getBlockHeight
+
+```javascript
+// Example
+var blockHeight = abcTxEngine.getBlockHeight()
+console.log(blockHeight)
+"455487"
+```
+
+Retrieve the current block height from the network.
 
 ### getBalance
 
@@ -2990,6 +2993,60 @@ Callback fires when the plugin detects new or updated transactions from the bloc
 * `networkFee`
 * `blockHeight` (may be 0)
 * `nativeAmount`
+
+## ABCExchangePlugin
+
+```javascript
+// SDK users should do this:
+import { coinbasePlugin } from 'airbitz-currency-ethereum'
+
+const context = makeContext({
+  plugins: [coinbasePlugin]
+})
+
+// Inside the `makeContext` function, this is what happens:
+const exchangePlugin = await coinbasePlugin.makePlugin({ io })
+```
+
+These plugins fetch price information from various exchange-rate providers. They begin life as a generic [ABCCorePlugin](#abccoreplugin) that returns an `ABCExchangePlugin` instance from is `createPlugin` method.
+
+The `ABCExchangePlugin` object provides information about the exchange, as well as the ability to fetch rates. Exchange plugins should not spin up background tasks, but should make a fresh server connection on every `fetchExchangeRates` call.
+
+### exchangeInfo
+
+This property should contain information about the exchange.
+
+```javascript
+console.log(exchangePlugin.info.exchangeName) // "Coinbase"
+```
+
+| Property | Type | Description |
+| --- | --- | --- |
+| exchangeName | `string` | Name of the exchange as a human-friendly string |
+
+### fetchExchangeRates
+
+```javascript
+fetchExchangeRates(pairHints)
+
+// Example
+const pairHints = [
+  { fromCurrency: 'BTC', toCurrency: 'iso:EUR' },
+  { fromCurrency: 'ETH', toCurrency: 'iso:USD' }
+]
+
+const pairs = await exchangePlugin.fetchExchangeRates(pairHints)
+
+// The returned pairs might look like this:
+[
+  { fromCurrency: 'BTC', toCurrency: 'iso:EUR', rate: 2997.75 },
+  { fromCurrency: 'ETH', toCurrency: 'iso:USD', rate: 297.12 }
+]
+```
+
+Asks the plugin to fetch all available currency pairs.
+
+The passed-in currency pairs are a hint. Normal plugins should just return all available data, but in cases where that's too expensive (such as needing a separate HTTP request per pair), the plugin can use the passed-in list as a filter.
 
 # Account Management UI
 

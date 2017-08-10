@@ -3053,18 +3053,19 @@ onAddressesChecked(progressRatio)
 | --- | --- | --- |
 | progressRatio | `Number` | 0 to 1 value indicating how far along the core is in checking all the wallet addresses for new funds. This is only meaningful after the inital call to [startEngine](#startEngine) |
 
-Callback fires when the plugin detects a blockheight change for the supported currency.
+Callback fires as the plugin makes progress synchronizing with the blockchain network.
 
 ### onBalanceChanged
 
 ```javascript
-onBalanceChanged(progressRatio)
+onBalanceChanged(currencyCode, balance)
 ```
 | Param | Type | Description |
 | --- | --- | --- |
-| balance | `Number` | The new spendable balance, in the smallest units the currency supports. |
+| currencyCode | `string` | The three-letter code for which currency balance has changed. |
+| balance | `string` | The new spendable balance, in the smallest units the currency supports as a string (i.e. Satoshi or Wei). |
 
-Callback fires when the plugin detects a blockheight change for the supported currency.
+Callback fires when the plugin detects a balance change for the supported currency.
 
 ### onBlockHeightChanged
 

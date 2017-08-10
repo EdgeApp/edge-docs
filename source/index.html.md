@@ -1096,15 +1096,7 @@ Create a new [ABCWallet](#abcwallet) object and add it to the current account. E
 | error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 | id | `String` | Strings of wallet ID |
 
-| Wallet Type | Key Name | Description |
-| --- | --- | --- |
-| `wallet:repo:bitcoin` | `bitcoinKey` | HD BIP32 bitcoin wallet with base16 private key |
-| `wallet:repo:ethereum` | `ethereumKey` | Single address ethereum wallet with base16 private key
-| `wallet:repo:bitcoin-bip44` | `bitcoinKey-BIP44` | HD BIP44 bitcoin wallet with 24 word mnemonic master private key |
-| `wallet:repo:bitcoin-bip44-multisig` | `bitcoinKey-BIP44` | HD BIP44 bitcoin wallet with 24 word mnemonic master private key and upto 15 of 15 multisig support |
-| `wallet:repo:com.mydomain.myapp.myDataStoreType` | `null` | Generic data store for your app |
-
-Please contact developer@airbitz.co for the addition of new wallet types.
+Please seee the [ABCKeyInfo](#abckeyinfo) documentation for the different wallet types Airbitz understands.
 
 ### listWalletIds
 
@@ -1274,13 +1266,38 @@ Callback routines that notify application when various changes have occurred in 
 
 ## ABCKeyInfo
 
+```javascript
+{
+  "id": "1EeW6nzRFeSrtjgiGWlQLZUb/HDHOZspfLgALd9j6UE=",
+  "type": "wallet:bitcoin",
+  "keys": {
+    "bitcoinKey": "K83+b3/fuR4wzIymH3SltCAafJwgW54E/gQh91nmRSo=",
+    "dataKey": "QIjkKYVg1tTT8eYgfyGWJp4T7R1yHcpHDUqHtSuPmt0=",
+    "syncKey": "1JG0vR1L8tFbsWiS/kuZGgY6/hY="
+  }
+}
+```
+
+An `ABCKeyInfo` contains the information needed to access a wallet or other resource. The Airbitz login system exists to store these keys in an encrypted and backed-up manner.
+
+The Airbitz SDK includes full send & receive capability for a variety of blockchains. If you use these features, you won't need to deal with these keys directly.
+
+Otherwise, if your application does its own blockchain access, keeping your keys in this format will ensure that the Airbitz Wallet application can seamlessly interoperate with the keys your app creates.
+
 | Property | Type | Description |
 | --- | --- | --- |
 | id | `String` | The globally-unique key ID. A 256-bit base64-encoded integer. |
 | type | `String` | The type of resource these keys unlock. |
 | keys | `Object` | The contents of this object depend on the key type. See the documentation for the key types below. |
 
+Every key bundle has a globally-unique `id`. The simplest approach is to pick a random number for this `id`, using the same entropy source that would be used for private keys.
+
 Some supported key types are documented in the sections below:
+
+* [Storage Keys](#storage-keys)
+* [Account Repos](#account-repos)
+* [wallet:bitcoin](#wallet-bitcoin)
+* [wallet:ethereum](#wallet-ethereum)
 
 ### Storage Keys
 
@@ -1293,29 +1310,79 @@ Many different key types include access to Git repo for storage. In all cases, t
 
 In the future, Airbitz may introduce a `readKey`, which provides only read-only access to the sync server. This would be something like `sha256(syncKey)`. In that case, the `keys` object would contain one, the other, or both of `syncKey` and `readKey`.
 
+### Account Repos
+
+```javascript
+{
+  "type": "account-repo:co.airbitz.wallet",
+  "id": "91MD0VDrSH6i+Sq6oM+uzIT6CEJlmz3cG3VYDRu+s1Y=",
+  "keys": {
+    "dataKey": "u0dnSMP+/Qz/CfDpeqloT1HOSlrqM59lIOeMG2Yz44g=",
+    "syncKey": "otzd6UewIXAQv+FHOPYVPWzJjZ8="
+  }
+}
+```
+
+| Property | Type | Description |
+| --- | --- | --- |
+| dataKey | `String` | See [Storage Keys](#storage-keys). |
+| syncKey | `String` | See [Storage Keys](#storage-keys). |
+
+Account repos have `type` set to `'account-repo:' + appId`. They have storage keys and nothing else; everything interesting is stored in Git. Each app has the freedom to decide what goes in their own Git repo.
+
 ### wallet:bitcoin
+
+```javascript
+{
+  "id": "1EeW6nzRFeSrtjgiGWlQLZUb/HDHOZspfLgALd9j6UE=",
+  "type": "wallet:bitcoin",
+  "keys": {
+    "bitcoinKey": "K83+b3/fuR4wzIymH3SltCAafJwgW54E/gQh91nmRSo=",
+    "dataKey": "QIjkKYVg1tTT8eYgfyGWJp4T7R1yHcpHDUqHtSuPmt0=",
+    "syncKey": "1JG0vR1L8tFbsWiS/kuZGgY6/hY="
+  }
+}
+```
 
 A BIP-32 Bitcoin wallet. The key derivation follows the same scheme specified in the original BIP 32 spec.
 
 | Property | Type | Description |
 | --- | --- | --- |
 | bitcoinKey | `String` | The master entropy according to the BIP 32 spec. A 256-bit base64-encoded integer. |
+| bitcoinXpub | `String` | Key `m/0` in `xpub` format, as defined by the BIP 32 spec. |
 | dataKey | `String` | See [Storage Keys](#storage-keys). |
 | syncKey | `String` | See [Storage Keys](#storage-keys). |
 
+A spending-capable bitcoin wallet will have a `bitcoinKey`, while a read-only bitcoin wallet will just have `bitcoinXpub`.
+
+The `airbitz-core-js` library is responsible for managing `dataKey` and `syncKey`; the currency plugins should ignore them.
+
 ### wallet:ethereum
+
+```javascript
+{
+  "type": "wallet:ethereum",
+  "id": "lZvB9W1waiDHn52JRzUjfqAbyp1wyN5jreKbdyto4pI=",
+  "keys": {
+    "ethereumKey": "65256374d98202d11b22d74a5d89960cf50d71f45a3d4f7641e1c2ce3b2bdc89",
+    "dataKey": "X/ovC9WM7EClpjMc/U+0HHQv/cmUlgHFM+drtuiF73Q=",
+    "syncKey": "VvijidoeI07d3sYvgyGghwGJBpU="
+  }
+}
+```
 
 An Ethereum wallet.
 
 | Property | Type | Description |
 | --- | --- | --- |
-| ethereumKey | `String` | A hex-encoded 256-bit Ethereum private key. |
+| ethereumKey | `String` | A hex-encoded 256-bit Ethereum private key (private only). |
+| ethereumAddress | `String` | A hex-encoded Ethereum payment address (public only). |
 | dataKey | `String` | See [Storage Keys](#storage-keys). |
 | syncKey | `String` | See [Storage Keys](#storage-keys). |
 
-### account:&lt;appId&gt;
+A spending-capable ethereum wallet will have an `ethereumKey`, while a read-only ethereum wallet will just have `ethereumAddress`.
 
-A git repo for an app. See the [Storage Keys](#storage-keys) section for the contents.
+The `airbitz-core-js` library is responsible for managing `dataKey` and `syncKey`; the currency plugins should ignore them.
 
 ## ABCDataStore
 
@@ -2604,28 +2671,57 @@ The `metaTokens` array includes the following properties:
 
 ```javascript
 // Example
-const keyInfo = currencyPlugin.createPrivateKeyInfo('wallet:bitcoin')
+const keyInfo = currencyPlugin.createPrivateKeyInfo('wallet:ethereum')
+
+// Output:
+{
+  "type": "wallet:ethereum",
+  "id": "lZvB9W1waiDHn52JRzUjfqAbyp1wyN5jreKbdyto4pI=",
+  "keys": {
+    "ethereumKey": "65256374d98202d11b22d74a5d89960cf50d71f45a3d4f7641e1c2ce3b2bdc89"
+  }
+}
 ```
 
-Creates a new random master private key, and returns it in an [`ABCKeyInfo`](#abckeyinfo) structure. This is used to create new wallets.
+Creates a new random master private key, and returns it in an [`ABCKeyInfo`](#abckeyinfo) structure. Please see the [`ABCKeyInfo`](#abckeyinfo) for documentation on the various key types Airbitz understands. If your currency is not documented in that section, please submit a pull request to add your format to [the documentation](https://github.com/Airbitz/airbitz-docs/tree/full-api-docs).
 
-If the returned `ABCKeyInfo` structure has a blank `id` field, the core will fill it in.
+If the returned `ABCKeyInfo` structure has a blank `id` field, the core will fill it in. The core will also handle the `dataKey` and `syncKey`, so the currency plugin does not need to worry about these.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| type | `string` | The type of key to create. See [`ABCKeyInfo`](#abckeyinfo) for types. |
+| type | `string` | The type of key to create. See [`ABCKeyInfo`](#abckeyinfo) for valid types. |
 
 ### derivePublicKeyInfo
 
 ```javascript
 // Example
+const privateKeyInfo = {
+  "type": "wallet:ethereum",
+  "id": "lZvB9W1waiDHn52JRzUjfqAbyp1wyN5jreKbdyto4pI=",
+  "keys": {
+    "ethereumKey": "65256374d98202d11b22d74a5d89960cf50d71f45a3d4f7641e1c2ce3b2bdc89"
+  }
+}
 const publicKeyInfo = currencyPlugin.derivePublicKeyInfo(privateKeyInfo)
+
+// Output:
+{
+  "type": "wallet:ethereum",
+  "id": "lZvB9W1waiDHn52JRzUjfqAbyp1wyN5jreKbdyto4pI=",
+  "keys": {
+    "ethereumAddress": "0x9ba8075585b5fad5c0455894a667715374f1ed63"
+  }
+}
 ```
 
-Derives a master public key from a private key. The provided [`ABCKeyInfo`](#abckeyinfo) structure holds the private key, as well as encryption keys, storage keys, and other potentially sensitive information. This function should create a new [`ABCKeyInfo`](#abckeyinfo) structure holding just the keys needed to check for incoming funds. This has multiple uses:
+Converts a spending-capable [`ABCKeyInfo`](#abckeyinfo) structure into a receive-only [`ABCKeyInfo`](#abckeyinfo). This has multiple uses:
 
 1. Saving a unencrypted wallet on the local device for offline balance checks.
 2. Sharing a wallet with another user is a watch-only mode.
+
+For Bitcoin, this means replacing the private seed with a xpub-format key. For Ethereum, it means replacing the private key with the public address. Please see the [`ABCKeyInfo`](#abckeyinfo) for documentation on the various key types Airbitz understands. If your currency is not documented in that section, please submit a pull request to [the documentation](https://github.com/Airbitz/airbitz-docs/tree/full-api-docs).
+
+The `type` and `id` properties should remain unchanged. The core handles the `dataKey` and `syncKey` keys, so the currency plugin should leave those unchanged as well.
 
 | Param | Type | Description |
 | --- | --- | --- |

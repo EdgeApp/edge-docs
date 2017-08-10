@@ -1096,7 +1096,7 @@ Create a new [ABCWallet](#abcwallet) object and add it to the current account. E
 | error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 | id | `String` | Strings of wallet ID |
 
-Please seee the [ABCKeyInfo](#abckeyinfo) documentation for the different wallet types Airbitz understands.
+Please seee the [ABCWalletInfo](#abcwalletinfo) documentation for the different wallet types Airbitz understands.
 
 ### listWalletIds
 
@@ -1149,10 +1149,10 @@ Get the first [ABCWallet](#abcwallet) object of type `walletType`
 | --- | --- | --- |
 | abcWallet | [`ABCWallet`](#abcwallet) | (Javascript) Error object. `null` if no error |
 
-### changeKeyStates
+### changeWalletStates
 
 ```javascript
-const keyStates = {
+const walletStates = {
   "wallet-id-1": {
     archived: false,
     deleted: false,
@@ -1164,14 +1164,14 @@ const keyStates = {
   }
 }
 
-await account.changeKeyStates(keyStates)
+await account.changeWalletStates(keyStates)
 ```
 
 Keys (which represent wallets) can have associated metadata. This method makes it possible to change the metadata for one or more wallets.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| keyInfos | `Object` | An object mapping from key ID's (or wallet ID's) to the new metadata. All properties are optional, and unspecified properties will remain unchanged. |
+| walletStates | `Object` | An object mapping from wallet ID's to the new metadata. All properties are optional, and unspecified properties will remain unchanged. |
 | callback | `Callback` | (Javascript) Callback function |
 
 The metadata structure looks like this:
@@ -1264,7 +1264,7 @@ Callback routines that notify application when various changes have occurred in 
 | address | `String` | Public address of private key used to sign |
 | signature | `String` | Public address of private key used to sign |
 
-## ABCKeyInfo
+## ABCWalletInfo
 
 ```javascript
 {
@@ -1278,35 +1278,37 @@ Callback routines that notify application when various changes have occurred in 
 }
 ```
 
-An `ABCKeyInfo` contains the information needed to access a wallet or other resource. The Airbitz login system exists to store these keys in an encrypted and backed-up manner.
+An `ABCWalletInfo` contains the keys needed to access a wallet or other resource. The Airbitz login system exists to store these wallet keys in an encrypted and backed-up manner.
 
-The Airbitz SDK includes full send & receive capability for a variety of blockchains. If you use these features, you won't need to deal with these keys directly.
+The Airbitz SDK includes full send & receive capability for a variety of blockchains. If you use these features, you won't need to deal with these wallet keys directly.
 
-Otherwise, if your application does its own blockchain access, keeping your keys in this format will ensure that the Airbitz Wallet application can seamlessly interoperate with the keys your app creates.
+Otherwise, if your application does its own blockchain access, keeping your wallet keys in this format will ensure that the Airbitz Wallet application can seamlessly interoperate with the keys your app creates.
 
 | Property | Type | Description |
 | --- | --- | --- |
-| id | `String` | The globally-unique key ID. A 256-bit base64-encoded integer. |
-| type | `String` | The type of resource these keys unlock. |
-| keys | `Object` | The contents of this object depend on the key type. See the documentation for the key types below. |
+| id | `String` | The globally-unique wallet ID. A 256-bit base64-encoded integer. |
+| type | `String` | The type of wallet these keys unlock. |
+| keys | `Object` | The contents of this object depend on the wallet type. See the documentation for the wallet types below. |
 
-Every key bundle has a globally-unique `id`. The simplest approach is to pick a random number for this `id`, using the same entropy source that would be used for private keys.
+Every wallet has a globally-unique `id`. The simplest approach is to pick a random number for this `id`, using the same entropy source that would be used for private keys.
 
-Some supported key types are documented in the sections below:
+Some supported wallet types are documented in the sections below:
 
-* [Storage Keys](#storage-keys)
+* [Storage Wallets](#storage-wallets)
 * [Account Repos](#account-repos)
 * [wallet:bitcoin](#wallet-bitcoin)
 * [wallet:ethereum](#wallet-ethereum)
 
-### Storage Keys
+### Storage Wallets
 
-Many different key types include access to Git repo for storage. In all cases, the `keys` property will have the following members:
+Many different wallets include access to a Git repo for storage. In these cases, the `keys` property will have the following members:
 
 | Property | Type | Description |
 | --- | --- | --- |
 | dataKey | `String` | The data encryption key. A 256-bit base64-encoded integer. |
 | syncKey | `String` | The git repo identity. A 160-bit base64-encoded integer. |
+
+For pure storage wallets, the wallet type should be a reverse domain-name starting with `storage:`, like `storage:com.yourdomain.yourtype`.
 
 In the future, Airbitz may introduce a `readKey`, which provides only read-only access to the sync server. This would be something like `sha256(syncKey)`. In that case, the `keys` object would contain one, the other, or both of `syncKey` and `readKey`.
 
@@ -1325,10 +1327,10 @@ In the future, Airbitz may introduce a `readKey`, which provides only read-only 
 
 | Property | Type | Description |
 | --- | --- | --- |
-| dataKey | `String` | See [Storage Keys](#storage-keys). |
-| syncKey | `String` | See [Storage Keys](#storage-keys). |
+| dataKey | `String` | See [Storage Wallets](#storage-wallets). |
+| syncKey | `String` | See [Storage Wallets](#storage-wallets). |
 
-Account repos have `type` set to `'account-repo:' + appId`. They have storage keys and nothing else; everything interesting is stored in Git. Each app has the freedom to decide what goes in their own Git repo.
+Account repos have `type` set to `'account-repo:' + appId`. They have storage keys and nothing else; everything interesting is stored in Git. Each app has the freedom to decide what goes in their own account repo.
 
 ### wallet:bitcoin
 
@@ -1350,8 +1352,8 @@ A BIP-32 Bitcoin wallet. The key derivation follows the same scheme specified in
 | --- | --- | --- |
 | bitcoinKey | `String` | The master entropy according to the BIP 32 spec. A 256-bit base64-encoded integer. |
 | bitcoinXpub | `String` | Key `m/0` in `xpub` format, as defined by the BIP 32 spec. |
-| dataKey | `String` | See [Storage Keys](#storage-keys). |
-| syncKey | `String` | See [Storage Keys](#storage-keys). |
+| dataKey | `String` | See [Storage Wallets](#storage-wallets). |
+| syncKey | `String` | See [Storage Wallets](#storage-wallets). |
 
 A spending-capable bitcoin wallet will have a `bitcoinKey`, while a read-only bitcoin wallet will just have `bitcoinXpub`.
 
@@ -1375,10 +1377,10 @@ An Ethereum wallet.
 
 | Property | Type | Description |
 | --- | --- | --- |
-| ethereumKey | `String` | A hex-encoded 256-bit Ethereum private key (private only). |
-| ethereumAddress | `String` | A hex-encoded Ethereum payment address (public only). |
-| dataKey | `String` | See [Storage Keys](#storage-keys). |
-| syncKey | `String` | See [Storage Keys](#storage-keys). |
+| ethereumKey | `String` | A hex-encoded 256-bit Ethereum private key. |
+| ethereumAddress | `String` | A hex-encoded Ethereum payment address. |
+| dataKey | `String` | See [Storage Wallets](#storage-wallets). |
+| syncKey | `String` | See [Storage Wallets](#storage-wallets). |
 
 A spending-capable ethereum wallet will have an `ethereumKey`, while a read-only ethereum wallet will just have `ethereumAddress`.
 
@@ -1668,7 +1670,7 @@ This function creates an instance of the storage wallet class.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| keys | `String` | An [`ABCKeyInfo`](#abckeyinfo) structure from the account. |
+| keys | `String` | An [`ABCWalletInfo`](#abcwalletinfo) structure from the account. |
 | opts.account | `Object` | The [`ABCAccount`](#abcaccount) object that these keys belong to. |
 | opts.onDataChange | `Function` | Called when the data changes as part of a sync operation. |
 
@@ -1676,9 +1678,9 @@ This function creates an instance of the storage wallet class.
 
 | Property | Type | Description |
 | --- | --- | --- |
-| id | `String` | The `id` property of the account-level [ABCKeyInfo](#abckeyinfo) |
-| type | `String` | The `type` property of the account-level [ABCKeyInfo](#abckeyinfo) |
-| keys | `Object` | The `keys` property of the account-level [ABCKeyInfo](#abckeyinfo) |
+| id | `String` | The `id` property of the account-level [ABCWalletInfo](#abcwalletinfo) |
+| type | `String` | The `type` property of the account-level [ABCWalletInfo](#abcwalletinfo) |
+| keys | `Object` | The `keys` property of the account-level [ABCWalletInfo](#abcwalletinfo) |
 | name | `String` | Human readable name of wallet. May be `null` if the wallet has no name. |
 | folder | `Folder` | A [`Disklet`](https://www.npmjs.com/package/disklet) folder. This datastore object is encrypted by default, backed up to the cloud, and synchronized with any device the user logs into. Data modifications are versioned and can be rolled back but this functionality is not yet exposed via API. dataStore object may `null` if parent [ABCAccount](#abcaccount) has not been logged into yet |
 | localFolder | `Folder` | A [`Disklet`](https://www.npmjs.com/package/disklet) folder that only exists on the current device. This data is not encrypted nor backed up. Not to be used for sensitive data but rather as a local cache of network data. Data is not version controlled and has no rollback capability. Common use case will be for local device specific wallet settings, blockchain cache information, and public address cache for use when account/wallet has not yet been decrypted (background processing) |
@@ -1755,7 +1757,7 @@ Creates a wallet capable of send and receive functionality. An [ABCCurrencyPlugi
 
 | Param | Type | Description |
 | --- | --- | --- |
-| keys | `ABCKeyInfo` | The key info obtained from the account |
+| keys | [`ABCWalletInfo`](#abcwalletinfo) | The wallet info obtained from the account |
 | opts.account | `ABCAccount` | The account object this wallet belongs to. |
 | opts.plugin | `ABCCurrencyPlugin` |  Object that exposes the [ABCCurrencyPlugin](#abccurrencyplugin) functions |
 | opts.callbacks | `ABCCurrencyPlugin` | `Object` | Object with callback functions |
@@ -2652,7 +2654,7 @@ The `currencyInfo` property should be an object with the following properties de
 | denominations | `Array` | An array of Objects of the possible denominations for this currency |
 | symbolImage | `String` | Base64 encoded png or jpg image of the currency symbol (optional) |
 | metaTokens | `Array` | Array of objects describing the supported metatokens |
-| keyTypes | `Array` | Array of strings listing the key types that this currency can handle. Any [ABCKeyInfo](#abckeyinfo) object with a `type` that matches this array can be passed to `makeEngine`. |
+| keyTypes | `Array` | Array of strings listing the key types that this currency can handle, such as `wallet:ethereum`. Please see the [ABCWalletInfo](#abcwalletinfo) documentation for information about these types. The `makeEngine`, `createPrivateKey`, and `derivePublicKey` methods can handle keys with these types. |
 
 The `denominations` object includes the following properties:
 
@@ -2671,42 +2673,41 @@ The `metaTokens` array includes the following properties:
 | denominations | `Array` | An array of Objects of the possible denominations for this currency |
 | symbolImage | `String` | Base64 encoded png or jpg image of the currency symbol (optional) |
 
-### createPrivateKeyInfo
+### createPrivateKey
 
 ```javascript
 // Example
-const keyInfo = currencyPlugin.createPrivateKeyInfo('wallet:ethereum')
+const walletInfo = currencyPlugin.createPrivateKey('wallet:ethereum')
 
 // Output:
 {
   "type": "wallet:ethereum",
-  "id": "lZvB9W1waiDHn52JRzUjfqAbyp1wyN5jreKbdyto4pI=",
   "keys": {
     "ethereumKey": "65256374d98202d11b22d74a5d89960cf50d71f45a3d4f7641e1c2ce3b2bdc89"
   }
 }
 ```
 
-Creates a new random master private key, and returns it in an [`ABCKeyInfo`](#abckeyinfo) structure. Please see the [`ABCKeyInfo`](#abckeyinfo) for documentation on the various key types Airbitz understands. If your currency is not documented in that section, please submit a pull request to add your format to [the documentation](https://github.com/Airbitz/airbitz-docs/tree/full-api-docs).
-
-If the returned `ABCKeyInfo` structure has a blank `id` field, the core will fill it in. The core will also handle the `dataKey` and `syncKey`, so the currency plugin does not need to worry about these.
+Creates a new random master private key, and returns it in an [`ABCWalletInfo`](#abcwalletinfo) structure. Please see the [`ABCWalletInfo`](#abcwalletinfo) for documentation on the various key types Airbitz understands. If your currency is not documented in that section, please submit a pull request to add your format to [the documentation](https://github.com/Airbitz/airbitz-docs/tree/full-api-docs).
 
 | Param | Type | Description |
 | --- | --- | --- |
-| type | `string` | The type of key to create. See [`ABCKeyInfo`](#abckeyinfo) for valid types. |
+| type | `string` | The type of wallet to create. See [`ABCWalletInfo`](#abcwalletinfo) for valid wallet types. |
 
-### derivePublicKeyInfo
+The returned [`ABCWalletInfo`](#abcwalletinfo) must have the exact `type` specified in the input. It should leave the `id` field blank, since the core will assign one. The core will also insert the `dataKey` and `syncKey`, so the currency plugin does not need to worry about those either.
+
+### derivePublicKey
 
 ```javascript
 // Example
-const privateKeyInfo = {
+const walletInfo = {
   "type": "wallet:ethereum",
   "id": "lZvB9W1waiDHn52JRzUjfqAbyp1wyN5jreKbdyto4pI=",
   "keys": {
     "ethereumKey": "65256374d98202d11b22d74a5d89960cf50d71f45a3d4f7641e1c2ce3b2bdc89"
   }
 }
-const publicKeyInfo = currencyPlugin.derivePublicKeyInfo(privateKeyInfo)
+const readOnlyWalletInfo = currencyPlugin.derivePublicKey(walletInfo)
 
 // Output:
 {
@@ -2718,18 +2719,18 @@ const publicKeyInfo = currencyPlugin.derivePublicKeyInfo(privateKeyInfo)
 }
 ```
 
-Converts a spending-capable [`ABCKeyInfo`](#abckeyinfo) structure into a receive-only [`ABCKeyInfo`](#abckeyinfo). This has multiple uses:
+Converts a spending-capable [`ABCWalletInfo`](#abcwalletinfo) structure into a receive-only [`ABCWalletInfo`](#abcwalletinfo). This has multiple uses:
 
 1. Saving a unencrypted wallet on the local device for offline balance checks.
 2. Sharing a wallet with another user is a watch-only mode.
 
-For Bitcoin, this means replacing the private seed with a xpub-format key. For Ethereum, it means replacing the private key with the public address. Please see the [`ABCKeyInfo`](#abckeyinfo) for documentation on the various key types Airbitz understands. If your currency is not documented in that section, please submit a pull request to [the documentation](https://github.com/Airbitz/airbitz-docs/tree/full-api-docs).
+For Bitcoin, this means replacing the private seed with a xpub-format key. For Ethereum, it means replacing the private key with the payment address. Please see the [`ABCWalletInfo`](#abcwalletinfo) for documentation on the various key types Airbitz understands. If your currency is not documented in that section, please submit a pull request to [the documentation](https://github.com/Airbitz/airbitz-docs/tree/full-api-docs).
 
-The `type` and `id` properties should remain unchanged. The core handles the `dataKey` and `syncKey` keys, so the currency plugin should leave those unchanged as well.
+The `type` and `id` properties should remain unchanged. The core mangages the `dataKey` and `syncKey` keys, so the currency plugin should leave those unchanged as well.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| keyInfo | [`ABCKeyInfo`](#abckeyinfo) | The private keys to the wallet. |
+| walletInfo | [`ABCWalletInfo`](#abcwalletinfo) | The private keys to the wallet. |
 
 ### makeEngine
 
@@ -2751,14 +2752,14 @@ const options = {
   walletLocalFolder
 }
 
-const abcTxEngine = await currencyPlugin.makeEngine(keyInfo, options)
+const abcTxEngine = await currencyPlugin.makeEngine(walletInfo, options)
 ```
 
 This function creates an [`ABCTxEngine`](#abctxengine) object to send, receive, and list transactions for an individual wallet instance.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| keyInfo | [`ABCKeyInfo`](#abckeyinfo) | The keys to the wallet. This may include just the pubic key (no private key) in read-only scenarios. |
+| walletInfo | [`ABCWalletInfo`](#abcwalletinfo) | The keys to the wallet. This may include just the pubic key (no private key) in read-only scenarios. See the [`ABCWalletInfo`](#abcwalletinfo) documentation for details. |
 | options | `Object` | Options for [`currencyPlugin.makeEngine`](#makeengine) |
 
 | Options | Type | Description |

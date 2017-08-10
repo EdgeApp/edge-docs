@@ -1160,7 +1160,7 @@ const walletStates = {
   },
   "wallet-id-2": {
     archived: true,
-    sort: 2
+    sortIndex: 2
   }
 }
 

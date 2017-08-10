@@ -26,4 +26,3 @@ bundle exec middleman build --clean
 ```
 
 The docs will be in the ```build``` directory
-

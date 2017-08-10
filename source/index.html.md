@@ -2394,6 +2394,7 @@ Object represents a signed or unsigned transaction that may or may not be broadc
 | networkFee | `String` | Fee paid to network (mining fee) in denomination of smallest unit of currency, as a string (i.e. Satoshis or Wei) |
 | runningBalance | `String` | Running balance of entire wallet as of this transaction in the smallest unit of currency, as a string (i.e. Satoshis or Wei) |
 | signedTx |`Array` | Buffer of signed transaction data with signature. `null` if transaction is unsigned |
+| ourReceiveAddresses | `Array<string>` | Contains a list of addresses that belong to this wallet and have received money in this transaction. |
 | otherParams |`Object` | Crypto currency specific data |
 
 `otherParams` has the following parameters for bitcoin wallets
@@ -2815,6 +2816,7 @@ Returns an array of transactions matching the options specified. The plugin must
 * `networkFee`
 * `blockHeight` (may be 0)
 * `nativeAmount`
+* `ourReceiveAddresses`
 
 The remaining fields are updated by Airbitz Core.
 
@@ -2993,6 +2995,7 @@ Callback fires when the plugin detects new or updated transactions from the bloc
 * `networkFee`
 * `blockHeight` (may be 0)
 * `nativeAmount`
+* `ourReceiveAddresses`
 
 ## ABCExchangePlugin
 

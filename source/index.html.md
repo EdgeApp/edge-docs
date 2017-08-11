@@ -2673,24 +2673,21 @@ The `metaTokens` array includes the following properties:
 
 ```javascript
 // Example
-const walletInfo = currencyPlugin.createPrivateKey('wallet:ethereum')
+const walletKey = currencyPlugin.createPrivateKey('wallet:ethereum')
 
 // Output:
 {
-  "type": "wallet:ethereum",
-  "keys": {
-    "ethereumKey": "65256374d98202d11b22d74a5d89960cf50d71f45a3d4f7641e1c2ce3b2bdc89"
-  }
+  "ethereumKey": "65256374d98202d11b22d74a5d89960cf50d71f45a3d4f7641e1c2ce3b2bdc89"
 }
 ```
 
-Creates a new random master private key, and returns it in an [`ABCWalletInfo`](#abcwalletinfo) structure. Please see the [`ABCWalletInfo`](#abcwalletinfo) for documentation on the various key types Airbitz understands. If your currency is not documented in that section, please submit a pull request to add your format to [the documentation](https://github.com/Airbitz/airbitz-docs/tree/full-api-docs).
+Creates a new random master private key. The returned object will be used as the `keys` member of an [`ABCWalletInfo`](#abcwalletinfo) structure. Please see [`ABCWalletInfo`](#abcwalletinfo) for documentation on the various key types Airbitz understands. If your currency is not documented in that section, please submit a pull request to add your format to [the documentation](https://github.com/Airbitz/airbitz-docs/tree/full-api-docs).
 
 | Param | Type | Description |
 | --- | --- | --- |
 | type | `string` | The type of wallet to create. See [`ABCWalletInfo`](#abcwalletinfo) for valid wallet types. |
 
-The returned [`ABCWalletInfo`](#abcwalletinfo) must have the exact `type` specified in the input. It should leave the `id` field blank, since the core will assign one. The core will also insert the `dataKey` and `syncKey`, so the currency plugin does not need to worry about those either.
+The core will treat the returned object as the `keys` member of an [`ABCWalletInfo`](#abcwalletinfo) object. The core will generate a random `id`, and will use the same `type` as passed to `createPrivateKey`. The core will also insert the `dataKey` and `syncKey`, so the currency plugin does not need to worry about those either.
 
 ### derivePublicKey
 
@@ -2703,30 +2700,26 @@ const walletInfo = {
     "ethereumKey": "65256374d98202d11b22d74a5d89960cf50d71f45a3d4f7641e1c2ce3b2bdc89"
   }
 }
-const readOnlyWalletInfo = currencyPlugin.derivePublicKey(walletInfo)
+const readOnlyWalletKey = currencyPlugin.derivePublicKey(walletInfo)
 
 // Output:
 {
-  "type": "wallet:ethereum",
-  "id": "lZvB9W1waiDHn52JRzUjfqAbyp1wyN5jreKbdyto4pI=",
-  "keys": {
-    "ethereumAddress": "0x9ba8075585b5fad5c0455894a667715374f1ed63"
-  }
+  "ethereumAddress": "0x9ba8075585b5fad5c0455894a667715374f1ed63"
 }
 ```
 
-Converts a spending-capable [`ABCWalletInfo`](#abcwalletinfo) structure into a receive-only [`ABCWalletInfo`](#abcwalletinfo). This has multiple uses:
+Converts a spending-capable [`ABCWalletInfo`](#abcwalletinfo) structure into a receive-only wallet. The core will treat the return value as the `keys` member of a new [`ABCWalletInfo`](#abcwalletinfo) structure. This has multiple uses:
 
 1. Saving a unencrypted wallet on the local device for offline balance checks.
 2. Sharing a wallet with another user is a watch-only mode.
 
-For Bitcoin, this means replacing the private seed with a xpub-format key. For Ethereum, it means replacing the private key with the payment address. Please see the [`ABCWalletInfo`](#abcwalletinfo) for documentation on the various key types Airbitz understands. If your currency is not documented in that section, please submit a pull request to [the documentation](https://github.com/Airbitz/airbitz-docs/tree/full-api-docs).
-
-The `type` and `id` properties should remain unchanged. The core mangages the `dataKey` and `syncKey` keys, so the currency plugin should leave those unchanged as well.
+For Bitcoin, this means converting the private seed into an xpub-format key. For Ethereum, it means converting the private key into a payment address. Please see [`ABCWalletInfo`](#abcwalletinfo) for documentation on the various key types Airbitz understands. If your currency is not documented in that section, please submit a pull request to [the documentation](https://github.com/Airbitz/airbitz-docs/tree/full-api-docs).
 
 | Param | Type | Description |
 | --- | --- | --- |
 | walletInfo | [`ABCWalletInfo`](#abcwalletinfo) | The private keys to the wallet. |
+
+The core will treat the returned object as the `keys` member of a new [`ABCWalletInfo`](#abcwalletinfo) object. The core also manages the `dataKey` and `syncKey`, so the currency plugin does not need to worry about those either.
 
 ### makeEngine
 

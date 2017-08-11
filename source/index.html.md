@@ -498,6 +498,55 @@ Checks if PIN login is possible for the given username. This checks if there is 
 | error | [`ABCError`](#abcerror) | Error object. `null` if no error |
 | enabled | `Boolean` | True if PIN login is enabled |
 
+### getRecovery2Key
+
+```javascript
+recovery2Key = getRecovery2Key(username)
+```
+
+Retrieves the recovery key for a particular user. The user should email this key to themselves.
+
+If this returns an error, the user does not have recovery set up on this device. The user needs to click the link in their email if they want to do a recovery login.
+
+### fetchRecovery2Questions
+
+```javascript
+const questions = await fetchRecovery2Questions(recovery2Key, username)
+
+// Result:
+[
+  'What is your name?',
+  'What is your quest?',
+  'What is your favorite color?'
+]
+```
+
+Retrieves the recovery questions a user has configured for their account.
+
+### loginWithRecovery2
+
+```javascript
+const answers = [
+  'Sir Lancelot of Camelot',
+  'To seek the Holy Grail',
+  'Blue'
+]
+
+const account = await loginWithRecovery2(recovery2Key, username, answers)
+```
+
+Performs a recovery login.
+
+### listRecoveryQuestionChoices
+
+```javascript
+const questions = await listRecoveryQuestionChoices()
+```
+
+Fetches a list of possible recovery questions from the server.
+
+TODO: How does this work with localization? Why not build the question list into the app itself?
+
 ### listUsernames
 
 ```javascript

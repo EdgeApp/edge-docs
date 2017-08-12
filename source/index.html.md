@@ -155,34 +155,31 @@ Initialize and create an ABCContext object. Required for functionality of ABC SD
 abcContext.createAccount(username,
                          password,
                          pin,
-                         ABCAccountCallbacks,
+                         ABCAccountOptions,
                          callback)
 
 // Example
-function abcAccountRemotePasswordChange () {}
-function abcAccountLoggedOut () {}
-function abcAccountOTPRequired () {}
-function abcAccountOTPSkew () {}
-function abcAccountAccountChanged () {}
-
-const abcCallbacks = {
-   abcAccountRemotePasswordChange,
-   abcAccountLoggedOut,
-   abcAccountOTPRequired,
-   abcAccountOTPSkew,
-   abcAccountAccountChanged
+const callbacks = {
+  onDataChanged () {},
+  onKeyListChanged () {},
+  onLoggedOut () {},
+  onOTPRequired () {},
+  onOTPSkew () {},
+  onRemotePasswordChange () {}
 }
 
-abcContext.createAccount("myUsername",
-                         "myNot5oGoodPassw0rd",
-                         "2946",
-                         abcCallbacks,
-                         function (error, account) {
+abcContext.createAccount(
+  "myUsername",
+  "myNot5oGoodPassw0rd",
+  "2946",
+  { callbacks },
+  function (error, account) {
     if (error) {
       // Error creating account
     } else {
       abcAccount = account;
     }
+  }
 })
 ```
 
@@ -220,7 +217,7 @@ Create and log into a new ABCAccount
 | username | `string` | Account username |
 | password | `string` | Account password |
 | pin | `string` | Account PIN for fast re-login |
-| callbacks | [`ABCAccountCallbacks`](#abcaccountcallbacks) | (Javascript) Callback event routines |
+| options | [`ABCAccountOptions`](#abcaccountoptions) | (Javascript) Callback event routines |
 | delegate | [`ABCAccountDelegate`](#abcaccountdelegate) | (ObjC) Callback event delegates |
 | callback | `Callback` | Callback function when routine completes|
 
@@ -232,10 +229,10 @@ Create and log into a new ABCAccount
 ### getLocalAccount
 
 ```javascript
-abcContext.getLocalAccount(username, callbacks, callback)
+abcContext.getLocalAccount(username, callbacks, options)
 
 // Example
-abcContext.getLocalAccount("JoeHomey", callbacks,
+abcContext.getLocalAccount("JoeHomey", null,
                            function (error, account) {
     if (error) {
       // Failed to get account.
@@ -246,12 +243,16 @@ abcContext.getLocalAccount("JoeHomey", callbacks,
 })
 ```
 
-Get local account details for a previously logged in account. This returns an ABCAccount object with a `null` `dataStore` object but with a functioning `localDataStore` object. This is effectively getting the non-encrypted account data which can be accessed without the user logging into the device with a password, PIN, or fingerpint. Any [ABCWallet](#abcwallet) objects in the account will also have `null` `dataStore` objects but with functioning `localDataStore` objects. This is commonly used for background processing the accounts/wallets on a device to do querying of cryptocurrency transactions while the user is not logged in.
+(Proposal)
+
+Get local account details for a previously logged in account. This returns an ABCAccount object with a `null` `dataStore` object but with a functioning `localDataStore` object. This is effectively getting the non-encrypted account data which can be accessed without the user logging into the device with a password, PIN, or fingerpint.
+
+Any [ABCWallet](#abcwallet) objects in the account will also have `null` `dataStore` objects but with functioning `localDataStore` objects. This is commonly used for background processing the accounts/wallets on a device to do querying of cryptocurrency transactions while the user is not logged in.
 
 | Param | Type | Description |
 | --- | --- | --- |
 | username | `string` | Account username |
-| callbacks | [`ABCAccountCallbacks`](#abcaccountcallbacks) | (Javascript) Callback event routines |
+| options | [`ABCAccountOptions`](#abcaccountoptions) | (Javascript) Callback event routines |
 | delegate | [`ABCAccountDelegate`](#abcaccountdelegate) | (ObjC) Callback event delegates |
 | callback | `Callback` | Callback function when routine completes |
 
@@ -263,11 +264,14 @@ Get local account details for a previously logged in account. This returns an AB
 ### loginWithPassword
 
 ```javascript
-abcContext.loginWithPassword(username, password, otp, callbacks, callback)
+abcContext.loginWithPassword(username, password, options, callback)
 
 // Example
-abcContext.loginWithPassword("JoeHomey", "My0KPa55WoRd@Airb1t5", null, callbacks,
-                             function (error, account) {
+abcContext.loginWithPassword(
+  "JoeHomey",
+  "My0KPa55WoRd@Airb1t5",
+  { callbacks },
+  function (error, account) {
     if (error) {
       if (error.code === ABCConditionCodeInvalidOTP) {
         console.log("otpResetToken: " + error.otpResetToken)
@@ -321,8 +325,7 @@ The otpResetToken is only returned if the caller has provided the correct userna
 | --- | --- | --- |
 | username | `string` | Account username |
 | password | `string` | Account password |
-| otp | `string` | (Optional) OTP key retrieved from getOTPLocalKey |
-| callbacks | [`ABCAccountCallbacks`](#abcaccountcallbacks) | (Javascript) Callback event routines |
+| options | [`ABCAccountOptions`](#abcaccountoptions) | (Javascript) Callback event routines & OTP key |
 | delegate | [`ABCAccountDelegate`](#abcaccountdelegate) | (ObjC) Callback event delegates |
 | callback | `Callback` | Callback function when routine completes |
 
@@ -334,11 +337,14 @@ The otpResetToken is only returned if the caller has provided the correct userna
 ### loginWithPIN
 
 ```javascript
-abcContext.loginWithPIN(username, pin, callbacks, callback)
+abcContext.loginWithPIN(username, pin, callbacks, opts)
 
 // Example
-abcContext.loginWithPIN("JoeHomey", "2847", null,
-                        function (error, account) {
+abcContext.loginWithPIN(
+  "JoeHomey",
+  "2847",
+  { callbacks },
+  function (error, account) {
     if (error) {
       // Error
     } else {
@@ -378,7 +384,7 @@ Login to an Airbitz account with PIN. Used to sign into devices that have previo
 | --- | --- | --- |
 | username | `string` | Account username |
 | pin | `string` | Account PIN for fast re-login |
-| callbacks | [`ABCAccountCallbacks`](#abcaccountcallbacks) | (Javascript) Callback event routines |
+| options | [`ABCAccountOptions`](#abcaccountoptions) | (Javascript) Callback event routines |
 | delegate | [`ABCAccountDelegate`](#abcaccountdelegate) | (ObjC) Callback event delegates |
 | callback | `Callback` | Callback function when routine completes|
 
@@ -532,7 +538,12 @@ const answers = [
   'Blue'
 ]
 
-const account = await loginWithRecovery2(recovery2Key, username, answers)
+const account = await loginWithRecovery2(
+  recovery2Key,
+  username,
+  answers,
+  { callbacks }
+)
 ```
 
 Performs a recovery login.
@@ -1289,11 +1300,34 @@ abcAccount.importWallet(shareWalletToken, function(error, abcWallet) {
 
 Provides a key that can given to another user/app to share a wallet with that account.
 
-## ABCAccountCallbacks
+## ABCAccountOptions
+
+```javascript
+const options = {
+  otp: 'PMLCAKJ2IUDQQCIB',
+
+  callbacks: {
+    onDataChanged () {
+      // Reload any files we care about...
+    },
+    onLoggedOut () {
+      // Return to the login screen...
+    }
+    // etc...
+  }
+}
+
+const account = await context.loginWithPassword('user', 'pass', options)
+```
 
 Callback routines that notify application when various changes have occurred in the account. This is only utilized for Javascript. For ObjC, see [ABCAccountDelegate](#abcaccountdelegate).
 
-### Object Properties
+| Property | Type | Description |
+| --- | --- | --- |
+| otp | `string` | The OTP generation seed. This is only needed when logging into a 2fa-protected account for the first time on a new device. |
+| callbacks | `object` | A collection of callback functions for listening to changes in the account state. |
+
+### Callbacks
 
 | Property | Type | Description |
 | --- | --- | --- |

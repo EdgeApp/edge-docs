@@ -695,6 +695,48 @@ Logout the currently logged in ABCAccount
 | account | [`ABCAccount`](#abcaccount) | Account object |
 | callback | `Callback` | (Javascript) Callback function |
 
+### currencyWallets
+
+```javascript
+abcAccount.currencyWallets
+
+// Example value:
+{
+  'BReGzRCkPABS3x3CFJv9Kv38Jeyt6smoOyWU4WNaPq4=': { ... }, // AbcCurrencyWallet
+  'eT5WkFLlp6Mt8Ljyu2Mv3LzCTw2Zc0QebbhPljRyTYY=': { ... } // AbcCurrencyWallet
+}
+```
+
+A key-value map. The keys are wallet id's, and the values are instances of [`AbcCurrencyWallet`](#abccurrencywallet). The account will automatically load and manage any wallet types that have corresponding plugins.
+
+### activeWalletIds
+
+```javascript
+abcAccount.activeWalletIds
+
+// Example value:
+[
+  'BReGzRCkPABS3x3CFJv9Kv38Jeyt6smoOyWU4WNaPq4=',
+  'eT5WkFLlp6Mt8Ljyu2Mv3LzCTw2Zc0QebbhPljRyTYY='
+]
+```
+
+An array of active wallet ID's, in their proper sort order.  This list only includes wallets are not deleted or archived and have a corresponding currency plugin.
+
+### archivedWalletIds
+
+```javascript
+abcAccount.archivedWalletIds
+
+// Example value:
+[
+  'BReGzRCkPABS3x3CFJv9Kv38Jeyt6smoOyWU4WNaPq4=',
+  'eT5WkFLlp6Mt8Ljyu2Mv3LzCTw2Zc0QebbhPljRyTYY='
+]
+```
+
+An array of archived wallet ID's, in their proper sort order. This list only includes wallets are not deleted and have a corresponding currency plugin.
+
 ### allKeys
 
 ```javascript

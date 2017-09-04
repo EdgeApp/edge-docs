@@ -626,7 +626,6 @@ Checks if PIN login is possible for the given username. This checks if there is 
 | error | [`ABCError`](#abcerror) | Error object. `null` if no error |
 | enabled | `Boolean` | True if PIN login is enabled |
 
-
 ### requestOTPReset
 
 ```javascript
@@ -667,6 +666,20 @@ To obtain an otpResetToken, attempt a login into the OTP protected account using
 | Return Param | Type | Description |
 | --- | --- | --- |
 | error | [`ABCError`](#abcerror) | Error object. `null` if no error |
+
+### getCurrencyPlugins
+
+```javascript
+const plugins = await abcContext.getCurrencyPlugins()
+
+// Example value:
+[
+  { currencyInfo: { ... }, ... }, // AbcCurrencyPlugin
+  { currencyInfo: { ... }, ... } // AbcCurrencyPlugin
+]
+```
+
+Retrieves an array of [`AbcCurrencyPlugin`](#abccurrencyplugin) objects extracted from the plugin list passed in at context creation time. These can be used for parsing URI's, retrieving currency information, and other currency-related tasks.
 
 ## ABCAccount
 

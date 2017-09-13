@@ -1435,6 +1435,7 @@ Some supported wallet types are documented in the sections below:
 * [Storage Wallets](#storage-wallets)
 * [Account Repos](#account-repos)
 * [wallet:bitcoin](#wallet-bitcoin)
+* [wallet:bitcoin-bip44](#wallet-bitcoin-bip44)
 * [wallet:ethereum](#wallet-ethereum)
 
 ### Storage Wallets
@@ -1478,6 +1479,7 @@ Account repos have `type` set to `'account-repo:' + appId`. They have storage ke
   "type": "wallet:bitcoin",
   "keys": {
     "bitcoinKey": "K83+b3/fuR4wzIymH3SltCAafJwgW54E/gQh91nmRSo=",
+    "bitcoinXpub": "xpub6Bk1pSnncGei3JScQNzoZT4Ry6z4Zv4FJPKMNhGiHNmuw6o77oN4sPbmMYwPe2ED7KXxcFx8ZBVnEiDEnBoUHor3jzpYuhJUhLh9wR6Shsx",
     "dataKey": "QIjkKYVg1tTT8eYgfyGWJp4T7R1yHcpHDUqHtSuPmt0=",
     "syncKey": "1JG0vR1L8tFbsWiS/kuZGgY6/hY="
   }
@@ -1489,7 +1491,35 @@ A BIP-32 Bitcoin wallet. The key derivation follows the same scheme specified in
 | Property | Type | Description |
 | --- | --- | --- |
 | bitcoinKey | `String` | The master entropy according to the BIP 32 spec. A 256-bit base64-encoded integer. |
-| bitcoinXpub | `String` | Key `m/0` in `xpub` format, as defined by the BIP 32 spec. |
+| bitcoinXpub | `String` | Key `m/0` in `xpub` format, as defined by the BIP 32 spec |
+| dataKey | `String` | See [Storage Wallets](#storage-wallets). |
+| syncKey | `String` | See [Storage Wallets](#storage-wallets). |
+
+A spending-capable bitcoin wallet will have a `bitcoinKey`, while a read-only bitcoin wallet will just have `bitcoinXpub`. Individual private keys are derived using the BIP32 path m/0/0/n where `n` is the index of the private key to derive.
+
+The `airbitz-core-js` library is responsible for managing `dataKey` and `syncKey`; the currency plugins should ignore them.
+
+### wallet:bitcoin-bip44
+
+```javascript
+{
+  "id": "1EeW6nzRFeSrtjgiGWlQLZUb/HDHOZspfLgALd9j6UE=",
+  "type": "wallet:bitcoin-bip44",
+  "keys": {
+    "bitcoinKey": "dawn subway charge into unhappy limb kind palace dwarf pear shoulder battery",
+    "bitcoinXpub": "xpub6Bk1pSnncGei3JScQNzoZT4Ry6z4Zv4FJPKMNhGiHNmuw6o77oN4sPbmMYwPe2ED7KXxcFx8ZBVnEiDEnBoUHor3jzpYuhJUhLh9wR6Shsx",
+    "dataKey": "QIjkKYVg1tTT8eYgfyGWJp4T7R1yHcpHDUqHtSuPmt0=",
+    "syncKey": "1JG0vR1L8tFbsWiS/kuZGgY6/hY="
+  }
+}
+```
+
+A BIP-44 Bitcoin wallet. The key derivation follows the same scheme specified in the original BIP 44 spec.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| bitcoinKey | `String` | 12-24 word phrase master private seed as specified in BIP 44 spec |
+| bitcoinXpub | `String` | Key `m/0` in `xpub` format, as defined by the BIP 44 spec. |
 | dataKey | `String` | See [Storage Wallets](#storage-wallets). |
 | syncKey | `String` | See [Storage Wallets](#storage-wallets). |
 
@@ -1515,8 +1545,8 @@ An Ethereum wallet.
 
 | Property | Type | Description |
 | --- | --- | --- |
-| ethereumKey | `String` | A hex-encoded 256-bit Ethereum private key. |
-| ethereumAddress | `String` | A hex-encoded Ethereum payment address. |
+| ethereumKey | `String` | A hex-encoded 256-bit Ethereum private key without leading `0x` |
+| ethereumAddress | `String` | A hex-encoded Ethereum payment address WITH a leading `0x` |
 | dataKey | `String` | See [Storage Wallets](#storage-wallets). |
 | syncKey | `String` | See [Storage Wallets](#storage-wallets). |
 
@@ -2788,14 +2818,17 @@ The `currencyInfo` property should be an object with the following properties de
 
 | Property | Type | Description |
 | --- | --- | --- |
+| currencyName | `String` | Human readable string of the currency name. ie "Ethereum" |
 | currencyCode | `String` | The 3 character code for the currency |
-| denominations | `Array` | An array of Objects of the possible denominations for this currency |
+| addressExplorer | `String` | Full URL of explorer to give info on a specific address. ie. `https://etherscan.io/address/%s` |
+| transactionExplorer | `String` | Full URL of explorer to give info on a specific tx. ie. `https://etherscan.io/tx/%s` |
+| denominations | `Array` | An array of AbcDenomination objects of the possible denominations for this currency |
 | symbolImage | `String` | Base64 encoded png or jpg image of the currency symbol (optional) |
-| metaTokens | `Array` | Array of objects describing the supported metatokens |
-| walletTypes | `Array` | Array of strings listing the key types that this currency can handle, such as `wallet:ethereum`. Please see the [ABCWalletInfo](#abcwalletinfo) documentation for information about these types. The `makeEngine`, `createPrivateKey`, and `derivePublicKey` methods can handle keys with these types. |
+| metaTokens | `Array` | Array of AbcMetaToken objects describing the supported metatokens |
+| walletTypes | `Array` | Array of strings listing the wallet types that this currency can handle, such as `wallet:ethereum`. Please see the [ABCWalletInfo](#abcwalletinfo) documentation for information about these types. The `makeEngine`, `createPrivateKey`, and `derivePublicKey` methods can handle keys with these types. |
 | defaultSettings | `object` | Default per-currency settings. This acts as a template for the settings that should be passed to [`makeEngine`](#makeengine) and [`updateSettings`](#updatesettings). Optional. |
 
-The `denominations` object includes the following properties:
+The `AbcDenomination` object includes the following properties:
 
 | Property | Type | Description |
 | --- | --- | --- |
@@ -2804,12 +2837,12 @@ The `denominations` object includes the following properties:
 | symbol | `String` | The human readable 1-3 character symbol of the currency. ie. "Ƀ" |
 | font | `String` | (Optional) The font required to display the symbol specified above. If not given, will use the default system font. |
 
-The `metaTokens` array includes the following properties:
+The `AbcMetaToken` array includes the following properties:
 
 | Property | Type | Description |
 | --- | --- | --- |
 | currencyCode | `String` | The human readable string to describe the denomination. |
-| denominations | `Array` | An array of Objects of the possible denominations for this currency |
+| denominations | `Array` | An array of AbcDenomination objects of the possible denominations for this currency |
 | symbolImage | `String` | Base64 encoded png or jpg image of the currency symbol (optional) |
 
 ### createPrivateKey

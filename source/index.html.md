@@ -1122,26 +1122,6 @@ Removes the OTP reset request from the server for the currently logged in user. 
 | --- | --- | --- |
 | error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 
-### parseUri
-
-```javascript
-const abcParsedUri = abcAccount.parseUri("bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.2345&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X")
-
-console.log(abcParsedUri.publicAddress) // -> 1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs
-console.log(abcParsedUri.nativeAmount) // -> '123456700'
-console.log(abcParsedUri.paymentProtocolURL) // -> https://bitpay.com/i/7TEzdBg6rvsDVtWjNQ3C3X
-```
-
-| Param | Type | Description |
-| --- | --- | --- |
-| uri | `String` | URI to parse |
-
-| Return Param | Type | Description |
-| --- | --- | --- |
-| abcParsedUri | [`ABCParsedUri`](#abcparseduri) | Object with parsed parameters |
-
-Parses a URI extracting various elements into an [ABCParsedUri](#abcparseduri) object
-
 ### signBitIDRequest
 
 ```javascript
@@ -2195,6 +2175,58 @@ abcCurrencyWallet.lockReceiveAddress(function (error) {
 
 Locks this `receiveAddress` so that any future calls to [ABCCurrencyWallet.getReceiveAddress](#getreceiveaddress), without the `publicAddress` specified, will no longer return this address. Funds can still be received on this address. Use [ABCCurrencyWallet.getReceiveAddress](#getreceiveaddress) with `publicAddress` specified to get back this object in the future.
 
+### parseUri
+
+```javascript
+const abcParsedUri = wallet.parseUri("bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.2345&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X&label=Mom")
+
+console.log(abcParsedUri.publicAddress) // -> 1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs
+console.log(abcParsedUri.nativeAmount) // -> '123456700'
+console.log(abcParsedUri.metadata.name) // -> 'Mom'
+console.log(abcParsedUri.paymentProtocolURL) // -> https://bitpay.com/i/7TEzdBg6rvsDVtWjNQ3C3X
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| uri | `String` | URI to parse |
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| abcParsedUri | [`ABCParsedUri`](#abcparseduri) | Object with parsed parameters |
+
+Parses a URI extracting various elements into an [ABCParsedUri](#abcparseduri) object
+
+### encodeUri
+
+```javascript
+// Example
+const abcParsedUri = {
+  publicAddress: '1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs',
+  nativeAmount: '123456700',
+  metadata: {
+    name: 'Mom'
+  },
+  paymentProtocolURL: 'https://bitpay.com/i/7TEzdBg6rvsDVtWjNQ3C3X'
+}
+
+const uri = wallet.encodeUri(abcParsedUri)
+
+console.log(uri)
+// ->  "bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.2345&label=Mom&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X")
+
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| abcParsedUri | [`ABCParsedUri`](#abcparseduri) | Object with parsed parameters |
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| uri | `String` | URI output |
+
+Encodes a URI given a [ABCParsedUri](#abcparseduri) object
+
+
 ### makeAddressQrCode
 
 ```javascript
@@ -2214,7 +2246,6 @@ const uri = makeAddressUri(abcReceiveAddress)
 | Return | Type | Description |
 | --- | --- | --- |
 | addressUri | `String` | BIP21 or equivalent URI that encodes public address and optionally requested amount, name of requestor, and category of requested funds |
-
 
 ### makeSpend
 
@@ -2569,14 +2600,14 @@ Parameters
 | privateKey | `String` | Private key |
 | bitIDURI | `String` | Full BitID URI |
 | bitIDDomain | `String` | Domain name portion of BitID URI |
-| bitIDCallbackURI | `String` | BitID Callback URI |
-| paymentProtocolURL | `String` | BIP70 Payment Request URL |
+| bitIDCallbackUri | `String` | BitID Callback URI |
+| paymentProtocolUri | `String` | BIP70 Payment Request URL |
 | nativeAmount | `String` | Amount in the currency's smallest denomination, as a string (i.e. Satoshis or Wei)
 | metadata | [`ABCMetadata`](#abcmetadata) | [ABCMetadata](#abcmetadata) object with info extracted from URI |
-| returnURI | `String` | URI to send user after URI/payment has been processed |
+| returnUri | `String` | URI to send user after URI/payment has been processed |
 | bitidPaymentAddress | `Bool` | True if BitID URI is requesting a payment address (experimental)|
-| bitidKYCProvider | `Bool` | True if BitID URI would like to provide KYC token (experimental) |
-| bitidKYCRequest | `Bool` | True if BitID URI is requesting a KYC token (experimental) |
+| bitidKycProvider | `Bool` | True if BitID URI would like to provide KYC token (experimental) |
+| bitidKycRequest | `Bool` | True if BitID URI is requesting a KYC token (experimental) |
 
 
 Object contains various parts of a parsed URI depending on the source URI. Any of the properties may be `null`.
@@ -2857,6 +2888,57 @@ The `AbcMetaToken` array includes the following properties:
 | currencyCode | `String` | The human readable string to describe the denomination. |
 | denominations | `Array` | An array of AbcDenomination objects of the possible denominations for this currency |
 | symbolImage | `String` | Base64 encoded png or jpg image of the currency symbol (optional) |
+
+### parseUri
+
+```javascript
+const abcParsedUri = currencyPlugin.parseUri("bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.2345&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X&label=Mom")
+
+console.log(abcParsedUri.publicAddress) // -> 1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs
+console.log(abcParsedUri.nativeAmount) // -> '123456700'
+console.log(abcParsedUri.metadata.name) // -> 'Mom'
+console.log(abcParsedUri.paymentProtocolURL) // -> https://bitpay.com/i/7TEzdBg6rvsDVtWjNQ3C3X
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| uri | `String` | URI to parse |
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| abcParsedUri | [`ABCParsedUri`](#abcparseduri) | Object with parsed parameters |
+
+Parses a URI extracting various elements into an [ABCParsedUri](#abcparseduri) object
+
+### encodeUri
+
+```javascript
+// Example
+const abcParsedUri = {
+  publicAddress: '1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs',
+  nativeAmount: '123456700',
+  metadata: {
+    name: 'Mom'
+  },
+  paymentProtocolURL: 'https://bitpay.com/i/7TEzdBg6rvsDVtWjNQ3C3X'
+}
+
+const uri = currencyPlugin.encodeUri(abcParsedUri)
+
+console.log(uri)
+// ->  "bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.2345&label=Mom&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X")
+
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| abcParsedUri | [`ABCParsedUri`](#abcparseduri) | Object with parsed parameters |
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| uri | `String` | URI output |
+
+Encodes a URI given a [ABCParsedUri](#abcparseduri) object
 
 ### createPrivateKey
 

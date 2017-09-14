@@ -2742,10 +2742,10 @@ Note: The `io` object passed in the `options` structure contains a `folder` memb
 
 ```javascript
 // SDK users should do this:
-import { ethereumPlugin } from 'airbitz-currency-ethereum'
+import { EthereumCurrencyPluginFactory } from 'airbitz-currency-ethereum'
 
 const context = makeContext({
-  plugins: [ethereumPlugin]
+  plugins: [ EthereumCurrencyPluginFactory ]
 })
 
 // Inside the `makeContext` function, this is what happens:
@@ -2756,12 +2756,21 @@ Cryptocurrency functionality for [`ABCCurrencyWallet`](#abccurrencywallet) is pr
 
 The `ABCCurrencyPlugin` object provides all the functionality needed to integrate the currency into the user interface, manage keys, and handle URI's. It also provides the ability to create `ABCTxEngine` objects, which provide the send, receive, and transaction history functionality for individual wallets.
 
+### pluginName
+
+Simple unique string representing the currency supported by this plugin. Will be used for comparison of uniqueness
+against other plugins.
+
+ie.
+
+```javascript
+console.log(currencyPlugin.pluginName) // => "ethereum"
+```
+
 ### currencyInfo
 
 ```javascript
-const details = currencyPlugin.currencyInfo
-
-console.log(details)
+console.log(currencyPlugin.currencyInfo)
 "
 {
   walletTypes: [

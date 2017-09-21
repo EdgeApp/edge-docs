@@ -16,12 +16,49 @@ search: true
 ---
 # Introduction
 
-AirbitzCore (ABC) is a Javascript/ObjC/Java client-side blockchain and Edge Security SDK providing auto-encrypted and auto-backed up accounts and wallets with zero-knowledge security and privacy. All blockchain/bitcoin private and public keys are fully encrypted by the users' credentials before being backed up on to peer to peer servers.
+AirbitzCore (ABC) is a Javascript/ObjC client-side blockchain and Edge Security SDK providing auto-encrypted and auto-backed up accounts and wallets with zero-knowledge security and privacy. All blockchain/bitcoin private and public keys are fully encrypted by the users' credentials before being backed up on to peer to peer servers.
 
 ABC allows developers to apply client-side data security, encrypted such that only the end-user can access the data. The Airbitz ABCAccount object allows developers to store arbitrary Edge-Secured data on the user’s account which is automatically encrypted, automatically backed up, and automatically synchronized between the user’s authenticated devices.
 
 To get started, you’ll first need an API key. Get one at our [developer portal.](https://developer.airbitz.co)
 
+## Documentation/API conventions
+
+Documention and examples include parameter types in Flow style syntax. Due to Flow types not being standard Javascript, copy pasting of example code will fail under most environments except for React Native.
+
+All asynchronous function methods are capable of either a callback or Promise style interface. If a callback is passed as the final parameter to an asynchronous routine, the callback parameters will use a NodeJS callback style with the first parameter being the `error` object followed by the return parameter or object. If the `callback` parameter is omitted, the routine will return a Promise that resolves to the return value.
+
+```javascript
+// Example callback style
+abcContext.accountHasPassword("JoeHomey", function (error, hasPassword) {
+    if (error) {
+      // Error
+    } else {
+      if (hasPassword) {
+        // This account has a password
+      }
+    }
+})
+
+// Example promise style
+abcContext.accountHasPassword("JoeHomey").then(hasPassword => {
+  if (hasPassword) {
+    // This account has a password
+  }
+}).catch(error => {
+  // Error
+})
+
+// Example using async/await syntax
+try {
+  const hasPassword = await abcContext.accountHasPassword("JoeHomey")
+  if (hasPassword) {
+    // This account has a password
+  }
+} catch(error) {
+  // Error  
+}
+```
 # Airbitz Login System
 
 The Airbitz login system provides a way to backup and retrieve encrypted private keys. Users can login in using various methods:
@@ -36,24 +73,20 @@ A single account (username and password) can log into multiple applications, eac
 
 * Airbitz git repos for account settings
 * Airbitz git repos for wallet metadata
-* Public blockchains, like Bitcoin
+* Public blockchains, like Bitcoin and Ethereum
 * BitId identities
 
-Airbitz provides a separate wallet API for working with these keys once they've been retrieved by the login system.
+Airbitz provides a separate wallet API for working with these keys once they have been retrieved by the login system.
 
 ## Install the SDK
 
 See the following Github repos for your various development environments. Installation instructions are in the README.md files
 
-[Javascript](https://github.com/Airbitz/airbitz-core-js)
+[Javascript](https://github.com/Airbitz/airbitz-core-js-ui)
 
-[Objective-C](https://github.com/Airbitz/airbitz-core-objc)
+[Objective-C (deprecated)](https://github.com/Airbitz/airbitz-core-objc)
 
-[Java/Android](https://github.com/Airbitz/airbitz-core-java)
-
-```objc
-#import "ABCContext.h"
-```
+[Java/Android (deprecated)](https://github.com/Airbitz/airbitz-core-java)
 
 ## Platform-specific IO
 
@@ -129,12 +162,6 @@ const abcContext = abc.makeContext({
   appId: 'com.yourname.yourapp',
   io: myPlatformSpecificIo
 })
-```
-
-```objc
-+(ABCContext *) makeABCContext:(NSString *)abcAPIKey type:(NSString *)type hbits:(NSString *)hbitsKey
-
-ABCContext *abcContext = [ABCContext makeABCContext:@"your-api-key-here" type:@"account:repo:com.mydomain.myapp" hbits:null];
 ```
 
 Initialize and create an ABCContext object. Required for functionality of ABC SDK.
@@ -313,11 +340,11 @@ ABCAccount *abcAccount;
 }];
 ```
 
-Login to an Airbitz account with a full password. May optionally send 'otp' key which is required for any accounts that have OTP enabled using [ABCAccount.enableOTP](#enableotp). OTP key can be retrieved from a device that has account logged in and OTP enabled using getOTPLocalKey.
+Login to an Airbitz account with a full password. May optionally send 'otp' key which is required for any accounts that have OTP enabled using [ABCAccount.enableOtp](#enableotp). OTP key can be retrieved from a device that has account logged in and OTP enabled using getOtpLocalKey.
 
-If routine returns with error.code == ABCConditionCodeInvalidOTP, then the account has OTP enabled and needs the OTP key specified in parameter 'otp'. ABCError object may have properties otpResetToken and otpResetDate set which allow the user to call requestOTPReset to disable OTP.
+If routine returns with error.code == ABCConditionCodeInvalidOTP, then the account has OTP enabled and needs the OTP key specified in parameter 'otp'. ABCError object may have properties otpResetToken and otpResetDate set which allow the user to call requestOtpReset to disable OTP.
 
-This routine allows caller to receive back an error.otpResetToken which is used with requestOTPReset to remove OTP from the specified account.
+This routine allows caller to receive back an error.otpResetToken which is used with requestOtpReset to remove OTP from the specified account.
 
 The otpResetToken is only returned if the caller has provided the correct username and password but the account had OTP enabled. error.otpResetDate is the date when the account OTP will be disabled if a prior OTP reset was successfully requested. The reset date is set by default to 7 days from when a reset was initially requested.
 
@@ -626,46 +653,26 @@ Checks if PIN login is possible for the given username. This checks if there is 
 | error | [`ABCError`](#abcerror) | Error object. `null` if no error |
 | enabled | `Boolean` | True if PIN login is enabled |
 
-### requestOTPReset
+### requestOtpReset
 
 ```javascript
-abcContext.requestOTPReset(username, otpResetToken, callback)
+abcContext.requestOtpReset(username: string, otpResetToken: string): Promise<void>
 
 // Example
-abcContext.requestOTPReset("JoeHomey", "ZR2G9d8TYW8DH6", function (error) {
-    if (!error) {
-      // Yay
-    }
-})
+try {
+  await abcContext.requestOtpReset("JoeHomey", "ZR2G9d8TYW8DH6")
+} catch (error) {
+  console.log(error)
+}
 ```
-
-```objc
-- (void)requestOTPReset:(NSString *)username
-                  token:(NSString *)otpResetToken
-               callback:(void (^)(ABCError *error)) callback;
-
-// Example
-[abc requestOTPReset:@"JoeHomey" token:@"ZR2G9d8TYW8DH6" callback:^(ABCError *error)
-{
-    if (!error)
-        // Yay. Now to wait until the timeout expires to login again.
-}];
-```
-
-Launches an OTP reset timer on the server, which will disable the OTP authentication requirement on the account `username` when timeout expires. The expiration timeout is set when OTP is first enabled using [ABCAccount.enableOTP](#enableotp).
+Launches an OTP reset timer on the server, which will disable the OTP authentication requirement on the account `username` when timeout expires. The expiration timeout is set when OTP is first enabled using [AbcAccount.enableOtp](#enableotp).
 
 To obtain an otpResetToken, attempt a login into the OTP protected account using loginWithPassword with the correct username/password. The login should fail with error.code == ABCConditionCodeInvalidOTP. The OTP token will be in the error.otpResetToken property of the ABCError object.
-
 
 | Param | Type | Description |
 | --- | --- | --- |
 | username | `String` | Account username |
 | otpResetToken | `String` | Reset token from loginWithPassword |
-| callback | `Callback` | (Javascript) Callback function when routine completes |
-
-| Return Param | Type | Description |
-| --- | --- | --- |
-| error | [`ABCError`](#abcerror) | Error object. `null` if no error |
 
 ### getCurrencyPlugins
 
@@ -906,29 +913,20 @@ Enable or disable PIN login on this account. Set enable = YES to allow PIN login
 | error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 
 
-### setupOTPKey
+### setupOtpKey
 
 ```javascript
-abcAccount.setupOTPKey(key, callback)
+abcAccount.setupOtpKey(key: string):Promise<void>
 
 // Example
-abcAccount.setupOTPKey(key, function (error) {
-    if (error) {
-      // Failed
-    } else {
-      // Yay. Success
-    }
-})
+try {
+  await abcAccount.setupOtpKey(key)
+} catch (error) {
+  console.log(error)
+}
 ```
 
-```objc
-- (ABCError *) setupOTPKey:(NSString *)key;
-
-// Example
-ABCError *error = [abcAccount setupOTPKey:key];
-```
-
-Associates an OTP key with the currently logged in account. An OTP key can be retrieved from a previously logged in account using otpLocalKeyGet. The account must have had OTP enabled by using otpEnable().
+Associates an OTP key with the currently logged in account. An OTP key can be retrieved from a previously logged in account using AbcAccount.getOtpLocalKey. The account must have had OTP enabled by using otpEnable().
 
 This method is primarily used to add an OTP key to an account & device that was successfully logged in prior to OTP being enabled. A second device may have enabled OTP which would cause OTP warnings on the first device upon login.
 
@@ -938,189 +936,102 @@ Device B login to account "bob".
 Device B enables OTP.
 
 Device A can still login but will get OTP token notification warnings and will be unable to make any account changes such as changing password/PIN or creating new wallets.
-Device B can call getOTPLocalKey and Device A can add the OTP key using setupOTPKey
-
+Device B can call getOtpLocalKey and Device A can add the OTP key using setupOtpKey
 
 | Param | Type | Description |
 | --- | --- | --- |
 | key | `String` | OTP key |
-| callback | `Callback` | (Javascript) Callback function |
 
-| Return Param | Type | Description |
-| --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
-
-
-### getOTPLocalKey
+### getOtpLocalKey
 
 ```javascript
-abcAccount.getOTPLocalKey(callback)
+abcAccount.getOtpLocalKey(): Promise<string>
 
 // Example
-abcAccount.getOTPLocalKey(key, function (error, key) {
-    if (!error) {
-      // Yay. Success
-      console.log("My key is: " + key)
-    }
-})
-```
 
-```objc
-- (NSError *) getOTPLocalKey:(BOOL)enable;
-
-// Example
-ABCError *error;
-NSString *key = [abcAccount getOTPLocalKey:&error];
+try {
+  const key = await abcAccount.getOtpLocalKey()
+  console.log("My key is: " + key)
+} catch (error) {
+  console.log(error)
+}
 ```
 
 Gets the locally saved OTP key for the current user
 
-| Param | Type | Description |
+| Promise Return Param | Type | Description |
 | --- | --- | --- |
-| callback | `Callback` | (Javascript) Callback function |
-
-| Return Param | Type | Description |
-| --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 | key | `String` | OTP key |
 
 
-### getOTPDetails
+### getOtpDetails
 
 ```javascript
-abcAccount.getOTPDetails(callback)
+abcAccount.getOtpDetails(): Promise<{enabled: boolean, timeout: number}>
 
 // Example
-abcAccount.getOTPDetails(function (error, enabled, timeout) {
-    // Do something with 'enabled' or 'timeout'
-})
+try {
+  const details = await abcAccount.getOtpDetails()
+} catch (error) {
+  console.log(error)  
+}
 ```
 
-```objc
-- (ABCError *)getOTPDetails:(bool *)enabled
-                   timeout:(long *)timeout;
+Reads the OTP configuration from the server. Gets information on whether OTP is enabled for the current account, and how long a reset request will take. An OTP reset is a request to disable OTP made through the method AbcContext.requestOtpReset.
 
-// Example
-BOOL enabled = NO;
-long timeout = 0;
-
-ABCError *error = [abcAccount getOTPDetails:&enabled
-                                    timeout:&timeout];
-```
-
-Reads the OTP configuration from the server. Gets information on whether OTP is enabled for the current account, and how long a reset request will take. An OTP reset is a request to disable OTP made through the method ABCContext.requestOTPReset.
-
-| Param | Type | Description |
+| Promise Return Param | Type | Description |
 | --- | --- | --- |
-| callback | `Callback` | (Javascript) Callback function |
-
-| Return Param | Type | Description |
-| --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 | enabled | `Boolean` | True if OTP is enabled on this accout |
-| timeout | `Number` | Number seconds required after a reset is requested before OTP is disabled (iOS only. Android returns 0) |
+| timeout | `Number` | Number seconds required after a reset is requested before OTP is disabled |
 
 
-### enableOTP
+### enableOtp
 
 ```javascript
-abcAccount.enableOTP(timeout, callback)
+abcAccount.enableOtp(timeout): Promise<void>
 
 // Example
-abcAccount.enableOTP(timeout, function (error) {
-    if (error) {
-      // Failed
-    } else {
-      // Yay. Success
-    }
-})
+try {
+  await abcAccount.enableOtp(timeout)
+} catch (error) {
+  console.log(error)  
+}
 ```
-
-```objc
-- (ABCError *)enableOTP:(long)timeout;
-
-// Example
-#define OTP_RESET_DELAY (60 * 60 * 24 * 7) // 7 days
-
-ABCError *error;
-error = [abcAccount enableOTP:OTP_RESET_DELAY];
-```
-
 Sets up OTP authentication on the server for currently logged in user. This will generate a new token if the username doesn't already have one.
 
 | Param | Type | Description |
 | --- | --- | --- |
 | timeout | `Number` | Number seconds required after a reset is requested before OTP is disabled |
-| callback | `Callback` | (Javascript) Callback function |
 
-| Return Param | Type | Description |
-| --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
-
-
-### disableOTP
+### disableOtp
 
 ```javascript
-abcAccount.disableOTP(callback)
+abcAccount.disableOtp(): Promise<void>
 
 // Example
-abcAccount.disableOTP(function (error) {
-    if (error) {
-      // Failed
-    } else {
-      // Yay. Success
-    }
-})
-```
-
-```objc
-- (ABCError *)disableOTP;
-
-// Example
-ABCError *error = [abcAccount disableOTP];
+try {
+  await abcAccount.disableOtp()
+} catch (error) {
+  console.log(error)  
+}
 ```
 
 Removes the OTP authentication requirement from the server for the currently logged in user. Also removes local key from device
 
-| Param | Type | Description |
-| --- | --- | --- |
-| callback | `Callback` | (Javascript) Callback function |
-
-| Return Param | Type | Description |
-| --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
-
-### cancelOTPResetRequest
+### cancelOtpResetRequest
 
 ```javascript
-abcAccount.cancelOTPResetRequest(callback)
+abcAccount.cancelOtpResetRequest(): Promise<void>
 
 // Example
-abcAccount.cancelOTPResetRequest(function (error) {
-    if (error) {
-      // Failed
-    } else {
-      // Yay. Success
-    }
-})
+try {
+  await abcAccount.cancelOtpResetRequest()
+} catch (error) {
+  console.log(error)  
+}
 ```
 
-```objc
-- (ABCError *)cancelOTPResetRequest;
-
-// Example
-ABCError *error = [abcAccount cancelOTPResetRequest];
-```
-
-Removes the OTP reset request from the server for the currently logged in user. When a user logs in on a new device for an account with OTP enabled, the login will fail with ABCConditionCodeInvalidOTP. A reset request can then be made using ABCContext.requestOTPReset. cancelOTPResetRequest allows a logged in user to cancel that request and prevent that device from logging in.
-
-| Param | Type | Description |
-| --- | --- | --- |
-| callback | `Callback` | (Javascript) Callback function |
-
-| Return Param | Type | Description |
-| --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
+Removes the OTP reset request from the server for the currently logged in user. When a user logs in on a new device for an account with OTP enabled, the login will fail with ABCConditionCodeInvalidOTP. A reset request can then be made using ABCContext.requestOtpReset. cancelOtpResetRequest allows a logged in user to cancel that request and prevent that device from logging in.
 
 ### signBitIDRequest
 
@@ -1135,19 +1046,6 @@ abcAccount.signBitIDRequest("bitid://airbitz.co/developer?nonce=12345",
     console.log("Signature = " + abcSignature.signature)
   }
 })
-```
-
-```objc
-- (ABCError *)enableOTP:(long)timeout;
-
-// Example
-ABCBitIDSignature *abcSignature;
-abcSignature = [abcAccount signBitIDRequest:@"bitid://airbitz.co/developer?nonce=12345"
-                                    message:@"Hello World"];
-if (!error) {
-  NSLog(@"Public address of signature = %@", abcSignature.address)
-  NSLog(@"Signature = %@", abcSignature.signature)
-}
 ```
 
 Sign an arbitrary message with a BitID URI. The URI determines the key derivation used to sign the message.

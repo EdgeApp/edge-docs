@@ -3007,6 +3007,26 @@ abcTxEngine.enableTokens(tokens).catch(handleError)
 
 Enable support for meta tokens (ie. counterparty, colored coin, ethereum ERC20). Library should begin checking the blockchain for the specified tokens and triggering the callbacks specified in [`currencyPlugin.makeEngine`](#makeengine).
 
+### enabledTokens
+
+```javascript
+enabledTokens():Promise<Array<string>>
+
+// Example
+try {
+  const tokens = await abcTxEngine.enabledTokens()
+  console.log(tokens) // => ['WINGS', 'REP']
+} catch (error) {
+  console.log(error)
+}
+```
+
+| Promise Return Param | Type | Description |
+| --- | --- | --- |
+| tokens | `Array<string>` | Array of strings of token currency codes. |
+
+Query the library for the currently enabled tokens.
+
 ### getBlockHeight
 
 ```javascript

@@ -3184,7 +3184,7 @@ console.log(addressObj) // =>
 
 "
 { 
-  'address': '1EiwDW9VjTUbLJtuPYUkbj5fJDnc36WKdz', 
+  'publicAddress': '1EiwDW9VjTUbLJtuPYUkbj5fJDnc36WKdz', 
   'segwitAddress': 'bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4'
 }
 "
@@ -3200,7 +3200,7 @@ console.log(addressObj) // =>
 
 | Return | Type | Description |
 | --- | --- | --- |
-| addressObj | `Object` | Object of type `{ address: string, segwitAddress?: string }` |
+| addressObj | `Object` | Object of type `{ publicAddress: string, segwitAddress?: string }` |
 
 Returns an address object that has never received funds
 

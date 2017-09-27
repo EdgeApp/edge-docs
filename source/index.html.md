@@ -2212,11 +2212,62 @@ const abcSpendInfo = {
   ]
 }
 
-abcCurrencyWallet.makeSpend(abcSpendInfo).then(abcTransaction => {
-  abcCurrencyWallet.signBroadcastAndSave(abcTransaction).then(() => {
+srcWallet.makeSpend(abcSpendInfo).then(abcTransaction => {
+  srcWallet.signBroadcastAndSave(abcTransaction).then(() => {
     console.log("Sent transaction with ID = " + abcTransaction.txid)
   })
 })
+
+// Example BTC -> ETH currency exchange between wallets specifying the destination amount
+const walletIds = abcAccount.listWalletIds()
+const srcWallet = abcAccount.getWallet(walletId[0]) // BTC wallet
+const destWallet = abcAccount.getWallet(walletId[1]) // ETH wallet
+
+const abcSpendInfo = {
+  networkFeeOption: 'high',
+  currencyCode: 'BTC',
+  spendTargets: [
+    {
+      destWallet,
+      currencyCode: 'ETH',
+      nativeAmount: '1200000000000000000' // 1.2 ETH
+    }
+  ]
+}
+
+try {
+  let abcTransaction = await srcWallet.makeSpend(abcSpendInfo)
+  abcTransaction = await srcWallet.signBroadcastAndSave(abcTransaction)
+  console.log("Sent transaction with ID = " + abcTransaction.txid)
+} catch (error) {
+  console.log(error)
+}
+
+// Example REP -> BCH currency exchange between wallets specifying the source amount
+const walletIds = abcAccount.listWalletIds()
+const srcWallet = abcAccount.getWallet(walletId[0]) // ETH/REP wallet
+const destWallet = abcAccount.getWallet(walletId[1]) // BCH wallet
+
+const abcSpendInfo = {
+  networkFeeOption: 'high',
+  currencyCode: 'REP',
+  nativeAmount: '1200000000000000000', // 1.2 REP
+  spendTargets: [
+    {
+      destWallet,
+      currencyCode: 'BCH'
+    }
+  ]
+}
+
+try {
+  let abcTransaction = await srcWallet.makeSpend(abcSpendInfo)
+  abcTransaction = await srcWallet.signBroadcastAndSave(abcTransaction)
+  console.log("Sent transaction with ID = " + abcTransaction.txid)
+} catch (error) {
+  console.log(error)
+}
+
 ```
 
 | Param | Type | Description |
@@ -2443,9 +2494,10 @@ Parameters
 | spendTargets | `Array` | Array of [ABCSpendTarget](#abcspendtarget) objects |
 | networkFeeOption | `String` | Adjusts network fee amount. Must be either "low", "standard", "high", or "custom". If unspecified, the default is "standard" |
 | customNetworkFee | `String` | Amount of per byte network fee if `networkFeeOption` is set to `custom`. Should be specified as smallest denomination of currency, as a string (i.e. Satoshis or Wei) |
+| nativeAmount | `String` | (Optional) Only used for currency exchange (ie. Shapeshift) to specify the amount to exchange using the source currency instead of the destination currency. It is an error to specify `nativeAmount` in AbcSpendInfo if it is also specified in an AbcSpendTarget.
 | metadata | [`ABCMetadata`](#abcMetadata) | [ABCMetadata](#abcMetadata) object. Outgoing transaction will have the specified metadata copied to the [ABCTransaction](#abctransaction) object |
 
-Parameter object used for creating an [ABCSpend](#abcspend) object.
+Parameter object used for creating an unsigned [ABCTransaction](#abctransaction) object.
 
 ## ABCSpendTarget
 

@@ -3126,7 +3126,16 @@ The `options` parameter may include the following:
 ### getFreshAddress
 
 ```javascript
-const address = abcTxEngine.getFreshAddress(options)
+const addressObj = abcTxEngine.getFreshAddress(options)
+
+console.log(addressObj) // =>
+
+"
+{ 
+  'address': '1EiwDW9VjTUbLJtuPYUkbj5fJDnc36WKdz', 
+  'segwitAddress': 'bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4'
+}
+"
 ```
 
 | Param | Type | Description |
@@ -3139,9 +3148,9 @@ const address = abcTxEngine.getFreshAddress(options)
 
 | Return | Type | Description |
 | --- | --- | --- |
-| address | `String` | Public address |
+| addressObj | `Object` | Object of type `{ address: string, segwitAddress?: string }` |
 
-Returns an address that has never received funds
+Returns an address object that has never received funds
 
 ### addGapLimitAddresses
 

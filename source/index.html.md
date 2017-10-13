@@ -912,6 +912,28 @@ Enable or disable PIN login on this account. Set enable = YES to allow PIN login
 | --- | --- | --- |
 | error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 
+### fetchLobby
+
+```javascript
+const abcLobby = await abcAccount.fetchLobby(lobbyId)
+
+if (abcLobby.loginRequest) {
+  // Show the request to the user...
+
+  await abcLobby.loginRequest.approve()
+  await abcLobby.sendReply()
+}
+```
+
+Retrieves an edge-login or wallet-sharing request from the Airbitz lobby server. The `lobbyId` can be found in the edge-login QR code.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| lobbyId | `string` | The lobby id, extracted from an edge-login QR code. |
+
+| Return Param | Type | Description |
+| --- | --- | --- |
+| abcLobby | [`Promise<AbcLobby>`](#abclobby) | The lobby object. |
 
 ### setupOtpKey
 
@@ -1270,6 +1292,60 @@ Callback routines that notify application when various changes have occurred in 
 | onOTPRequired() | `Function` | Another device has enabled OTP, and this device does not have the correct OTP token. The GUI should notify the user and give them an opportunity to scan the OTP barcode if they desire. |
 | onOTPSkew() | `Function` | This device's clock is out-of-sync with the Airbitz servers. The user should be notified to fix their clock. Otherwise, if the skew gets worse, they may not be able to log in again. |
 | onRemotePasswordChange() | `Function` | The account password has been changed by a remote device. The GUI should notify the user and give them an opportunity to log in again, which will activate the change on this device as well. Otherwise, this device will continue to have the old password. |
+
+## AbcLobby
+
+```javascript
+interface AbcLobby {
+  loginRequest?: AbcLoginRequest,
+  walletRequest?: AbcWalletRequest, // Not supported at this time
+
+  sendReply(): Promise<void>
+}
+```
+
+To perform an edge login, an app creates a "lobby" on the Airbitz server. This lobby contains the public keys for the reply encryption, as well as information about what the request is for. A logged-in wallet can download this wallet, validate the request, and post a reply back to the lobby.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| loginRequest | [`AbcLoginRequest`](#abcloginrequest) | A login request, if the user is trying to log in. |
+| walletRequest | `AbcWalletRequest` | A wallet request, if the user wants a wallet. |
+
+### sendReply
+
+```javascript
+const abcLobby = await abcAccount.fetchLobby(lobbyId)
+
+if (abcLobby.loginRequest) {
+  // Show the request to the user...
+
+  await abcLobby.loginRequest.approve()
+  await abcLobby.sendReply()
+}
+```
+
+After the user has inspected and approved any login or wallet-sharing requests, they should call `sendReply` to complete the login or wallet-sharing process. A lobby can request multiple things at once, such as a login and a wallet to go with it, but the user can choose to only approve a subset of these things.
+
+| Return | Type | Description |
+| --- | --- | --- |
+| return | `Promise<void>` | Resolves once the upload is complete. |
+
+## AbcLoginRequest
+
+```javascript
+interface AbcLoginRequest {
+  appId: string,
+  approve(): Promise<void>,
+
+  // Deprecated:
+  displayName: string,
+  displayImageUrl: string
+}
+```
+
+If a user is requesting an edge login, their lobby will contain this object. Calling the `approve` method will prepare the requested login keys and place them in the lobby. To complete the login, call `sendReply` on the lobby.
+
+The `displayName` and `displayImageUrl` are easily spoofable, which makes it easy for partner sites to request keys that do not belong to them. To prevent "login phishing", we need to remove these members and provide a `getInfoForAppId(appId)` function, which looks up display info from `developer.airbitz.co` (which we monitor). This way, the display info always matches the appId. In the mean time, we have to trust our parner sites not to send the wrong appId, and we have to trust our users not to fall for phishing sites.
 
 ## ABCBitIDSignature
 
@@ -2194,9 +2270,10 @@ abcCurrencyWallet.makeSpend(abcSpendInfo).then(abcTransaction => {
 })
 
 // Example wallet to wallet transfer
-const walletIds = abcAccount.listWalletIds()
-const srcWallet = abcAccount.getWallet(walletId[0]) // Add check for null and correct wallet type
-const destWallet = abcAccount.getWallet(walletId[1]) // Add check for null and correct wallet type
+// (assuming these wallets are not `undefined`)
+const walletIds = abcAccount.activeWalletIds
+const srcWallet = abcAccount.currencyWallets[walletIds[0]]
+const destWallet = abcAccount.currencyWallets[walletIds[1]]
 
 const abcSpendInfo = {
   networkFeeOption: 'high',
@@ -2219,9 +2296,9 @@ srcWallet.makeSpend(abcSpendInfo).then(abcTransaction => {
 })
 
 // Example BTC -> ETH currency exchange between wallets specifying the destination amount
-const walletIds = abcAccount.listWalletIds()
-const srcWallet = abcAccount.getWallet(walletId[0]) // BTC wallet
-const destWallet = abcAccount.getWallet(walletId[1]) // ETH wallet
+const walletIds = abcAccount.activeWalletIds
+const srcWallet = abcAccount.currencyWallets[walletIds[0]] // ETH/REP wallet
+const destWallet = abcAccount.currencyWallets[walletIds[1]] // BCH wallet
 
 const abcSpendInfo = {
   networkFeeOption: 'high',

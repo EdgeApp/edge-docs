@@ -2194,9 +2194,10 @@ abcCurrencyWallet.makeSpend(abcSpendInfo).then(abcTransaction => {
 })
 
 // Example wallet to wallet transfer
-const walletIds = abcAccount.listWalletIds()
-const srcWallet = abcAccount.getWallet(walletId[0]) // Add check for null and correct wallet type
-const destWallet = abcAccount.getWallet(walletId[1]) // Add check for null and correct wallet type
+// (assuming these wallets are not `undefined`)
+const walletIds = abcAccount.activeWalletIds
+const srcWallet = abcAccount.currencyWallets[walletIds[0]]
+const destWallet = abcAccount.currencyWallets[walletIds[1]]
 
 const abcSpendInfo = {
   networkFeeOption: 'high',
@@ -2219,9 +2220,9 @@ srcWallet.makeSpend(abcSpendInfo).then(abcTransaction => {
 })
 
 // Example BTC -> ETH currency exchange between wallets specifying the destination amount
-const walletIds = abcAccount.listWalletIds()
-const srcWallet = abcAccount.getWallet(walletId[0]) // BTC wallet
-const destWallet = abcAccount.getWallet(walletId[1]) // ETH wallet
+const walletIds = abcAccount.activeWalletIds
+const srcWallet = abcAccount.currencyWallets[walletIds[0]] // ETH/REP wallet
+const destWallet = abcAccount.currencyWallets[walletIds[1]] // BCH wallet
 
 const abcSpendInfo = {
   networkFeeOption: 'high',

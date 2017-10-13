@@ -921,7 +921,6 @@ if (abcLobby.loginRequest) {
   // Show the request to the user...
 
   await abcLobby.loginRequest.approve()
-  await abcLobby.sendReply()
 }
 ```
 
@@ -1299,36 +1298,15 @@ Callback routines that notify application when various changes have occurred in 
 interface AbcLobby {
   loginRequest?: AbcLoginRequest,
   walletRequest?: AbcWalletRequest, // Not supported at this time
-
-  sendReply(): Promise<void>
 }
 ```
 
-To perform an edge login, an app creates a "lobby" on the Airbitz server. This lobby contains the public keys for the reply encryption, as well as information about what the request is for. A logged-in wallet can download this wallet, validate the request, and post a reply back to the lobby.
+To perform an edge login, an app creates a "lobby" on the Airbitz server. This lobby contains the public keys for the reply encryption, as well as information about what the request is for. A logged-in wallet can download this lobby, validate the request, and post a reply back to the server.
 
 | Property | Type | Description |
 | --- | --- | --- |
 | loginRequest | [`AbcLoginRequest`](#abcloginrequest) | A login request, if the user is trying to log in. |
 | walletRequest | `AbcWalletRequest` | A wallet request, if the user wants a wallet. |
-
-### sendReply
-
-```javascript
-const abcLobby = await abcAccount.fetchLobby(lobbyId)
-
-if (abcLobby.loginRequest) {
-  // Show the request to the user...
-
-  await abcLobby.loginRequest.approve()
-  await abcLobby.sendReply()
-}
-```
-
-After the user has inspected and approved any login or wallet-sharing requests, they should call `sendReply` to complete the login or wallet-sharing process. A lobby can request multiple things at once, such as a login and a wallet to go with it, but the user can choose to only approve a subset of these things.
-
-| Return | Type | Description |
-| --- | --- | --- |
-| return | `Promise<void>` | Resolves once the upload is complete. |
 
 ## AbcLoginRequest
 
@@ -1337,15 +1315,14 @@ interface AbcLoginRequest {
   appId: string,
   approve(): Promise<void>,
 
-  // Deprecated:
   displayName: string,
   displayImageUrl: string
 }
 ```
 
-If a user is requesting an edge login, their lobby will contain this object. Calling the `approve` method will prepare the requested login keys and place them in the lobby. To complete the login, call `sendReply` on the lobby.
+If a user is requesting an edge login, their lobby will contain this object. Calling the `approve` method will send the required keys to the requesting application.
 
-The `displayName` and `displayImageUrl` are easily spoofable, which makes it easy for partner sites to request keys that do not belong to them. To prevent "login phishing", we need to remove these members and provide a `getInfoForAppId(appId)` function, which looks up display info from `developer.airbitz.co` (which we monitor). This way, the display info always matches the appId. In the mean time, we have to trust our parner sites not to send the wrong appId, and we have to trust our users not to fall for phishing sites.
+In the future, `AbcLoginRequest` may contain information about the wallet types the requesting application wants. When this happens, the `approve` method will begin accepting an `opts` parameter to specify which wallets the user wishes to share.
 
 ## ABCBitIDSignature
 

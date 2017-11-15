@@ -3,8 +3,6 @@ title: AirbitzCore API/SDK Reference
 
 language_tabs:
   - javascript: Javascript
-  - objective_c: Objective C
-  - java: Java/Android
 
 toc_footers:
   - <a href='https://developer.airbitz.co'>Sign Up for a Developer Key</a>
@@ -83,10 +81,6 @@ Airbitz provides a separate wallet API for working with these keys once they hav
 See the following Github repos for your various development environments. Installation instructions are in the README.md files
 
 [Javascript](https://github.com/Airbitz/airbitz-core-js-ui)
-
-[Objective-C (deprecated)](https://github.com/Airbitz/airbitz-core-objc)
-
-[Java/Android (deprecated)](https://github.com/Airbitz/airbitz-core-java)
 
 ## Platform-specific IO
 
@@ -208,33 +202,6 @@ abcContext.createAccount(
     }
   }
 })
-```
-
-```objc
--(void) createAccount:(NSString *) username
-             password:(NSString *) password
-                  pin:(NSString *) pin
-             delegate:(ABCAccountDelegate) delegate
-             callback:^(ABCError *error, ABCAccount *account)
-
-// Example
-ABCAccount *abcAccount;
-
-[abcContext createAccount:@"myUsername"
-                 password:@"myNot5oGoodPassw0rd"
-                      pin:@"2946"
-                 delegate:self
-                 callback:^(ABCError *error, ABCAccount *account)
-{
-    if (error)
-    {
-        abcAccount = account;
-    }
-    else
-    {
-        // Yikes
-    }
-}];
 ```
 
 Create and log into a new ABCAccount

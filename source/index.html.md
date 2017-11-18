@@ -2851,7 +2851,8 @@ The `currencyInfo` property should be an object with the following properties de
 | addressExplorer | `String` | Full URL of explorer to give info on a specific address. ie. `https://etherscan.io/address/%s` |
 | transactionExplorer | `String` | Full URL of explorer to give info on a specific tx. ie. `https://etherscan.io/tx/%s` |
 | denominations | `Array` | An array of AbcDenomination objects of the possible denominations for this currency |
-| symbolImage | `String` | Base64 encoded png or jpg image of the currency symbol (optional) |
+| symbolImage | `String` | Base64 encoded png or jpg image of the currency symbol designed to be placed on a dark background (optional) |
+| symbolImageDarkMono | `String` | Base64 encoded png or jpg image of the currency symbol in a monochrome (grey) color over transparent (optional) |
 | metaTokens | `Array` | Array of AbcMetaToken objects describing the supported metatokens |
 | walletTypes | `Array` | Array of strings listing the wallet types that this currency can handle, such as `wallet:ethereum`. Please see the [AbcWalletInfo](#abcwalletinfo) documentation for information about these types. The `makeEngine`, `createPrivateKey`, and `derivePublicKey` methods can handle keys with these types. |
 | defaultSettings | `object` | Default per-currency settings. This acts as a template for the settings that should be passed to [`makeEngine`](#makeengine) and [`updateSettings`](#updatesettings). Optional. |
@@ -2861,7 +2862,7 @@ The `AbcDenomination` object includes the following properties:
 | Property | Type | Description |
 | --- | --- | --- |
 | name | `String` | The human readable string to describe the denomination. |
-| multiplier | `Int` | The value to multiply the smallest unit of currency to get to the denomination. |
+| multiplier | `Number` | The value to multiply the smallest unit of currency to get to the denomination. |
 | symbol | `String` | The human readable 1-3 character symbol of the currency. ie. "Ƀ" |
 | font | `String` | (Optional) The font required to display the symbol specified above. If not given, will use the default system font. |
 
@@ -3009,7 +3010,7 @@ This function creates an [`ABCTxEngine`](#abctxengine) object to send, receive, 
 
 | Options | Type | Description |
 | --- | --- | --- |
-| callbacks | [`ABCTxLibCallbacks`](#abctxlibcallbacks) | Various callbacks when wallet is updated. |
+| callbacks | [`AbcCurrencyPluginCallbacks`](#abccurrencyplugincallbacks) | Various callbacks when wallet is updated. |
 | walletFolder | `Folder` | [Disklet](https://www.npmjs.com/package/disklet) folder for synced and encrypted data. May not be present in certain read-only scenarios. |
 | walletLocalFolder | `Folder` | [Disklet](https://www.npmjs.com/package/disklet) folder for non-encrypted, device-only data. |
 | optionalSettings | `object` | Per-currency settings. The plugin should provide a template for this in its [`currencyInfo`](#currencyinfo). Optional. |
@@ -3316,7 +3317,7 @@ await abcTxEngine.saveTx(abcTransaction)
 
 Saves an already signed [ABCTransaction](#abctransaction) object to the local cache so that funds are considered spent by the wallet. Any future calls to [getTransactions](#gettransactions), [getBalance](#getbalance), or [getNumTransactions](#getNumTransactions) should reflect the outcome of this saved transaction. This routine should also trigger the callback [transactionsChanged](#transactionschanged).
 
-## ABCTxLibCallbacks
+## AbcCurrencyPluginCallbacks
 
 ### onAddressesChecked
 

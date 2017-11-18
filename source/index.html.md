@@ -3245,7 +3245,7 @@ console.log(addressObj) // =>
 | --- | --- | --- |
 | addressObj | `Object` | Object of type `{ publicAddress: string, segwitAddress?: string }` |
 
-Returns an address object that has never received funds
+Returns an address object that has never received funds. `getFreshAddress` will consider any addresses that have been sent to `addGapLimitAddresses` as having received funds and will not return such addresses in this call.
 
 ### addGapLimitAddresses
 

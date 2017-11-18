@@ -2170,6 +2170,7 @@ const uri = makeAddressUri(abcReceiveAddress)
 // Example to spend to two bitcoin addresses
 const abcSpendInfo = {
   networkFeeOption: 'high',
+  currencyCode: 'BTC',
   metadata: {
     name: 'Tyra CPA',
     category: 'Expense:Professional Services'
@@ -2180,37 +2181,33 @@ const abcSpendInfo = {
       nativeAmount: '210000000' // 2.1 BTC
     },
     {
-      currencyCode: 'LTBCOIN',
       publicAddress: '1FSxyn9AbBMwGusKAFqvyS63763tM8KiA2',
-      nativeAmount: '120' // 120 LTBCOIN
+      nativeAmount: '120000000' // 1.2 BTC 
     }
   ]
 }
 
-abcCurrencyWallet.makeSpend(abcSpendInfo).then(abcTransaction => {
-  abcCurrencyWallet.signBroadcastAndSave(abcTransaction).then(() => {
-    console.log("Sent transaction with ID = " + abcTransaction.txid)
-  })
-})
+let abcTransaction: AbcTransaction = await abcCurrencyWallet.makeSpend(abcSpendInfo)
+await abcCurrencyWallet.signBroadcastAndSave(abcTransaction)
+console.log("Sent transaction with ID = " + abcTransaction.txid)
 
 // Example to spend to a BIP70 payment request
 const abcParsedUri = abcAccount.parseUri("bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.000000&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X")
 
-abcCurrencyWallet.getPaymentProtocolInfo(abcParsedUri.paymentProtocolURL, function(error, spendTarget) {
-  abcSpendInfo = {
-    networkFeeOption: 'high',
-    metadata: {
-      name: 'Tyra CPA',
-      category: 'Expense:Professional Services'
-    },
-    spendTargets: [ spendTarget ]
-  }
+let absSpendTarget: AbcSpendTarget = await abcCurrencyWallet.getPaymentProtocolInfo(abcParsedUri.paymentProtocolURL)
+const abcSpendInfo: AbcSpendInfo = {
+  networkFeeOption: 'high',
+  metadata: {
+    name: 'Tyra CPA',
+    category: 'Expense:Professional Services'
+  },
+  spendTargets: [ spendTarget ]
+}
 
-abcCurrencyWallet.makeSpend(abcSpendInfo).then(abcTransaction => {
-  abcCurrencyWallet.signBroadcastAndSave(abcTransaction).then(() => {
-    console.log("Sent transaction with ID = " + abcTransaction.txid)
-  })
-})
+const abcTransaction = abcCurrencyWallet.makeSpend(abcSpendInfo)
+await abcCurrencyWallet.signBroadcastAndSave(abcTransaction)
+
+console.log("Sent transaction with ID = " + abcTransaction.txid)
 
 // Example wallet to wallet transfer
 // (assuming these wallets are not `undefined`)
@@ -2220,6 +2217,7 @@ const destWallet = abcAccount.currencyWallets[walletIds[1]]
 
 const abcSpendInfo = {
   networkFeeOption: 'high',
+  currencyCode: 'BTC',
   metadata: {
     name: 'Transfer to College Fund',
     category: 'Transfer:Wallet:College Fund'
@@ -2232,11 +2230,9 @@ const abcSpendInfo = {
   ]
 }
 
-srcWallet.makeSpend(abcSpendInfo).then(abcTransaction => {
-  srcWallet.signBroadcastAndSave(abcTransaction).then(() => {
-    console.log("Sent transaction with ID = " + abcTransaction.txid)
-  })
-})
+const abcTransaction = await srcWallet.makeSpend(abcSpendInfo)
+await srcWallet.signBroadcastAndSave(abcTransaction)
+console.log("Sent transaction with ID = " + abcTransaction.txid)
 
 // Example BTC -> ETH currency exchange between wallets specifying the destination amount
 const walletIds = abcAccount.activeWalletIds
@@ -2411,9 +2407,10 @@ Convenience routine to do `signTx`, `broadcastTx`, then `saveTx` in one call.
 // Example
 const abcParsedUri = abcAccount.parseUri("bitcoin:1CsaBND4GNA5eeGGvU5PhKUZWxyKYxrFqs?amount=1.000000&r=https%3A%2F%2Fbitpay.com%2Fi%2F7TEzdBg6rvsDVtWjNQ3C3X")
 
-abcCurrencyWallet.getPaymentProtocolInfo(abcParsedUri.paymentProtocolURL, function(error, paymentProtocolInfo) {
-  abcSpendInfo = {
+const paymentProtocolInfo = await abcCurrencyWallet.getPaymentProtocolInfo(abcParsedUri.paymentProtocolURL)
+const abcSpendInfo:AbcSpendInfo = {
     networkFeeOption: 'high',
+    currencyCode: 'BTC',
     metadata: {
       name: paymentProtocolInfo.merchant,
       category: 'Expense:Professional Services'
@@ -2421,13 +2418,9 @@ abcCurrencyWallet.getPaymentProtocolInfo(abcParsedUri.paymentProtocolURL, functi
     spendTargets: [ paymentProtocolInfo.spendTarget ]
   }
 
-  const abcTransaction = abcCurrencyWallet.makeSpend(abcSpendInfo)
-  abcCurrencyWallet.signBroadcastAndSave(abcTransaction, function(error, abcTransaction) {
-    if (!error) {
-      // Success, transaction sent
-      console.log("Sent transaction with ID = " + abcTransaction.txid)
-    }
-  })
+  let abcTransaction = abcCurrencyWallet.makeSpend(abcSpendInfo)
+  abcTransaction = await abcCurrencyWallet.signBroadcastAndSave(abcTransaction
+  console.log("Sent transaction with ID = " + abcTransaction.txid)
 }
 ```
 
@@ -2482,7 +2475,7 @@ coming soon...
 
 coming soon...
 
-## ABCSpendInfo
+## AbcSpendInfo
 
 ```javascript
 // Example spend info to transfer from wallet to wallet
@@ -2492,6 +2485,7 @@ const destWallet = abcAccount.getWallet(walletId[1]) // Add check for null and c
 
 abcSpendInfo = {
   networkFeeOption: 'high',
+  currencyCode: 'BTC',
   metadata:  {
     name: 'Transfer to College Fund',
     category: 'Transfer:Wallet:College Fund',
@@ -2509,7 +2503,7 @@ Parameters
 
 | Param | Type | Description |
 | --- | --- | --- |
-| currencyCode | `String` | (Optional) Chooses the currency or meta-token to spend from. If not specified, uses the primary currency of this wallet |
+| currencyCode | `String` | Chooses the currency or meta-token to spend from. (Required) |
 | noUnconfirmed | `Boolean` | (Optional) If set to TRUE, this will not spend from any unconfirmed funds. Default is FALSE |
 | spendTargets | `Array` | Array of [ABCSpendTarget](#abcspendtarget) objects |
 | networkFeeOption | `String` | Adjusts network fee amount. Must be either "low", "standard", "high", or "custom". If unspecified, the default is "standard" |
@@ -2555,7 +2549,7 @@ Parameters
 
 | Param | Type | Description |
 | --- | --- | --- |
-| currencyCode | `String` | (Optional) Chooses the currency or meta-token type for the destination receiving address or wallet. If not specified, uses the primary currency of this wallet |
+| currencyCode | `String` | (Optional) Chooses the currency or meta-token type for the destination receiving address or wallet. If not specified, uses the primary currency of this wallet. If the specified `currencyCode` differs from that specified in the parent [`AbcSpendInfo`](#abcspendinfo) then this spend will utilize an exchange operation (if possible) using a 3rd party service such as Shape Shift. |
 | publicAddress | `String` | Public address in the format of the current wallet's currency. This requires the `nativeAmount` field to be set. Must not set both `publicAddress` and `destWallet` |
 | nativeAmount | `String` | Amount to send in the smallest denomination of the source wallet's currency, as a string. ie Satoshis or Wei |
 | destWallet | [`ABCWallet`](#abcwallet) | Destination wallet to transfer funds to. Must also set `nativeAmount`. Must not set both `publicAddress` and `destWallet` |
@@ -3291,37 +3285,25 @@ The `options` parameter may include the following:
 ### makeSpend
 
 ```javascript
-abcTxEngine.makeSpend(abcSpendInfo)
-  .then(abcTransaction => {
-    // your logic here
-  })
-  .catch(handleError)
+const abcTransaction = await abcTxEngine.makeSpend(abcSpendInfo)
 ```
 
-Given an [ABCSpendInfo](#abcspendinfo) object, returns an unsigned [ABCTransaction](#abctransaction) object. [ABCTransaction](#abctransaction).signedTx should be NULL. `makeSpend` does not need to touch the metadata parameter in the `abcSpendInfo`. `makeSpend` only needs to support the [ABCSpendTarget](#abcspendtarget) parameters `currencyCode`, `publicAddress`, and `nativeAmount`.
+Given an [AbcSpendInfo](#abcspendinfo) object, returns an unsigned [AbcTransaction](#abctransaction) object. [AbcTransaction](#abctransaction).signedTx should be NULL. `makeSpend` does not need to touch the metadata parameter in the `abcSpendInfo`. `makeSpend` only needs to support the [AbcSpendTarget](#abcspendtarget) parameters `currencyCode`, `publicAddress`, and `nativeAmount`.
 
 Should produce an [InsufficientFundsError](#insufficientfundserror) if the amount is too large, or a [DustSpendError](#dustspenderror) if the amount is too small.
 
 ### signTx
 
 ```javascript
-abcTxEngine.signTx(abcTransaction)
-  .then(()) => {
-    // your logic here
-  })
-  .catch(handleError)
+await abcTxEngine.signTx(abcTransaction)
 ```
 
-This routine will set [ABCTransaction](#abctransaction).signedTx to an Array of bytes corresponding to the complete signed transaction. Takes an unsigned [ABCTransaction](#abctransaction) object and signs it.
+This routine will set [AbcTransaction](#abctransaction).signedTx to an Array of bytes corresponding to the complete signed transaction. Takes an unsigned [AbcTransaction](#abctransaction) object and signs it.
 
 ### broadcastTx
 
 ```javascript
-abcTxEngine.broadcastTx(abcTransaction)
-  .then(()) => {
-    // your logic here
-  })
-  .catch(handleError)
+await abcTxEngine.broadcastTx(abcTransaction)
 ```
 
 Takes a signed [ABCTransaction](#abctransaction) and broadcasts it to the blockchain network.
@@ -3329,11 +3311,7 @@ Takes a signed [ABCTransaction](#abctransaction) and broadcasts it to the blockc
 ### saveTx
 
 ```javascript
-abcTxEngine.saveTx(abcTransaction)
-  .then(()) => {
-    // your logic here
-  })
-  .catch(handleError)
+await abcTxEngine.saveTx(abcTransaction)
 ```
 
 Saves an already signed [ABCTransaction](#abctransaction) object to the local cache so that funds are considered spent by the wallet. Any future calls to [getTransactions](#gettransactions), [getBalance](#getbalance), or [getNumTransactions](#getNumTransactions) should reflect the outcome of this saved transaction. This routine should also trigger the callback [transactionsChanged](#transactionschanged).

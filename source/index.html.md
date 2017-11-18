@@ -1,5 +1,5 @@
 ---
-title: AirbitzCore API/SDK Reference
+title: Edge API/SDK Reference
 
 language_tabs:
   - javascript: Javascript
@@ -3209,6 +3209,14 @@ The `options` parameter may include the following:
 | currencyCode | `String` | Currency code to use. ie "REP", "LTBCOIN". If not specified, uses the wallet's primary currency. ie. "BTC", or "ETH" |
 | startIndex | `Int` | The starting index into the list of transactions. 0 specifies the newest transaction |
 | numEntries | `Int` |  The number of entries to return. If there aren't enough transactions to return `numEntries`, then the plugin should return the maximum possible |
+
+### getTxidList
+
+```javascript
+const txidList: Array<string> = abcTxEngine.getTxidList()
+```
+
+Returns an array of all the txids that this wallet currently has. All txids returned in this list should be fully queried from the network with a correct `nativeAmount`.
 
 ### getFreshAddress
 

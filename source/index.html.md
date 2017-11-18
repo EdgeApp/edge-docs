@@ -3114,6 +3114,25 @@ try {
 
 Query the library for the currently enabled tokens.
 
+### addCustomToken
+
+```javascript
+// Example for ethereum plugin
+const customTokens = {
+  contractAddress: '',
+  currencyCode: 'WINGS',
+  multiplier: '1000000000000000000'
+}
+
+await abcTxEngine.addCustomToken(customTokens)
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| customTokens | `Object` | Plugin specific object describing parameters for a token |
+
+Enable support for a custom meta token
+
 ### getBlockHeight
 
 ```javascript

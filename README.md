@@ -1,5 +1,5 @@
 
-Airbitz Developer Docs
+Edge Developer Docs
 ------------------------------
 
 ### Prerequisites

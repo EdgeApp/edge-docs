@@ -16,7 +16,7 @@ search: true
 
 AirbitzCore (ABC) is a Javascript client-side blockchain and Edge Security SDK providing auto-encrypted and auto-backed up accounts and wallets with zero-knowledge security and privacy. All blockchain/bitcoin private and public keys are fully encrypted by the users' credentials before being backed up on to peer to peer servers.
 
-ABC allows developers to apply client-side data security, encrypted such that only the end-user can access the data. The Airbitz ABCAccount object allows developers to store arbitrary Edge-Secured data on the user’s account which is automatically encrypted, automatically backed up, and automatically synchronized between the user’s authenticated devices.
+ABC allows developers to apply client-side data security, encrypted such that only the end-user can access the data. The Edge AbcAccount object allows developers to store arbitrary Edge-Secured data on the user’s account which is automatically encrypted, automatically backed up, and automatically synchronized between the user’s authenticated devices.
 
 ABC is the foundation of the Edge Security SDK and Edge Wallet mobile app
 
@@ -110,7 +110,7 @@ const io = abc.makeBrowserIo()
 const context = abc.makeContext({ io })
 ```
 
-Gathers the various browser API's into an IO object. This allows Airbitz to work on the web.
+Gathers the various browser API's into an IO object. This allows Edge to work on the web.
 
 ### airbitz-io-node-js
 
@@ -306,7 +306,7 @@ ABCAccount *abcAccount;
 }];
 ```
 
-Login to an Airbitz account with a full password. May optionally send 'otp' key which is required for any accounts that have OTP enabled using [ABCAccount.enableOtp](#enableotp). OTP key can be retrieved from a device that has account logged in and OTP enabled using getOtpLocalKey.
+Login to an Edge account with a full password. May optionally send 'otp' key which is required for any accounts that have OTP enabled using [ABCAccount.enableOtp](#enableotp). OTP key can be retrieved from a device that has account logged in and OTP enabled using getOtpLocalKey.
 
 If routine returns with error.code == ABCConditionCodeInvalidOTP, then the account has OTP enabled and needs the OTP key specified in parameter 'otp'. ABCError object may have properties otpResetToken and otpResetDate set which allow the user to call requestOtpReset to disable OTP.
 
@@ -371,7 +371,7 @@ ABCAccount *abcAccount;
 }];
 ```
 
-Login to an Airbitz account with PIN. Used to sign into devices that have previously been logged into using a full username & password
+Login to an Edge account with PIN. Used to sign into devices that have previously been logged into using a full username & password
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -867,7 +867,7 @@ abcAccount.enablePINLogin(enable, function (error) {
 ABCError *error = [abcAccount enablePINLogin:enable];
 ```
 
-Enable or disable PIN login on this account. Set enable = YES to allow PIN login. Enabling PIN login creates a local account decryption key that is split with one have in local device storage and the other half on Airbitz servers. When using loginWithPIN the PIN is sent to Airbitz servers to authenticate the user. If the PIN is correct, the second half of the decryption key is sent back to the device. Combined with the locally saved key, the two are then used to decrypt the local account thereby loggin in the user.
+Enable or disable PIN login on this account. Set enable = YES to allow PIN login. Enabling PIN login creates a local account decryption key that is split with one have in local device storage and the other half on Edge servers. When using loginWithPIN the PIN is sent to Edge servers to authenticate the user. If the PIN is correct, the second half of the decryption key is sent back to the device. Combined with the locally saved key, the two are then used to decrypt the local account thereby loggin in the user.
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -890,7 +890,7 @@ if (abcLobby.loginRequest) {
 }
 ```
 
-Retrieves an edge-login or wallet-sharing request from the Airbitz lobby server. The `lobbyId` can be found in the edge-login QR code.
+Retrieves an edge-login or wallet-sharing request from the Edge lobby server. The `lobbyId` can be found in the edge-login QR code.
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1076,7 +1076,7 @@ Create a new [ABCWallet](#abcwallet) object and add it to the current account. E
 | error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
 | id | `String` | Strings of wallet ID |
 
-Please seee the [ABCWalletInfo](#abcwalletinfo) documentation for the different wallet types Airbitz understands.
+Please seee the [ABCWalletInfo](#abcwalletinfo) documentation for the different wallet types Edge understands.
 
 ### listWalletIds
 
@@ -1255,7 +1255,7 @@ Callback routines that notify application when various changes have occurred in 
 | onKeyListChanged() | `Function` | The user has changed the key list in some way, including adding, deleting, archiving, or sorting. The GUI should refresh its wallets list. |
 | onLoggedOut() | `Function` | Account has been logged out. Not used. |
 | onOTPRequired() | `Function` | Another device has enabled OTP, and this device does not have the correct OTP token. The GUI should notify the user and give them an opportunity to scan the OTP barcode if they desire. |
-| onOTPSkew() | `Function` | This device's clock is out-of-sync with the Airbitz servers. The user should be notified to fix their clock. Otherwise, if the skew gets worse, they may not be able to log in again. |
+| onOTPSkew() | `Function` | This device's clock is out-of-sync with the Edge servers. The user should be notified to fix their clock. Otherwise, if the skew gets worse, they may not be able to log in again. |
 | onRemotePasswordChange() | `Function` | The account password has been changed by a remote device. The GUI should notify the user and give them an opportunity to log in again, which will activate the change on this device as well. Otherwise, this device will continue to have the old password. |
 
 ## AbcLobby
@@ -1267,7 +1267,7 @@ interface AbcLobby {
 }
 ```
 
-To perform an edge login, an app creates a "lobby" on the Airbitz server. This lobby contains the public keys for the reply encryption, as well as information about what the request is for. A logged-in wallet can download this lobby, validate the request, and post a reply back to the server.
+To perform an edge login, an app creates a "lobby" on the Edge server. This lobby contains the public keys for the reply encryption, as well as information about what the request is for. A logged-in wallet can download this lobby, validate the request, and post a reply back to the server.
 
 | Property | Type | Description |
 | --- | --- | --- |
@@ -1313,11 +1313,11 @@ In the future, `AbcLoginRequest` may contain information about the wallet types 
 }
 ```
 
-An `ABCWalletInfo` contains the keys needed to access a wallet or other resource. The Airbitz login system exists to store these wallet keys in an encrypted and backed-up manner.
+An `ABCWalletInfo` contains the keys needed to access a wallet or other resource. The Edge login system exists to store these wallet keys in an encrypted and backed-up manner.
 
-The Airbitz SDK includes full send & receive capability for a variety of blockchains. If you use these features, you won't need to deal with these wallet keys directly.
+The Edge SDK includes full send & receive capability for a variety of blockchains. If you use these features, you won't need to deal with these wallet keys directly.
 
-Otherwise, if your application does its own blockchain access, keeping your wallet keys in this format will ensure that the Airbitz Wallet application can seamlessly interoperate with the keys your app creates.
+Otherwise, if your application does its own blockchain access, keeping your wallet keys in this format will ensure that the Edge Wallet application can seamlessly interoperate with the keys your app creates.
 
 | Property | Type | Description |
 | --- | --- | --- |
@@ -1346,7 +1346,7 @@ Many different wallets include access to a Git repo for storage. In these cases,
 
 For pure storage wallets, the wallet type should be a reverse domain-name starting with `storage:`, like `storage:com.yourdomain.yourtype`.
 
-In the future, Airbitz may introduce a `readKey`, which provides only read-only access to the sync server. This would be something like `sha256(syncKey)`. In that case, the `keys` object would contain one, the other, or both of `syncKey` and `readKey`.
+In the future, Edge may introduce a `readKey`, which provides only read-only access to the sync server. This would be something like `sha256(syncKey)`. In that case, the `keys` object would contain one, the other, or both of `syncKey` and `readKey`.
 
 ### Account Repos
 
@@ -1606,7 +1606,7 @@ try {
 }
 ```
 
-All Airbitz API's use one of the standard Javascript error-reporting mechanisms:
+All Edge API's use one of the standard Javascript error-reporting mechanisms:
 
 * Throwing an exception
 * Rejecting a promise
@@ -1683,7 +1683,7 @@ Once the user has logged in and retrieved their keys, there are serveral things 
 * Sending and receiving digital currencies
 * Signing BitId requests
 
-The Airbitz SDK includes several helper classes which perform these capabilities on your behalf, using a set of provided keys.
+The Edge SDK includes several helper classes which perform these capabilities on your behalf, using a set of provided keys.
 
 ## ABCStorageWallet
 
@@ -2689,7 +2689,7 @@ import { EthereumCurrencyPluginFactory } from 'edge-currency-ethereum'
 import { BitcoinCurrencyPluginFactory, LitecoinCurrencyPluginFactory, BitcoincashCurrencyPluginFactory } from 'edge-currency-bitcoin'
 ```
 
-The Airbitz core library accepts an array of plugin factory objects in its `makeContext` function. 
+The Edge core library accepts an array of plugin factory objects in its `makeContext` function. 
 
 ```javascript
 const context = makeContext({
@@ -2937,7 +2937,7 @@ const walletKey = currencyPlugin.createPrivateKey('wallet:ethereum')
 }
 ```
 
-Creates a new random master private key. The returned object will be used as the `keys` member of an [`ABCWalletInfo`](#abcwalletinfo) structure. Please see [`ABCWalletInfo`](#abcwalletinfo) for documentation on the various key types Airbitz understands. If your currency is not documented in that section, please submit a pull request to add your format to [the documentation](https://github.com/Airbitz/airbitz-docs/tree/full-api-docs).
+Creates a new random master private key. The returned object will be used as the `keys` member of an [`ABCWalletInfo`](#abcwalletinfo) structure. Please see [`ABCWalletInfo`](#abcwalletinfo) for documentation on the various key types Edge understands. If your currency is not documented in that section, please submit a pull request to add your format to [the documentation](https://github.com/Airbitz/airbitz-docs/tree/full-api-docs).
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -3463,7 +3463,7 @@ Initializes the ABCUI library and returns an [ABCUIContext](#abcuicontext) objec
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| abcUiContext | [`ABCUIContext`](#abcuicontext) | Airbitz account object |
+| abcUiContext | [`ABCUIContext`](#abcuicontext) | Edge account object |
 
 ## ABCUIContext
 
@@ -3484,7 +3484,7 @@ Create an overlay popup where a user can register a new account or login to a pr
 | Return Param | Type | Description |
 | --- | --- | --- |
 | error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
-| account | [`ABCAccount`](#abcaccount) | Airbitz account object |
+| account | [`ABCAccount`](#abcaccount) | Edge account object |
 
 ![Login UI](#https://airbitz.co/go/wp-content/uploads/2016/08/Screen-Shot-2016-08-26-at-12.50.04-PM.png)
 
@@ -3500,7 +3500,7 @@ Launch an account management window for changing password, PIN, and recovery que
 
 | Param | Type | Description |
 | --- | --- | --- |
-| account | [`ABCAccount`](#abcaccount) | Airbitz account object to modify |
+| account | [`ABCAccount`](#abcaccount) | Edge account object to modify |
 | callback | `Callback` | (Javascript) Callback function |
 
 | Return Param | Type | Description |
@@ -3521,9 +3521,9 @@ These pages serve as an introduction on writing your own plugins. You only need 
 
 ## Creating a plugin
 
-Airbitz plugins are just single page HTML files, with all the resources compiled in. That means that the javascript libraries, stylesheets and whatever else are all included in one monolithic HTML file.
+Edge plugins are just single page HTML files, with all the resources compiled in. That means that the javascript libraries, stylesheets and whatever else are all included in one monolithic HTML file.
 
-The `airbitz-plugins` repo has a build system to help ease the creation of the files. Simply creating a new directory under the `plugins` directory will be treated as a new plugin. The build system knows to how to compile the javascript, HTML and CSS to work with Airbitz.
+The `airbitz-plugins` repo has a build system to help ease the creation of the files. Simply creating a new directory under the `plugins` directory will be treated as a new plugin. The build system knows to how to compile the javascript, HTML and CSS to work with Edge.
 
 ## Dependencies
 

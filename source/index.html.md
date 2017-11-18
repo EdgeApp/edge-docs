@@ -14,17 +14,15 @@ search: true
 ---
 # Introduction
 
-AirbitzCore (ABC) is a Javascript/ObjC client-side blockchain and Edge Security SDK providing auto-encrypted and auto-backed up accounts and wallets with zero-knowledge security and privacy. All blockchain/bitcoin private and public keys are fully encrypted by the users' credentials before being backed up on to peer to peer servers.
+AirbitzCore (ABC) is a Javascript client-side blockchain and Edge Security SDK providing auto-encrypted and auto-backed up accounts and wallets with zero-knowledge security and privacy. All blockchain/bitcoin private and public keys are fully encrypted by the users' credentials before being backed up on to peer to peer servers.
 
 ABC allows developers to apply client-side data security, encrypted such that only the end-user can access the data. The Airbitz ABCAccount object allows developers to store arbitrary Edge-Secured data on the user’s account which is automatically encrypted, automatically backed up, and automatically synchronized between the user’s authenticated devices.
+
+ABC is the foundation of the Edge Security SDK and Edge Wallet mobile app
 
 To get started, you’ll first need an API key. Get one at our [developer portal.](https://developer.airbitz.co)
 
 ## Documentation/API conventions
-
-Documention and examples include parameter types in Flow style syntax. Due to Flow types not being standard Javascript, copy pasting of example code will fail under most environments except for React Native.
-
-All asynchronous function methods are capable of either a callback or Promise style interface. If a callback is passed as the final parameter to an asynchronous routine, the callback parameters will use a NodeJS callback style with the first parameter being the `error` object followed by the return parameter or object. If the `callback` parameter is omitted, the routine will return a Promise that resolves to the return value.
 
 ```javascript
 // Example callback style
@@ -57,9 +55,16 @@ try {
   // Error  
 }
 ```
-# Airbitz Login System
 
-The Airbitz login system provides a way to backup and retrieve encrypted private keys. Users can login in using various methods:
+Documention and examples include parameter types in Flow style syntax. Due to Flow types not being standard Javascript, copy pasting of example code will fail under most environments except for React Native.
+
+All asynchronous function methods are capable of either a callback or Promise style interface. If a callback is passed as the final parameter to an asynchronous routine, the callback parameters will use a NodeJS callback style with the first parameter being the `error` object followed by the return parameter or object. If the `callback` parameter is omitted, the routine will return a Promise that resolves to the return value.
+
+Further documentation will use the async/await syntax for brevity
+
+# Edge Security SDK
+
+The Edge login system provides a way to backup and retrieve encrypted private keys. Users can login in using various methods:
 
 * Password
 * PIN
@@ -69,22 +74,16 @@ The Airbitz login system provides a way to backup and retrieve encrypted private
 
 A single account (username and password) can log into multiple applications, each with its own keys. The application id (or `appId`) determines which keys are visible through this API. The keys provide access to various resources, including:
 
-* Airbitz git repos for account settings
-* Airbitz git repos for wallet metadata
+* Edge datastore repos for account settings
+* Edge datastore repos for wallet metadata
 * Public blockchains, like Bitcoin and Ethereum
 * BitId identities
 
-Airbitz provides a separate wallet API for working with these keys once they have been retrieved by the login system.
+Edge provides a separate Wallet API for working with these keys once they have been retrieved by the login system.
 
 ## Install the SDK
 
-See the following Github repos for your various development environments. Installation instructions are in the README.md files
-
-[Javascript](https://github.com/Airbitz/airbitz-core-js-ui)
-
-## Platform-specific IO
-
-(Javascript only) The Airbitz login system runs in many different environments, including the web, Node.js and React Native. To handle the differences between these platforms, the login system talks to the outside world through an `io` object. Before intializing the login API, you need an `io` object for your particular platform.
+The Edge SDK system runs in many different environments, including the web, Node.js and React Native. To handle the differences between these platforms, the login system talks to the outside world through an `io` object. Before intializing the login API, you need an `io` object for your particular platform.
 
 ### makeFakeIos
 
@@ -129,11 +128,11 @@ Gathers various Node.js API's into an IO object.
 | --- | --- | --- |
 | path | `string` | The filesystem path to save files to
 
-### react-native-airbitz-io
+### airbitz-core-react-native
 
 ```javascript
 const abc = require('airbitz-core-js')
-const abcReact = require('react-native-airbitz-io')
+const abcReact = require('airbitz-core-react-native')
 
 abcReact.makeReactNativeIo().then(io => {
   const context = abc.makeContext({ io })
@@ -142,7 +141,7 @@ abcReact.makeReactNativeIo().then(io => {
 
 Gathers various React Native API's into an IO object. This is an asynchronous function, and returns a `Promise`.
 
-## ABCContext
+## AbcContext
 
 Starting point of Airbitz Core SDK. Used for operations that do not require a logged in ABCAccount
 
@@ -158,7 +157,7 @@ const abcContext = abc.makeContext({
 })
 ```
 
-Initialize and create an ABCContext object. Required for functionality of ABC SDK.
+Initialize and create an AbcContext object. Required for functionality of ABC SDK.
 
 | Option | Type | Description |
 | --- | --- | --- |
@@ -3449,11 +3448,11 @@ Asks the plugin to fetch all available currency pairs.
 
 The passed-in currency pairs are a hint. Normal plugins should just return all available data, but in cases where that's too expensive (such as needing a separate HTTP request per pair), the plugin can use the passed-in list as a filter.
 
-# Account Management UI
+# Edge Login UI
 
-To ease the implementation of the Airbitz SDK in applications, Airbitz provides a base user interface capable of all the account creation, account login, password & PIN management, and password recovery. This functionality is currently only available in Javascript for HTML apps
+To ease the implementation of the Edge SDK in applications, Edge provides a base user interface capable of all the account creation, account login, password & PIN management, and password recovery.
 
-The repo [airbitz-core-js-ui](https://github.com/Airbitz/airbitz-core-js-ui) implements a UI layer on top of [airbitz-core-js](https://github.com/Airbitz/airbitz-core-js) to provide web applications the interface required to do all the accounts management in just a small handful of Javascript API calls. All UI operates in an overlay iframe on top of the current HTML view.
+The repo [airbitz-core-js-ui](https://github.com/Airbitz/airbitz-core-js-ui) implements a UI layer on top of [airbitz-core-js](https://github.com/Airbitz/airbitz-core-js) to provide web and React Native applications the interface required to do all the accounts management in just a small handful of Javascript API calls. For HTML apps, the UI operates in an overlay iframe on top of the current HTML view.
 
 Install instructions are in [airbitz-core-js-ui](https://github.com/Airbitz/airbitz-core-js-ui).
 
@@ -3461,7 +3460,7 @@ Install instructions are in [airbitz-core-js-ui](https://github.com/Airbitz/airb
 
 A sample webpage exists in [airbitz-core-js-sample](https://github.com/Airbitz/airbitz-core-js-sample) which makes a simple page with a Login & Register button on the top bar and uses [airbitz-core-js-ui](https://github.com/Airbitz/airbitz-core-js-ui).
 
-## Usage
+## Usage for web/HTML
 
 ### makeABCUIContext
 
@@ -3531,15 +3530,17 @@ Launch an account management window for changing password, PIN, and recovery que
 
 ![Manage UI](#https://airbitz.co/go/wp-content/uploads/2016/08/Screen-Shot-2016-08-26-at-12.50.26-PM.png)
 
-# Wallet Plugin API
+# Edge Wallet Plugin API
 
-Airbitz plugins are a way to include additional functionality into the Airbitz Mobile Bitcoin Wallet on iOS and Android. They are currently used to buy and sell bitcoin through Glidera, and purchase discounted Starbucks and Target cards through Foldapp.
+Edge Wallet plugins are a way to include additional functionality into Edge Wallet on iOS and Android. They are currently used to buy and sell bitcoin through Glidera & Bity.com, and purchase discounted Starbucks and Target cards through Foldapp.
 
-The plugin API provides a subset of the entire Airbitz SDK which allows the plugin to access the currently logged in user's wallet to request sends and receives.
+The Wallet Plugin API provides a subset of the entire Edge SDK which allows the plugin to access the currently logged in user's wallet to request sends and receives.
 
 These pages serve as an introduction on writing your own plugins. You only need basic web development skills to build your own plugin. If you can write HTML, CSS and Javascript, you can easily write a plugin and run it on Android and iOS.
 
-# Creating a plugin
+> ************* Needs Update *************
+
+## Creating a plugin
 
 Airbitz plugins are just single page HTML files, with all the resources compiled in. That means that the javascript libraries, stylesheets and whatever else are all included in one monolithic HTML file.
 

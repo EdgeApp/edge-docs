@@ -1774,7 +1774,7 @@ abcStorageWallet.renameWallet("My Wallet", function (error) {
 
 Returns a list of transactions in the current wallet. Transactions are returned ordered from newest to oldest.
 
-## ABCCurrencyWallet
+## AbcCurrencyWallet
 
 Each ABCCurrencyWallet represents a single or HD cryptocurrency wallet tied to one specific blockchain such as bitcoin or ethereum. Various methods and fields in ABCCurrencyWallet are arrays or accept an index which selects which token system in the wallet is being referenced.
 
@@ -1865,6 +1865,68 @@ abcCurrencyWallet.setupContract(abcSetupContractOptions)
 ```
 
 Setup the script/contract for this wallet. This is used to setup basic multisig wallets under currencies like bitcoin and ethereum.
+
+### enableTokens
+
+```javascript
+// Example
+const tokens = {
+  tokens: [ "XCP", "TATIANACOIN" ]
+}
+
+abcCurrencyWallet.enableTokens(tokens).catch(handleError)
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| tokens | `Array` | Array of strings specifying the currency codes of tokens to enable in this wallet |
+
+| Return | Type | Description |
+| --- | --- | --- |
+| promise | `Promise<void>` | A promise that resolves when the tokens are ready to use. |
+
+Enable support for meta tokens (ie. counterparty, colored coin, ethereum ERC20). Library should begin checking the blockchain for the specified tokens and triggering the callbacks specified in [`currencyPlugin.makeEngine`](#makeengine).
+
+### disableTokens
+
+```javascript
+// Example
+const tokens = {
+  tokens: [ "XCP", "TATIANACOIN" ]
+}
+
+abcCurrencyWallet.disableTokens(tokens).catch(handleError)
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| tokens | `Array` | Array of strings specifying the currency codes of tokens to disable in this wallet |
+
+| Return | Type | Description |
+| --- | --- | --- |
+| promise | `Promise<void>` | A promise that resolves when the tokens are disabled. |
+
+Disable support for meta tokens (ie. counterparty, colored coin, ethereum ERC20). Library will stop checking the blockchain for the specified tokens.
+
+### getEnabledTokens
+
+```javascript
+getEnabledTokens():Promise<Array<string>>
+
+// Example
+try {
+  const tokens = await abcCurrencyWallet.getEnabledTokens()
+  console.log(tokens) // => ['WINGS', 'REP']
+} catch (error) {
+  console.log(error)
+}
+```
+
+| Promise Return Param | Type | Description |
+| --- | --- | --- |
+| tokens | `Array<string>` | Array of strings of token currency codes. |
+
+Query the library for the currently enabled tokens.
 
 ### getBalance
 
@@ -2977,6 +3039,16 @@ For Bitcoin, this means converting the private seed into an xpub-format key. For
 
 The core will treat the returned object as the `keys` member of a new [`ABCWalletInfo`](#abcwalletinfo) object. The core also manages the `dataKey` and `syncKey`, so the currency plugin does not need to worry about those either.
 
+### displayPrivateKey
+
+```javascript
+// Bitcoin bip44 wallet example
+const privateKey: string = currencyPlugin.displayPrivateKey(walletInfo)
+console.log(privateKey) // => "maximum head mouse racket bottle quiver button horse notebook cold simply massive"
+```
+
+Returns a user displayable string representing the master private key of this wallet. This would be a 12-24 word passphrase for Bitcoin BIP44/49 wallets and a 256bit hex string for ethereum wallets.
+
 ### makeEngine
 
 ```javascript
@@ -3094,14 +3166,35 @@ abcTxEngine.enableTokens(tokens).catch(handleError)
 
 Enable support for meta tokens (ie. counterparty, colored coin, ethereum ERC20). Library should begin checking the blockchain for the specified tokens and triggering the callbacks specified in [`currencyPlugin.makeEngine`](#makeengine).
 
-### enabledTokens
+### disableTokens
 
 ```javascript
-enabledTokens():Promise<Array<string>>
+// Example
+const tokens = {
+  tokens: [ "XCP", "TATIANACOIN" ]
+}
+
+abcTxEngine.disableTokens(tokens).catch(handleError)
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| tokens | `Array` | Array of strings specifying the currency codes of tokens to disable in this wallet |
+
+| Return | Type | Description |
+| --- | --- | --- |
+| promise | `Promise<void>` | A promise that resolves when the tokens are disabled. |
+
+Disable support for meta tokens (ie. counterparty, colored coin, ethereum ERC20). Library will stop checking the blockchain for the specified tokens.
+
+### getEnabledTokens
+
+```javascript
+getEnabledTokens():Promise<Array<string>>
 
 // Example
 try {
-  const tokens = await abcTxEngine.enabledTokens()
+  const tokens = await abcTxEngine.getEnabledTokens()
   console.log(tokens) // => ['WINGS', 'REP']
 } catch (error) {
   console.log(error)

@@ -1866,6 +1866,42 @@ abcCurrencyWallet.setupContract(abcSetupContractOptions)
 
 Setup the script/contract for this wallet. This is used to setup basic multisig wallets under currencies like bitcoin and ethereum.
 
+### getDisplayPrivateSeed
+
+```javascript
+const privateSeed = abcCurrencyWallet.getDisplayPrivateSeed()
+```
+
+Gets the master private seed (or private key if wallet is initialized from key and not from seed) from the engine as a string
+
+| Return | Type | Description |
+| --- | --- | --- |
+| privateSeed | `String` | The private seed |
+
+### getDisplayPublicSeed
+
+```javascript
+const publicKey = abcCurrencyWallet.getDisplayPublicSeed()
+```
+
+Gets the master public key (or address in case of the ethereum plugin) from the engine as a string
+
+| Return | Type | Description |
+| --- | --- | --- |
+| publicKey | `String` | The public key |
+
+### resyncBlockchain
+
+```javascript
+const publicKey = await abcCurrencyWallet.resyncBlockchain()
+```
+
+Wipes out the local disk and memory cache of all transactions and forces a refetching of all data from the network.
+
+| Return | Type | Description |
+| --- | --- | --- |
+| promise | `Promise<void>` | A promise that resolves when the cache has been cleared. |
+
 ### enableTokens
 
 ```javascript
@@ -2802,7 +2838,6 @@ ie.
 console.log(currencyPluginFactory.pluginName) // => "ethereum"
 ```
 
-
 ### makePlugin
 
 Returns either an `AbcCurrencyPlugin` or `AbcExchangePlugin` object instance, depending on the `pluginType` property described above. This is an async method. Due to the async nature of `makePlugin`, this routine can dynamically change its functionality based on server based calls. This type of dynamic functionality change can include updating its `currencyInfo` include more supported tokens.
@@ -3144,6 +3179,42 @@ Stops checking the blockchain for new transactions, and flushes any caches to di
 | Return | Type | Description |
 | --- | --- | --- |
 | promise | `Promise<void>` | A promise that resolves when the engine has fully shut down. |
+
+### getDisplayPrivateSeed
+
+```javascript
+const privateSeed = abcTxEngine.getDisplayPrivateSeed()
+```
+
+Gets the master private seed (or private key if wallet is initialized from key and not from seed) from the engine as a string
+
+| Return | Type | Description |
+| --- | --- | --- |
+| privateSeed | `String` | The private seed |
+
+### getDisplayPublicSeed
+
+```javascript
+const publicKey = abcTxEngine.getDisplayPublicSeed()
+```
+
+Gets the master public key (or address in case of the ethereum plugin) from the engine as a string
+
+| Return | Type | Description |
+| --- | --- | --- |
+| publicKey | `String` | The public key |
+
+### resyncBlockchain
+
+```javascript
+const publicKey = await abcTxEngine.resyncBlockchain()
+```
+
+Wipes out the local disk and memory cache of all transactions and forces a refetching of all data from the network.
+
+| Return | Type | Description |
+| --- | --- | --- |
+| promise | `Promise<void>` | A promise that resolves when the cache has been cleared. |
 
 ### enableTokens
 

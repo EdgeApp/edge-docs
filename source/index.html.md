@@ -1162,63 +1162,31 @@ The metadata structure looks like this:
 | deleted | `boolean` | Marks the wallet as "deleted". Deleted wallets are completely invisible to the user. |
 | sortIndex | `number` | Used to place the wallets in a particular order in the user interface. Lower indices should sort first. |
 
-### shareWallet (proposal)
+### requestWallet (proposal)
 
 ```javascript
-abcAccount.shareWallet(abcWallet, abcShareWalletOptions, function(error, shareWalletToken) {
-  if (error == null) {
-    // Send 'shareWalletToken' to other user
+// Make the request:
+const opts = {
+  type: 'wallet:bitcoin',
+  onWalletShared (walletId) {
+    // We just received a wallet!
   }
-})
+}
+const pendingRequest = await abcAccount.requestWallet(opts)
 
-// On other device
-abcAccount.importWallet(shareWalletToken, function(error, abcWallet) {
-  if (error == null) {
-    // Success, wallet imported
-  }
-})
+// Put this in a QR code and show it to the user:
+const qrCodeUri = `edge://lobby/${pendingRequest.lobbyId}`
+
+// If the user loses interest, cancel the request:
+pendingRequest.cancel()
 ```
+
+Creates a QR code that can be used to request a wallet from another user. If the remote user scans the barcode and approves the request, the wallet will be added to this account.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcWallet | [`ABCWallet`](#abcwallet) | Wallet to share |
-| callback | `Callback` | (Javascript) Callback function |
-
-| Callback Params | Type | Description |
-| --- | --- | --- |
-| error | [`AbcError`](#abcerror) | (Javascript) Error object. `null` if no error |
-| shareWalletToken | `String` | Token to use with [importWallet](#importWallet) |
-
-Provides a key that can given to another user/app to share a wallet with that account.
-
-### importWallet (proposal)
-
-```javascript
-abcAccount.shareWallet(abcWallet, abcShareWalletOptions, function(error, shareWalletToken) {
-  if (error == null) {
-    // Send 'shareWalletToken' to other user
-  }
-})
-
-// On other device
-abcAccount.importWallet(shareWalletToken, function(error, abcWallet) {
-  if (error == null) {
-    // Success, wallet imported
-  }
-})
-```
-
-| Param | Type | Description |
-| --- | --- | --- |
-| shareWalletToken | `String` | Token to use with [importWallet](#importwallet) |
-| callback | `Callback` | (Javascript) Callback function |
-
-| Callback Params | Type | Description |
-| --- | --- | --- |
-| error | [`AbcError`](#abcerror) | (Javascript) Error object. `null` if no error |
-| shareWalletToken | `String` | Token from [shareWallet](#sharewallet) |
-
-Provides a key that can given to another user/app to share a wallet with that account.
+| type | `string` | A wallet type. See [`AbcWalletInfo`](#abcwalletinfo) for more information. |
+| onWalletShared | `Function` | Called when a remote user fulfills the request. |
 
 ## AbcAccountOptions
 

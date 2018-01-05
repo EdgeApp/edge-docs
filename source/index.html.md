@@ -1870,25 +1870,31 @@ Setup the script/contract for this wallet. This is used to setup basic multisig 
 
 ```javascript
 const privateSeed = abcCurrencyWallet.getDisplayPrivateSeed()
+if (privateSeed !== null) {
+  console.log(privateSeed)
+}
 ```
 
 Gets the master private seed (or private key if wallet is initialized from key and not from seed) from the engine as a string
 
 | Return | Type | Description |
 | --- | --- | --- |
-| privateSeed | `String` | The private seed |
+| privateSeed | `String | null` | The private seed if exists |
 
 ### getDisplayPublicSeed
 
 ```javascript
 const publicKey = abcCurrencyWallet.getDisplayPublicSeed()
+if (publicKey !== null) {
+  console.log(publicKey)
+}
 ```
 
 Gets the master public key (or address in case of the ethereum plugin) from the engine as a string
 
 | Return | Type | Description |
 | --- | --- | --- |
-| publicKey | `String` | The public key |
+| publicKey | `String | null` | The public key if exists |
 
 ### resyncBlockchain
 
@@ -3184,25 +3190,31 @@ Stops checking the blockchain for new transactions, and flushes any caches to di
 
 ```javascript
 const privateSeed = abcTxEngine.getDisplayPrivateSeed()
+if (privateSeed !== null) {
+  console.log(privateSeed)
+}
 ```
 
 Gets the master private seed (or private key if wallet is initialized from key and not from seed) from the engine as a string
 
 | Return | Type | Description |
 | --- | --- | --- |
-| privateSeed | `String` | The private seed |
+| privateSeed | `String | null` | The private seed if exists |
 
 ### getDisplayPublicSeed
 
 ```javascript
 const publicKey = abcTxEngine.getDisplayPublicSeed()
+if (publicKey !== null) {
+  console.log(publicKey)
+}
 ```
 
 Gets the master public key (or address in case of the ethereum plugin) from the engine as a string
 
 | Return | Type | Description |
 | --- | --- | --- |
-| publicKey | `String` | The public key |
+| publicKey | `String | null` | The public key if exists |
 
 ### resyncBlockchain
 

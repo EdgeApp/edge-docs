@@ -1908,6 +1908,25 @@ Wipes out the local disk and memory cache of all transactions and forces a refet
 | --- | --- | --- |
 | promise | `Promise<void>` | A promise that resolves when the cache has been cleared. |
 
+### dumpData
+
+```javascript
+abcCurrencyWallet.dumpData()
+
+// Example
+const dataDump = abcCurrencyWallet.dumpData()
+console.log(dataDump.walletId)
+console.log(dataDump.walletType)
+console.log(dataDump.pluginType)
+console.log(dataDump.data)
+```
+
+Returns the entire memory and disk states of the wallet for debugging purposes
+
+| Return | Type | Description |
+| --- | --- | --- |
+| dataDump | [`AbcDataDump`](#abcdatadump) | An object containing the dump of the entire wallet cache and memory |
+
 ### enableTokens
 
 ```javascript
@@ -2741,6 +2760,17 @@ Object represents a signed or unsigned transaction that may or may not be broadc
 | isDoubleSpend | `Bool` | True if this transaction is found to be a double spend attempt |
 | inputOutputList | `Array` | Array of transaction inputs and outputs |
 
+## ABCDataDump
+
+An object that contains an entire dump of the memory and disk cache of a wallet.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| walletId | `string` | The Id of the dumped wallet |
+| walletType | `string` | The wallet type of the dumped wallet |
+| pluginType | `string` | The plugin type (network) of the dumped wallet |
+| data | `any` | An object containing the actual dump. Every key/value contains a dump of a different cache from inside the wallet. different plugins (for example Etherum and Bitcoin) might return different data structures |
+
 ## ABCExchangeRateCache
 
 ### addSource
@@ -3227,6 +3257,25 @@ Wipes out the local disk and memory cache of all transactions and forces a refet
 | Return | Type | Description |
 | --- | --- | --- |
 | promise | `Promise<void>` | A promise that resolves when the cache has been cleared. |
+
+### dumpData
+
+```javascript
+abcTxEngine.dumpData()
+
+// Example
+const dataDump = abcTxEngine.dumpData()
+console.log(dataDump.walletId)
+console.log(dataDump.walletType)
+console.log(dataDump.pluginType)
+console.log(dataDump.data)
+```
+
+Returns the entire memory and disk states of the wallet for debugging purposes
+
+| Return | Type | Description |
+| --- | --- | --- |
+| dataDump | [`AbcDataDump`](#abcdatadump) | An object containing the dump of the entire wallet cache and memory |
 
 ### enableTokens
 

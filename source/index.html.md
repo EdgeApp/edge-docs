@@ -656,11 +656,14 @@ Retrieves an array of [`AbcCurrencyPlugin`](#abccurrencyplugin) objects extracte
 
 ## AbcAccount
 
-### Class Properties
+### Basic Login Properties
 
 | Property | Type | Description |
 | --- | --- | --- |
-| username | `String` | Account username |
+| loggedIn | `string` | True if [`AbcAccount.logout`](#logout) has not been called. |
+| loginKey | `string` | The master decryption key for the account. This key gives full access to all account assets, including wallet private keys. It can be stored in the device secure element to enable fingerprint login via [`AbcContext.loginWithKey`](#loginwithkey). |
+| recoveryKey | `string` | The email backup key for recovery login. |
+| username | `string` | Account username |
 
 ### logout
 
@@ -734,16 +737,7 @@ This read-only property contains a `Array` of all keys visible to the account, i
 ### changePassword
 
 ```javascript
-abcAccount.changePassword(password, callback)
-
-// Example
-abcAccount.changePassword(password, function(error) {
-  if (error) {
-    // Oh no
-  } else {
-    // Yay!
-  }
-})
+await abcAccount.changePassword(password)
 ```
 
 ```objc
@@ -764,26 +758,21 @@ Change the password of the currently logged in AbcAccount
 
 | Param | Type | Description |
 | --- | --- | --- |
-| password | `String` | Password string |
-| callback | `Callback` | Callback function |
+| password | `string` | Password string |
 
-| Return Param | Type | Description |
-| --- | --- | --- |
-| error | [`AbcError`](#abcerror) | Error object. `null` if no error |
+| Return Type | Description |
+| --- | --- |
+| Promise<void> | Resolves or rejects once the function finishes. |
 
-### changePIN
+### changePin
 
 ```javascript
-abcAccount.changePIN(pin, callback)
+// Set up a new PIN, and use it for login:
+await abcAccount.changePin({ pin: '1234', enableLogin: true })
 
-// Example
-abcAccount.changePIN(pin, function(error) {
-  if (error) {
-    // Oh no
-  } else {
-    // Yay!
-  }
-})
+// Keep the exising PIN, but enable / disable using it for login:
+await abcAccount.changePin({ enableLogin: true })
+await abcAccount.changePin({ enableLogin: false })
 ```
 
 ```objc
@@ -800,30 +789,51 @@ abcAccount.changePIN(pin, function(error) {
 }];
 ```
 
-Change the PIN of the currently logged in AbcAccount
+Change the PIN of the currently logged in AbcAccount, and configure whether the PIN may be used for logging in.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| pin | `String` | 4 digit PIN string|
-| callback | `Callback` | (Javascript/ObjC) Callback function |
+| pin | `string | void` | 4 digit PIN string, or `undefined` to leave the PIN unchanged and simply toggle its login capability. |
+| enableLogin | `boolean` | True to enable logging in via PIN, or false to disable this feature. The PIN may still be used for in-app spending limits and other features via [AbcAccount.checkPin](#checkpin), even if it's disabled for login. |
 
-| Return Param | Type | Description |
+| Return Type | Description |
+| --- | --- |
+| Promise<void> | Resolves or rejects once the function finishes. |
+
+### changeRecoveryQuestions
+
+```javascript
+const recoveryKey = await abcAccount.changeRecoveryQuestions(
+  [
+    'What is your name?',
+    'What is your quest?',
+    'What is your favorite color?'
+  ],
+  [
+    'Sir Lancelot of Camelot',
+    'To seek the Holy Grail',
+    'Blue'
+  ]
+)
+
+// Now the user should email the recoveryKey to themselves...
+```
+
+Change the recovery questions and anwers for the the logged in AbcAccount.
+
+| Param | Type | Description |
 | --- | --- | --- |
-| error | [`AbcError`](#abcerror) | Error object. `null` if no error |
+| questions | `Array<string>` | An array of questions to show the user. |
+| answers | `Array<string>` | An array of answers to the provided questions. The user must answer the questions exactly (character-for-character) to log in. |
+
+| Return Type | Description |
+| --- | --- |
+| Promise<string> | Resolves or rejects once the function finishes. The resolved value is a recoveryKey, which the user should email to themselves. Logging in via recovery requires having access to this key. |
 
 ### checkPassword
 
 ```javascript
-abcAccount.checkPassword(password, callback)
-
-// Example
-abcAccount.checkPassword(password, function (error, passwordCorrect) {
-    if (!error) {
-      if (passwordCorrect) {
-        // Yay
-      }
-    }
-})
+const isOk = await abcAccount.checkPassword('MyNotSoGoodPassword')
 ```
 
 ```objc
@@ -838,45 +848,98 @@ Checks if password is the correct password for this account
 | Param | Type | Description |
 | --- | --- | --- |
 | password | `string` | Account password |
-| callback | `Callback` | (Javascript) Callback function |
 
-| Return Param | Type | Description |
+| Return Type | Description |
 | --- | --- | --- |
-| error | [`AbcError`](#abcerror) | (Javascript) Error object. `null` if no error |
-| passwordCorrect | `Boolean` | True if password is correct |
+| `Promise<boolean>` | Resolves to `true` if the password is correct, or `false` if the password is wrong. |
 
-### enablePINLogin
+### checkPin
 
 ```javascript
-abcAccount.enablePINLogin(enable, callback)
-
-// Example
-abcAccount.enablePINLogin(enable, function (error) {
-    if (error) {
-      // Failed
-    } else {
-      // Yay. Success
-    }
-})
+const isOk = await abcAccount.checkPin('1234')
 ```
 
-```objc
-- (NSError *) enablePINLogin:(BOOL)enable;
-
-// Example
-AbcError *error = [abcAccount enablePINLogin:enable];
-```
-
-Enable or disable PIN login on this account. Set enable = YES to allow PIN login. Enabling PIN login creates a local account decryption key that is split with one have in local device storage and the other half on Edge servers. When using loginWithPIN the PIN is sent to Edge servers to authenticate the user. If the PIN is correct, the second half of the decryption key is sent back to the device. Combined with the locally saved key, the two are then used to decrypt the local account thereby loggin in the user.
+Checks if the provided PIN is correct for this account.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| enable | `Boolean` | Set true to enable PIN login. False to disable |
-| callback | `Callback` | (Javascript) Callback function |
+| pin | `string` | Account PIN |
 
-| Return Param | Type | Description |
+| Return Type | Description |
 | --- | --- | --- |
-| error | [`AbcError`](#abcerror) | (Javascript) Error object. `null` if no error |
+| `Promise<boolean>` | Resolves to `true` if the PIN is correct, or `false` if the PIN is wrong. |
+
+### deletePin
+
+```javascript
+await abcAccount.deletePin()
+```
+
+Removes the PIN from this account. The [`AbcAccount.checkPin`](#checkpin) function will no longer work, so this may be too extreme. Consider using [`AbcAccount.changePin`](#changepin) if the goal is to simply disable PIN login.
+
+| Return Type | Description |
+| --- | --- |
+| Promise<void> | Resolves or rejects once the function finishes. |
+
+### deleteRecoveryQuestions
+
+```javascript
+await abcAccount.deleteRecoveryQuestions()
+```
+
+Removes the recovery questions from this account.
+
+| Return Type | Description |
+| --- | --- |
+| Promise<void> | Resolves or rejects once the function finishes. |
+
+### OTP Properties
+
+| Property | Type | Description |
+| --- | --- | --- |
+| otpKey | `string | void` | The OTP secret. This can be shown to the user for backup purposes. This will be `undefined` if OTP is not configured. |
+| otpResetDate | `Date` | Set to a `Date` object if someone has requested an OTP reset for this account. The OTP will be turned off after the provided data. |
+
+### cancelOtpReset
+
+```javascript
+await abcAccount.cancelOtpResetRequest()
+```
+
+Removes the OTP reset request from the server for the currently logged in user. When a user logs in on a new device for an account with OTP enabled, the login will fail with 'OtpError'. A reset request can then be made using [AbcContext.requestOtpReset](#requestOtpReset). This function allows a logged in user to cancel that request and prevent the remote device from logging in.
+
+| Return Type | Description |
+| --- | --- |
+| Promise<void> | Resolves or rejects once the function finishes. |
+
+### disableOtp
+
+```javascript
+await abcAccount.disableOtp()
+```
+
+Removes the OTP authentication requirement from the server for the currently logged in user.
+
+| Return Type | Description |
+| --- | --- |
+| Promise<void> | Resolves or rejects once the function finishes. |
+
+### enableOtp
+
+```javascript
+// Enable OTP protection with a 1-week reset requirement:
+await abcAccount.enableOtp(7 * 24 * 60 * 60)
+```
+
+Enables 2-factor protection for this account.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| timeout | number | The number of seconds the user must wait for an OTP reset request to complete. Defaults to 1 week. |
+
+| Return Type | Description |
+| --- | --- |
+| Promise<void> | Resolves or rejects once the function finishes. |
 
 ### fetchLobby
 
@@ -890,7 +953,7 @@ if (abcLobby.loginRequest) {
 }
 ```
 
-Retrieves an edge-login or wallet-sharing request from the Edge lobby server. The `lobbyId` can be found in the edge-login QR code.
+Retrieves an edge-login or wallet-sharing request from the Airbitz lobby server. The `lobbyId` can be found in the edge-login QR code.
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -900,127 +963,7 @@ Retrieves an edge-login or wallet-sharing request from the Edge lobby server. Th
 | --- | --- | --- |
 | abcLobby | [`Promise<AbcLobby>`](#abclobby) | The lobby object. |
 
-### setupOtpKey
-
-```javascript
-abcAccount.setupOtpKey(key: string):Promise<void>
-
-// Example
-try {
-  await abcAccount.setupOtpKey(key)
-} catch (error) {
-  console.log(error)
-}
-```
-
-Associates an OTP key with the currently logged in account. An OTP key can be retrieved from a previously logged in account using AbcAccount.getOtpLocalKey. The account must have had OTP enabled by using otpEnable().
-
-This method is primarily used to add an OTP key to an account & device that was successfully logged in prior to OTP being enabled. A second device may have enabled OTP which would cause OTP warnings on the first device upon login.
-
-ie.
-Device A creates account "bob".
-Device B login to account "bob".
-Device B enables OTP.
-
-Device A can still login but will get OTP token notification warnings and will be unable to make any account changes such as changing password/PIN or creating new wallets.
-Device B can call getOtpLocalKey and Device A can add the OTP key using setupOtpKey
-
-| Param | Type | Description |
-| --- | --- | --- |
-| key | `String` | OTP key |
-
-### getOtpLocalKey
-
-```javascript
-abcAccount.getOtpLocalKey(): Promise<string>
-
-// Example
-
-try {
-  const key = await abcAccount.getOtpLocalKey()
-  console.log("My key is: " + key)
-} catch (error) {
-  console.log(error)
-}
-```
-
-Gets the locally saved OTP key for the current user
-
-| Promise Return Param | Type | Description |
-| --- | --- | --- |
-| key | `String` | OTP key |
-
-
-### getOtpDetails
-
-```javascript
-abcAccount.getOtpDetails(): Promise<{enabled: boolean, timeout: number}>
-
-// Example
-try {
-  const details = await abcAccount.getOtpDetails()
-} catch (error) {
-  console.log(error)  
-}
-```
-
-Reads the OTP configuration from the server. Gets information on whether OTP is enabled for the current account, and how long a reset request will take. An OTP reset is a request to disable OTP made through the method AbcContext.requestOtpReset.
-
-| Promise Return Param | Type | Description |
-| --- | --- | --- |
-| enabled | `Boolean` | True if OTP is enabled on this accout |
-| timeout | `Number` | Number seconds required after a reset is requested before OTP is disabled |
-
-
-### enableOtp
-
-```javascript
-abcAccount.enableOtp(timeout): Promise<void>
-
-// Example
-try {
-  await abcAccount.enableOtp(timeout)
-} catch (error) {
-  console.log(error)  
-}
-```
-Sets up OTP authentication on the server for currently logged in user. This will generate a new token if the username doesn't already have one.
-
-| Param | Type | Description |
-| --- | --- | --- |
-| timeout | `Number` | Number seconds required after a reset is requested before OTP is disabled |
-
-### disableOtp
-
-```javascript
-abcAccount.disableOtp(): Promise<void>
-
-// Example
-try {
-  await abcAccount.disableOtp()
-} catch (error) {
-  console.log(error)  
-}
-```
-
-Removes the OTP authentication requirement from the server for the currently logged in user. Also removes local key from device
-
-### cancelOtpResetRequest
-
-```javascript
-abcAccount.cancelOtpResetRequest(): Promise<void>
-
-// Example
-try {
-  await abcAccount.cancelOtpResetRequest()
-} catch (error) {
-  console.log(error)  
-}
-```
-
-Removes the OTP reset request from the server for the currently logged in user. When a user logs in on a new device for an account with OTP enabled, the login will fail with 'OtpError'. A reset request can then be made using AbcContext.requestOtpReset. cancelOtpResetRequest allows a logged in user to cancel that request and prevent that device from logging in.
-
-### signBitIDRequest
+### signBitIDRequest (proposal)
 
 ```javascript
 abcAccount.signBitIDRequest(uri, message, callback)

@@ -143,7 +143,7 @@ Gathers various React Native API's into an IO object. This is an asynchronous fu
 
 ## AbcContext
 
-Starting point of Airbitz Core SDK. Used for operations that do not require a logged in ABCAccount
+Starting point of Airbitz Core SDK. Used for operations that do not require a logged in AbcAccount
 
 ### makeContext
 
@@ -167,7 +167,7 @@ Initialize and create an AbcContext object. Required for functionality of ABC SD
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| context | [`ABCContext`](#abccontext) | Initialized context |
+| context | [`AbcContext`](#abccontext) | Initialized context |
 
 ### createAccount
 
@@ -175,7 +175,7 @@ Initialize and create an AbcContext object. Required for functionality of ABC SD
 abcContext.createAccount(username,
                          password,
                          pin,
-                         ABCAccountOptions,
+                         AbcAccountOptions,
                          callback)
 
 // Example
@@ -203,21 +203,21 @@ abcContext.createAccount(
 })
 ```
 
-Create and log into a new ABCAccount
+Create and log into a new AbcAccount
 
 | Param | Type | Description |
 | --- | --- | --- |
 | username | `string` | Account username |
 | password | `string` | Account password |
 | pin | `string` | Account PIN for fast re-login |
-| options | [`ABCAccountOptions`](#abcaccountoptions) | (Javascript) Callback event routines |
-| delegate | [`ABCAccountDelegate`](#abcaccountdelegate) | (ObjC) Callback event delegates |
+| options | [`AbcAccountOptions`](#abcaccountoptions) | (Javascript) Callback event routines |
+| delegate | [`AbcAccountDelegate`](#abcaccountdelegate) | (ObjC) Callback event delegates |
 | callback | `Callback` | Callback function when routine completes|
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | Error object. `null` if no error |
-| account | [`ABCAccount`](#abcaccount) | Initialized account |
+| error | [`AbcError`](#abcerror) | Error object. `null` if no error |
+| account | [`AbcAccount`](#abcaccount) | Initialized account |
 
 ### getLocalAccount
 
@@ -238,21 +238,21 @@ abcContext.getLocalAccount("JoeHomey", null,
 
 (Proposal)
 
-Get local account details for a previously logged in account. This returns an ABCAccount object with a `null` `dataStore` object but with a functioning `localDataStore` object. This is effectively getting the non-encrypted account data which can be accessed without the user logging into the device with a password, PIN, or fingerpint.
+Get local account details for a previously logged in account. This returns an AbcAccount object with a `null` `dataStore` object but with a functioning `localDataStore` object. This is effectively getting the non-encrypted account data which can be accessed without the user logging into the device with a password, PIN, or fingerpint.
 
 Any [ABCWallet](#abcwallet) objects in the account will also have `null` `dataStore` objects but with functioning `localDataStore` objects. This is commonly used for background processing the accounts/wallets on a device to do querying of cryptocurrency transactions while the user is not logged in.
 
 | Param | Type | Description |
 | --- | --- | --- |
 | username | `string` | Account username |
-| options | [`ABCAccountOptions`](#abcaccountoptions) | (Javascript) Callback event routines |
-| delegate | [`ABCAccountDelegate`](#abcaccountdelegate) | (ObjC) Callback event delegates |
+| options | [`AbcAccountOptions`](#abcaccountoptions) | (Javascript) Callback event routines |
+| delegate | [`AbcAccountDelegate`](#abcaccountdelegate) | (ObjC) Callback event delegates |
 | callback | `Callback` | Callback function when routine completes |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | Error object. `null` if no error |
-| account | [`ABCAccount`](#abcaccount) | Initialized account |
+| error | [`AbcError`](#abcerror) | Error object. `null` if no error |
+| account | [`AbcAccount`](#abcaccount) | Initialized account |
 
 ### loginWithPassword
 
@@ -281,16 +281,16 @@ abcContext.loginWithPassword(
 ```objc
 -(void) loginWithPassword:(NSString *) username
                  password:(NSString *) password
-                 delegate:(ABCAccountDelegate) delegate
-                 callback:^(ABCError *error, ABCAccount *account);
+                 delegate:(AbcAccountDelegate) delegate
+                 callback:^(AbcError *error, AbcAccount *account);
 
 // Example
-ABCAccount *abcAccount;
+AbcAccount *abcAccount;
 
 [abcContext loginWithPassword:@"myUsername"
                      password:@"myNot5oGoodPassw0rd"
                      delegate:self
-                     callback:^(ABCError *error, ABCAccount *account)
+                     callback:^(AbcError *error, AbcAccount *account)
 {
     if (error)
     {
@@ -306,9 +306,9 @@ ABCAccount *abcAccount;
 }];
 ```
 
-Login to an Edge account with a full password. May optionally send 'otp' key which is required for any accounts that have OTP enabled using [ABCAccount.enableOtp](#enableotp). OTP key can be retrieved from a device that has account logged in and OTP enabled using getOtpLocalKey.
+Login to an Edge account with a full password. May optionally send 'otp' key which is required for any accounts that have OTP enabled using [AbcAccount.enableOtp](#enableotp). OTP key can be retrieved from a device that has account logged in and OTP enabled using getOtpLocalKey.
 
-If routine returns with error.code == ABCConditionCodeInvalidOTP, then the account has OTP enabled and needs the OTP key specified in parameter 'otp'. ABCError object may have properties otpResetToken and otpResetDate set which allow the user to call requestOtpReset to disable OTP.
+If routine returns with error.code == ABCConditionCodeInvalidOTP, then the account has OTP enabled and needs the OTP key specified in parameter 'otp'. AbcError object may have properties otpResetToken and otpResetDate set which allow the user to call requestOtpReset to disable OTP.
 
 This routine allows caller to receive back an error.otpResetToken which is used with requestOtpReset to remove OTP from the specified account.
 
@@ -318,14 +318,14 @@ The otpResetToken is only returned if the caller has provided the correct userna
 | --- | --- | --- |
 | username | `string` | Account username |
 | password | `string` | Account password |
-| options | [`ABCAccountOptions`](#abcaccountoptions) | (Javascript) Callback event routines & OTP key |
-| delegate | [`ABCAccountDelegate`](#abcaccountdelegate) | (ObjC) Callback event delegates |
+| options | [`AbcAccountOptions`](#abcaccountoptions) | (Javascript) Callback event routines & OTP key |
+| delegate | [`AbcAccountDelegate`](#abcaccountdelegate) | (ObjC) Callback event delegates |
 | callback | `Callback` | Callback function when routine completes |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | Error object. `null` if no error |
-| account | [`ABCAccount`](#abcaccount) | Initialized account |
+| error | [`AbcError`](#abcerror) | Error object. `null` if no error |
+| account | [`AbcAccount`](#abcaccount) | Initialized account |
 
 ### loginWithPIN
 
@@ -349,16 +349,16 @@ abcContext.loginWithPIN(
 ```objc
 -(void) loginWithPIN:(NSString *) username
             password:(NSString *) password
-            delegate:(ABCAccountDelegate) delegate
-            callback:^(ABCError *error, ABCAccount *account);
+            delegate:(AbcAccountDelegate) delegate
+            callback:^(AbcError *error, AbcAccount *account);
 
 // Example
-ABCAccount *abcAccount;
+AbcAccount *abcAccount;
 
 [abcContext loginWithPIN:@"myUsername"
                      pin:@"4728"
                 delegate:self
-                callback:^(ABCError *error, ABCAccount *account)
+                callback:^(AbcError *error, AbcAccount *account)
 {
     if (!error)
     {
@@ -377,14 +377,14 @@ Login to an Edge account with PIN. Used to sign into devices that have previousl
 | --- | --- | --- |
 | username | `string` | Account username |
 | pin | `string` | Account PIN for fast re-login |
-| options | [`ABCAccountOptions`](#abcaccountoptions) | (Javascript) Callback event routines |
-| delegate | [`ABCAccountDelegate`](#abcaccountdelegate) | (ObjC) Callback event delegates |
+| options | [`AbcAccountOptions`](#abcaccountoptions) | (Javascript) Callback event routines |
+| delegate | [`AbcAccountDelegate`](#abcaccountdelegate) | (ObjC) Callback event delegates |
 | callback | `Callback` | Callback function when routine completes|
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | Error object. `null` if no error |
-| account | [`ABCAccount`](#abcaccount) | Initialized account |
+| error | [`AbcError`](#abcerror) | Error object. `null` if no error |
+| account | [`AbcAccount`](#abcaccount) | Initialized account |
 
 
 ### accountHasPassword
@@ -406,10 +406,10 @@ abcContext.accountHasPassword("JoeHomey", function (error, hasPassword) {
 
 ```objc
 -(BOOL) accountHasPassword:(NSString *) username
-                     error:(ABCError *) error;
+                     error:(AbcError *) error;
 
 // Example
-ABCError *error;
+AbcError *error;
 
 BOOL hasPassword = [abcContext accountHasPassword:@"myUsername"
                                             error:&error
@@ -424,7 +424,7 @@ Check if specified username has a password on the account or if it is a PIN-only
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | Error object. `null` if no error |
+| error | [`AbcError`](#abcerror) | Error object. `null` if no error |
 | hasPassword | `Boolean` | True if account has a password |
 
 
@@ -444,12 +444,12 @@ abcContext.deleteLocalAccount("JoeHomey", function (error) {
 ```
 
 ```objc
-- (ABCError *) deleteLocalAccount:(NSString *) username;
+- (AbcError *) deleteLocalAccount:(NSString *) username;
 
 // Example
-ABCError *error;
+AbcError *error;
 
-ABCError *error = [abcContext deleteLocalAccount:@"myUsername"];
+AbcError *error = [abcContext deleteLocalAccount:@"myUsername"];
 ```
 
 Deletes named account from local device. Account is recoverable if it contains a password. Use accountHasPassword to determine if account has a password. Recommend warning user before executing deleteLocalAccount if accountHasPassword returns FALSE.
@@ -461,7 +461,7 @@ Deletes named account from local device. Account is recoverable if it contains a
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | Error object. `null` if no error |
+| error | [`AbcError`](#abcerror) | Error object. `null` if no error |
 | hasPassword | `Boolean` | True if account has a password |
 
 ### pinLoginEnabled
@@ -481,7 +481,7 @@ abcContext.pinLoginEnabled(username,function (error, enabled) {
 - (BOOL)pinLoginEnabled:(NSString *)username error:(NSError **)error;
 
 // Example
-ABCError *error;
+AbcError *error;
 BOOL enabled = [abcContext pinLoginEnabled:username error:&error];
 ```
 
@@ -494,7 +494,7 @@ Checks if PIN login is possible for the given username. This checks if there is 
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | Error object. `null` if no error |
+| error | [`AbcError`](#abcerror) | Error object. `null` if no error |
 | enabled | `Boolean` | True if PIN login is enabled |
 
 ### getRecovery2Key
@@ -565,7 +565,7 @@ abcContext.listUsernames(function (error, usernames) {
 ```
 
 ```objc
-- (NSArray *) listUsernames:(ABCError **) abcerror;
+- (NSArray *) listUsernames:(AbcError **) abcerror;
 
 // Example
 NSError *error;
@@ -583,7 +583,7 @@ Get a list of previously logged in usernames on this device
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | Error object. `null` if no error |
+| error | [`AbcError`](#abcerror) | Error object. `null` if no error |
 | usernames | `Array` | Array |
 
 ### usernameAvailable
@@ -603,7 +603,7 @@ abcContext.usernameAvailable(username, function (error, available) {
 - (BOOL)pinLoginEnabled:(NSString *)username error:(NSError **)error;
 
 // Example
-ABCError *error;
+AbcError *error;
 BOOL enabled = [abcContext pinLoginEnabled:username error:&error];
 ```
 
@@ -616,7 +616,7 @@ Checks if PIN login is possible for the given username. This checks if there is 
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | Error object. `null` if no error |
+| error | [`AbcError`](#abcerror) | Error object. `null` if no error |
 | enabled | `Boolean` | True if PIN login is enabled |
 
 ### requestOtpReset
@@ -633,7 +633,7 @@ try {
 ```
 Launches an OTP reset timer on the server, which will disable the OTP authentication requirement on the account `username` when timeout expires. The expiration timeout is set when OTP is first enabled using [AbcAccount.enableOtp](#enableotp).
 
-To obtain an otpResetToken, attempt a login into the OTP protected account using loginWithPassword with the correct username/password. The login should fail with error.code == ABCConditionCodeInvalidOTP. The OTP token will be in the error.otpResetToken property of the ABCError object.
+To obtain an otpResetToken, attempt a login into the OTP protected account using loginWithPassword with the correct username/password. The login should fail with error.code == ABCConditionCodeInvalidOTP. The OTP token will be in the error.otpResetToken property of the AbcError object.
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -654,7 +654,7 @@ const plugins = await abcContext.getCurrencyPlugins()
 
 Retrieves an array of [`AbcCurrencyPlugin`](#abccurrencyplugin) objects extracted from the plugin list passed in at context creation time. These can be used for parsing URI's, retrieving currency information, and other currency-related tasks.
 
-## ABCAccount
+## AbcAccount
 
 ### Class Properties
 
@@ -674,11 +674,11 @@ abcAccount.logout(function() {
 [abcAccount logout];
 ```
 
-Logout the currently logged in ABCAccount
+Logout the currently logged in AbcAccount
 
 | Param | Type | Description |
 | --- | --- | --- |
-| account | [`ABCAccount`](#abcaccount) | Account object |
+| account | [`AbcAccount`](#abcaccount) | Account object |
 | callback | `Callback` | (Javascript) Callback function |
 
 ### currencyWallets
@@ -748,10 +748,10 @@ abcAccount.changePassword(password, function(error) {
 
 ```objc
 - (void)changePassword:(NSString *)password
-              callback:(void (^)(ABCError *error)) callback;
+              callback:(void (^)(AbcError *error)) callback;
 
 // Example
-[abcAccount changePassword:password callback:^(ABCError *error) {
+[abcAccount changePassword:password callback:^(AbcError *error) {
     if (error) {
         // Oh no
     } else {
@@ -760,7 +760,7 @@ abcAccount.changePassword(password, function(error) {
 }];
 ```
 
-Change the password of the currently logged in ABCAccount
+Change the password of the currently logged in AbcAccount
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -769,7 +769,7 @@ Change the password of the currently logged in ABCAccount
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | Error object. `null` if no error |
+| error | [`AbcError`](#abcerror) | Error object. `null` if no error |
 
 ### changePIN
 
@@ -788,10 +788,10 @@ abcAccount.changePIN(pin, function(error) {
 
 ```objc
 - (void)changePIN:(NSString *)pin
-         callback:(void (^)(ABCError *error)) callback;
+         callback:(void (^)(AbcError *error)) callback;
 
 // Example
-[abcAccount changePIN:pin callback:^(ABCError *error) {
+[abcAccount changePIN:pin callback:^(AbcError *error) {
     if (error) {
         // Oh no
     } else {
@@ -800,7 +800,7 @@ abcAccount.changePIN(pin, function(error) {
 }];
 ```
 
-Change the PIN of the currently logged in ABCAccount
+Change the PIN of the currently logged in AbcAccount
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -809,7 +809,7 @@ Change the PIN of the currently logged in ABCAccount
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | Error object. `null` if no error |
+| error | [`AbcError`](#abcerror) | Error object. `null` if no error |
 
 ### checkPassword
 
@@ -842,7 +842,7 @@ Checks if password is the correct password for this account
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
+| error | [`AbcError`](#abcerror) | (Javascript) Error object. `null` if no error |
 | passwordCorrect | `Boolean` | True if password is correct |
 
 ### enablePINLogin
@@ -864,7 +864,7 @@ abcAccount.enablePINLogin(enable, function (error) {
 - (NSError *) enablePINLogin:(BOOL)enable;
 
 // Example
-ABCError *error = [abcAccount enablePINLogin:enable];
+AbcError *error = [abcAccount enablePINLogin:enable];
 ```
 
 Enable or disable PIN login on this account. Set enable = YES to allow PIN login. Enabling PIN login creates a local account decryption key that is split with one have in local device storage and the other half on Edge servers. When using loginWithPIN the PIN is sent to Edge servers to authenticate the user. If the PIN is correct, the second half of the decryption key is sent back to the device. Combined with the locally saved key, the two are then used to decrypt the local account thereby loggin in the user.
@@ -876,7 +876,7 @@ Enable or disable PIN login on this account. Set enable = YES to allow PIN login
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
+| error | [`AbcError`](#abcerror) | (Javascript) Error object. `null` if no error |
 
 ### fetchLobby
 
@@ -1018,7 +1018,7 @@ try {
 }
 ```
 
-Removes the OTP reset request from the server for the currently logged in user. When a user logs in on a new device for an account with OTP enabled, the login will fail with ABCConditionCodeInvalidOTP. A reset request can then be made using ABCContext.requestOtpReset. cancelOtpResetRequest allows a logged in user to cancel that request and prevent that device from logging in.
+Removes the OTP reset request from the server for the currently logged in user. When a user logs in on a new device for an account with OTP enabled, the login will fail with ABCConditionCodeInvalidOTP. A reset request can then be made using AbcContext.requestOtpReset. cancelOtpResetRequest allows a logged in user to cancel that request and prevent that device from logging in.
 
 ### signBitIDRequest
 
@@ -1045,7 +1045,7 @@ Sign an arbitrary message with a BitID URI. The URI determines the key derivatio
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
+| error | [`AbcError`](#abcerror) | (Javascript) Error object. `null` if no error |
 | abcSignature | [`ABCBitIDSignature`](#ABCBitIDSignature) | BitID Signature Object |
 
 ### createWallet
@@ -1064,7 +1064,7 @@ abcAccount.createWallet("wallet:repo:ethereum",
                         function (error, id) { /* your callback */ })
 ```
 
-Create a new [ABCWallet](#abcwallet) object and add it to the current account. Each wallet object represents key storage for a specific cryptocurrency type or other misc functionality such as BitID or general data storage. Once a wallet is created, the wallet keys cannot be modified. ABCWallet objects may be shared between ABCAccount objects of the same or different users given permission by the user.
+Create a new [ABCWallet](#abcwallet) object and add it to the current account. Each wallet object represents key storage for a specific cryptocurrency type or other misc functionality such as BitID or general data storage. Once a wallet is created, the wallet keys cannot be modified. ABCWallet objects may be shared between AbcAccount objects of the same or different users given permission by the user.
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1073,10 +1073,10 @@ Create a new [ABCWallet](#abcwallet) object and add it to the current account. E
 
 | Callback Params | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
+| error | [`AbcError`](#abcerror) | (Javascript) Error object. `null` if no error |
 | id | `String` | Strings of wallet ID |
 
-Please seee the [ABCWalletInfo](#abcwalletinfo) documentation for the different wallet types Edge understands.
+Please seee the [AbcWalletInfo](#abcwalletinfo) documentation for the different wallet types Edge understands.
 
 ### listWalletIds
 
@@ -1122,7 +1122,7 @@ Get the first [ABCWallet](#abcwallet) object of type `walletType`
 
 | Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
+| error | [`AbcError`](#abcerror) | (Javascript) Error object. `null` if no error |
 | walletType | `String` | Wallet type |
 
 | Return Param | Type | Description |
@@ -1186,7 +1186,7 @@ abcAccount.importWallet(shareWalletToken, function(error, abcWallet) {
 
 | Callback Params | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
+| error | [`AbcError`](#abcerror) | (Javascript) Error object. `null` if no error |
 | shareWalletToken | `String` | Token to use with [importWallet](#importWallet) |
 
 Provides a key that can given to another user/app to share a wallet with that account.
@@ -1215,12 +1215,12 @@ abcAccount.importWallet(shareWalletToken, function(error, abcWallet) {
 
 | Callback Params | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
+| error | [`AbcError`](#abcerror) | (Javascript) Error object. `null` if no error |
 | shareWalletToken | `String` | Token from [shareWallet](#sharewallet) |
 
 Provides a key that can given to another user/app to share a wallet with that account.
 
-## ABCAccountOptions
+## AbcAccountOptions
 
 ```javascript
 const options = {
@@ -1240,7 +1240,7 @@ const options = {
 const account = await context.loginWithPassword('user', 'pass', options)
 ```
 
-Callback routines that notify application when various changes have occurred in the account. This is only utilized for Javascript. For ObjC, see [ABCAccountDelegate](#abcaccountdelegate).
+Callback routines that notify application when various changes have occurred in the account. This is only utilized for Javascript. For ObjC, see [AbcAccountDelegate](#abcaccountdelegate).
 
 | Property | Type | Description |
 | --- | --- | --- |
@@ -1299,7 +1299,7 @@ In the future, `AbcLoginRequest` may contain information about the wallet types 
 | address | `String` | Public address of private key used to sign |
 | signature | `String` | Public address of private key used to sign |
 
-## ABCWalletInfo
+## AbcWalletInfo
 
 ```javascript
 {
@@ -1313,7 +1313,7 @@ In the future, `AbcLoginRequest` may contain information about the wallet types 
 }
 ```
 
-An `ABCWalletInfo` contains the keys needed to access a wallet or other resource. The Edge login system exists to store these wallet keys in an encrypted and backed-up manner.
+An `AbcWalletInfo` contains the keys needed to access a wallet or other resource. The Edge login system exists to store these wallet keys in an encrypted and backed-up manner.
 
 The Edge SDK includes full send & receive capability for a variety of blockchains. If you use these features, you won't need to deal with these wallet keys directly.
 
@@ -1453,7 +1453,7 @@ The `airbitz-core-js` library is responsible for managing `dataKey` and `syncKey
 
 ## ABCDataStore
 
-This API is no longer used. Please see [ABCStorageWallet](#abcstoragewallet).
+This API is no longer used. Please see [AbcStorageWallet](#abcstoragewallet).
 
 ### writeData
 
@@ -1480,7 +1480,7 @@ abcWallet.dataStore.writeData("userAddress",
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
+| error | [`AbcError`](#abcerror) | (Javascript) Error object. `null` if no error |
 
 Writes a string of data to the specified dataStore folder using the given key. `folder` must not include the characters "/". The dataStore object at this point only provides a single depth folder for storing key/value pairs. Keys can be enumerated using the [ABCDataStore.listKeys](#listkeys) method. Data can read back using the [ABCDataStore.readData](#readdata) method.
 
@@ -1507,7 +1507,7 @@ abcWallet.dataStore.readData("userAddress",
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
+| error | [`AbcError`](#abcerror) | (Javascript) Error object. `null` if no error |
 | value | `String` | data value |
 
 Reads back a string of data from the specified dataStore folder using the given key. `folder` must not include the characters "/". The dataStore object at this point only provides a single depth folder for storing key/value pairs. Keys can be enumerated using the [ABCDataStore.listKeys](#listkeys) method.
@@ -1535,7 +1535,7 @@ abcWallet.dataStore.removeKey("userAddress",
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
+| error | [`AbcError`](#abcerror) | (Javascript) Error object. `null` if no error |
 
 Removes the specified key/value pair from the dataStore.
 
@@ -1560,7 +1560,7 @@ abcWallet.dataStore.removeFolder("userAddress",
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
+| error | [`AbcError`](#abcerror) | (Javascript) Error object. `null` if no error |
 
 Removes the specified folder from the dataStore. All key/value pairs in the folder will also be removed.
 
@@ -1584,7 +1584,7 @@ abcWallet.dataStore.listKeys("userAddress",
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
+| error | [`AbcError`](#abcerror) | (Javascript) Error object. `null` if no error |
 | keys | `Array` | Array of strings of keys in folder |
 
 List the keys in the specified folder
@@ -1685,7 +1685,7 @@ Once the user has logged in and retrieved their keys, there are serveral things 
 
 The Edge SDK includes several helper classes which perform these capabilities on your behalf, using a set of provided keys.
 
-## ABCStorageWallet
+## AbcStorageWallet
 
 ```javascript
 // Save a JSON file:
@@ -1711,7 +1711,7 @@ mapFiles(abcStorageWallet.folder.folder('articles'), async file => {
 })
 ```
 
-This wallet type handles encrypted and synced data. This is the base class for several other wallet types, including `ABCCurrencyWallet`. You can also use it directly if your application requires multiple encrypted and backed-up data stores. Bear in mind that each account also has its own data store, so you may not need this class unless you are doing something involving key sharing.
+This wallet type handles encrypted and synced data. This is the base class for several other wallet types, including `AbcCurrencyWallet`. You can also use it directly if your application requires multiple encrypted and backed-up data stores. Bear in mind that each account also has its own data store, so you may not need this class unless you are doing something involving key sharing.
 
 See the [Disklet](https://www.npmjs.com/package/disklet) documentation for information on the filesystem API.
 
@@ -1735,19 +1735,19 @@ This function creates an instance of the storage wallet class.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| keys | `String` | An [`ABCWalletInfo`](#abcwalletinfo) structure from the account. |
-| opts.account | `Object` | The [`ABCAccount`](#abcaccount) object that these keys belong to. |
+| keys | `String` | An [`AbcWalletInfo`](#abcwalletinfo) structure from the account. |
+| opts.account | `Object` | The [`AbcAccount`](#abcaccount) object that these keys belong to. |
 | opts.onDataChange | `Function` | Called when the data changes as part of a sync operation. |
 
 ### Class Properties
 
 | Property | Type | Description |
 | --- | --- | --- |
-| id | `String` | The `id` property of the account-level [ABCWalletInfo](#abcwalletinfo) |
-| type | `String` | The `type` property of the account-level [ABCWalletInfo](#abcwalletinfo) |
-| keys | `Object` | The `keys` property of the account-level [ABCWalletInfo](#abcwalletinfo) |
+| id | `String` | The `id` property of the account-level [AbcWalletInfo](#abcwalletinfo) |
+| type | `String` | The `type` property of the account-level [AbcWalletInfo](#abcwalletinfo) |
+| keys | `Object` | The `keys` property of the account-level [AbcWalletInfo](#abcwalletinfo) |
 | name | `String` | Human readable name of wallet. May be `null` if the wallet has no name. |
-| folder | `Folder` | A [`Disklet`](https://www.npmjs.com/package/disklet) folder. This datastore object is encrypted by default, backed up to the cloud, and synchronized with any device the user logs into. Data modifications are versioned and can be rolled back but this functionality is not yet exposed via API. dataStore object may `null` if parent [ABCAccount](#abcaccount) has not been logged into yet |
+| folder | `Folder` | A [`Disklet`](https://www.npmjs.com/package/disklet) folder. This datastore object is encrypted by default, backed up to the cloud, and synchronized with any device the user logs into. Data modifications are versioned and can be rolled back but this functionality is not yet exposed via API. dataStore object may `null` if parent [AbcAccount](#abcaccount) has not been logged into yet |
 | localFolder | `Folder` | A [`Disklet`](https://www.npmjs.com/package/disklet) folder that only exists on the current device. This data is not encrypted nor backed up. Not to be used for sensitive data but rather as a local cache of network data. Data is not version controlled and has no rollback capability. Common use case will be for local device specific wallet settings, blockchain cache information, and public address cache for use when account/wallet has not yet been decrypted (background processing) |
 
 ### renameWallet
@@ -1770,15 +1770,15 @@ abcStorageWallet.renameWallet("My Wallet", function (error) {
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
+| error | [`AbcError`](#abcerror) | (Javascript) Error object. `null` if no error |
 
 Returns a list of transactions in the current wallet. Transactions are returned ordered from newest to oldest.
 
 ## AbcCurrencyWallet
 
-Each ABCCurrencyWallet represents a single or HD cryptocurrency wallet tied to one specific blockchain such as bitcoin or ethereum. Various methods and fields in ABCCurrencyWallet are arrays or accept an index which selects which token system in the wallet is being referenced.
+Each AbcCurrencyWallet represents a single or HD cryptocurrency wallet tied to one specific blockchain such as bitcoin or ethereum. Various methods and fields in AbcCurrencyWallet are arrays or accept an index which selects which token system in the wallet is being referenced.
 
-This class also includes all the methods and callbacks of [`ABCStorageWallet`](#abcstoragewallet).
+This class also includes all the methods and callbacks of [`AbcStorageWallet`](#abcstoragewallet).
 
 ### makeCurrencyWallet
 
@@ -1818,27 +1818,27 @@ abc
   .then(abcBitcoinWallet => {})
 ```
 
-Creates a wallet capable of send and receive functionality. An [ABCCurrencyPlugin](#abccurrencyplugin) object must be passed in that exposes the entire [ABCCurrencyPlugin](#abccurrencyplugin) interface.
+Creates a wallet capable of send and receive functionality. An [AbcCurrencyPlugin](#abccurrencyplugin) object must be passed in that exposes the entire [AbcCurrencyPlugin](#abccurrencyplugin) interface.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| keys | [`ABCWalletInfo`](#abcwalletinfo) | The wallet info obtained from the account |
-| opts.account | `ABCAccount` | The account object this wallet belongs to. |
-| opts.plugin | `ABCCurrencyPlugin` |  Object that exposes the [ABCCurrencyPlugin](#abccurrencyplugin) functions |
-| opts.callbacks | `ABCCurrencyPlugin` | `Object` | Object with callback functions |
+| keys | [`AbcWalletInfo`](#abcwalletinfo) | The wallet info obtained from the account |
+| opts.account | `AbcAccount` | The account object this wallet belongs to. |
+| opts.plugin | `AbcCurrencyPlugin` |  Object that exposes the [AbcCurrencyPlugin](#abccurrencyplugin) functions |
+| opts.callbacks | `AbcCurrencyPlugin` | `Object` | Object with callback functions |
 
-(Javascript) Returns a `Promise` for an ABCCurrencyWallet type.
+(Javascript) Returns a `Promise` for an AbcCurrencyWallet type.
 
 | Callback name | Type | Description |
 | --- | --- | --- |
 | onAddressesChecked(progressRatio) | `Function` | Called as the engine checks addresses. If money has arrived while the app was shut down, this process will eventually detect it. The balance and history may be incomplete until `progressRatio` reaches 100%. |
 | onBalanceChanged(balance) | `Function` | The spendable balance has changed, either from newly-detected transactions or from dropped transactions. |
 | onBlockHeightChanged(height) | `Function` | Blockchain height changed. This is unused for sub wallets. The confirmation status of each transaction is `chainHeight - transactionHeight`, so this affects all confirmed transactions. |
-| onNewTransactions(transactionArray) | `Function` | Array of ABCTransaction objects. These transactions are either previously-recognized funds that are being synced to this device for the first time, or updates to previously-seen transactions such as new metadata or confirmation status. |
-| onTransactionsChanged(transactionArray) | `Function` | Array of never-before-seen ABCTransaction objects. These are new funds that the GUI should notify the user about. |
+| onNewTransactions(transactionArray) | `Function` | Array of AbcTransaction objects. These transactions are either previously-recognized funds that are being synced to this device for the first time, or updates to previously-seen transactions such as new metadata or confirmation status. |
+| onTransactionsChanged(transactionArray) | `Function` | Array of never-before-seen AbcTransaction objects. These are new funds that the GUI should notify the user about. |
 | onWalletNameChanged(name) | `Function` | The user has changed the wallet name, either on this device or on another device. |
 
-This class also includes all callbacks of [`ABCStorageWallet`](#abcstoragewallet).
+This class also includes all callbacks of [`AbcStorageWallet`](#abcstoragewallet).
 
 ### Class Properties
 
@@ -2054,8 +2054,8 @@ const abcTransactions = abcCurrencyWallet.getTransactions(options, function(erro
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
-| transactions | `Array` | Array of [ABCTransaction](#abctransaction) objects |
+| error | [`AbcError`](#abcerror) | (Javascript) Error object. `null` if no error |
+| transactions | `Array` | Array of [AbcTransaction](#abctransaction) objects |
 
 Returns a list of transactions in the current wallet. Options allow pruning of the search to a subset of the transactions in addition to string filtering. Options are applied in the following order:
 
@@ -2087,14 +2087,14 @@ abcCurrencyWallet.saveTxMetadata(txid, "BTC", metadata).then(() => {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| txid | `String` | The txid of an [`ABCTransaction`](#abctransaction) object |
+| txid | `String` | The txid of an [`AbcTransaction`](#abctransaction) object |
 | currencyCode | `String` | Which crypto-currency this metadata applies to, for wallets with multiple token support. |
-| metadata | [`ABCMetadata`](#abcmetadata) | The metadata to save with the transaction. |
+| metadata | [`AbcMetadata`](#abcmetadata) | The metadata to save with the transaction. |
 | callback | `Callback` | Called when the save is completed. |
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
+| error | [`AbcError`](#abcerror) | (Javascript) Error object. `null` if no error |
 
 Updates the metadata saved with a transaction.
 
@@ -2168,15 +2168,15 @@ const abcReceiveAddress = abcCurrencyWallet.getReceiveAddress(options, , functio
 | Options Param | Type | Description |
 | --- | --- | --- |
 | currencyCode | `String` | (Optional) Chooses the currency or meta-token to get an address for. If not specified, uses the primary currency of this wallet |
-| publicAddress | `String` | (Optional) Get an ABCReceiveAddress object using a previously returned public address. If `publicAddress` is set, `addressTag` must be null or unspecified |
+| publicAddress | `String` | (Optional) Get an AbcReceiveAddress object using a previously returned public address. If `publicAddress` is set, `addressTag` must be null or unspecified |
 | addressTag | `String` | (Optional) Arbitrary tag for this specific address request type. Future calls to getReceiveAddress with the same tag will return the same address as the previous call with the same tag unless that address has received funds. Useful for specifying a "display" address which is shown on screen but never used for email or SMS requests. Calling [lockReceiveAddress](#lockreceiveaddress) will cause this address to no longer be returned regardless of whether it has received funds. If `addressTag` is set, `publicAddress` must be null or unspecified |
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
-| abcReceiveAddress | `ABCReceiveAddress` | [ABCReceiveAddress](#abcreceiveaddress) |
+| error | [`AbcError`](#abcerror) | (Javascript) Error object. `null` if no error |
+| abcReceiveAddress | `AbcReceiveAddress` | [AbcReceiveAddress](#abcreceiveaddress) |
 
-Returns an [ABCReceiveAddress](#abcreceiveaddress) object. This routine is used to generate a new public address or return a previously request address object.  The `metadata` object
+Returns an [AbcReceiveAddress](#abcreceiveaddress) object. This routine is used to generate a new public address or return a previously request address object.  The `metadata` object
 
 ### saveReceiveAddress
 
@@ -2213,7 +2213,7 @@ abcCurrencyWallet.lockReceiveAddress(function (error) {
 })
 ```
 
-Locks this `receiveAddress` so that any future calls to [ABCCurrencyWallet.getReceiveAddress](#getreceiveaddress), without the `publicAddress` specified, will no longer return this address. Funds can still be received on this address. Use [ABCCurrencyWallet.getReceiveAddress](#getreceiveaddress) with `publicAddress` specified to get back this object in the future.
+Locks this `receiveAddress` so that any future calls to [AbcCurrencyWallet.getReceiveAddress](#getreceiveaddress), without the `publicAddress` specified, will no longer return this address. Funds can still be received on this address. Use [AbcCurrencyWallet.getReceiveAddress](#getreceiveaddress) with `publicAddress` specified to get back this object in the future.
 
 ### parseUri
 
@@ -2232,9 +2232,9 @@ console.log(abcParsedUri.paymentProtocolURL) // -> https://bitpay.com/i/7TEzdBg6
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| abcParsedUri | [`ABCParsedUri`](#abcparseduri) | Object with parsed parameters |
+| abcParsedUri | [`AbcParsedUri`](#abcparseduri) | Object with parsed parameters |
 
-Parses a URI extracting various elements into an [ABCParsedUri](#abcparseduri) object
+Parses a URI extracting various elements into an [AbcParsedUri](#abcparseduri) object
 
 ### encodeUri
 
@@ -2258,13 +2258,13 @@ console.log(uri)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcParsedUri | [`ABCParsedUri`](#abcparseduri) | Object with parsed parameters |
+| abcParsedUri | [`AbcParsedUri`](#abcparseduri) | Object with parsed parameters |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
 | uri | `String` | URI output |
 
-Encodes a URI given a [ABCParsedUri](#abcparseduri) object
+Encodes a URI given a [AbcParsedUri](#abcparseduri) object
 
 
 ### makeAddressQrCode
@@ -2411,14 +2411,14 @@ try {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcSpendInfo | [`ABCSpendInfo`](#abcspendinfo) | [ABCSpendInfo](#abcspendinfo) object with various parameters for a spend operation including output addresses, amounts, or payment protocol payment objects (BIP70) |
+| abcSpendInfo | [`AbcSpendInfo`](#abcspendinfo) | [AbcSpendInfo](#abcspendinfo) object with various parameters for a spend operation including output addresses, amounts, or payment protocol payment objects (BIP70) |
 | callback | `Callback` | (Javascript) Callback function |
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| abcTransaction | [`ABCTransaction`](#abctransaction) | Unsigned [ABCTransaction](#abctransaction) object |
+| abcTransaction | [`AbcTransaction`](#abctransaction) | Unsigned [AbcTransaction](#abctransaction) object |
 
-Creates an unsigned [ABCTransaction](#abctransaction) object which can be then be signed and broadcast to the network. Complete the spend by calling [ABCTransaction.signBroadcastAndSave](#signbroadcastandsave). Estimated fees can be determined by reading back [ABCTransaction.networkFee](#abctransaction)
+Creates an unsigned [AbcTransaction](#abctransaction) object which can be then be signed and broadcast to the network. Complete the spend by calling [AbcTransaction.signBroadcastAndSave](#signbroadcastandsave). Estimated fees can be determined by reading back [AbcTransaction.networkFee](#abctransaction)
 
 May produce an [InsufficientFundsError](#insufficientfundserror) if the amount is too large, or a [DustSpendError](#dustspenderror) if the amount is too small.
 
@@ -2438,16 +2438,16 @@ abcCurrencyWallet.signTx(abcTransaction, function(error) {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcTransaction | [`ABCTransaction`](#abctransaction) | Unsigned [ABCTransaction](#abctransaction) object |
+| abcTransaction | [`AbcTransaction`](#abctransaction) | Unsigned [AbcTransaction](#abctransaction) object |
 | callback | `Callback` | (Javascript) Callback function |
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| abcError | [`ABCError`](#abcerror) | [ABCError](#abcerror) object |
+| abcError | [`AbcError`](#abcerror) | [AbcError](#abcerror) object |
 
-Signs this [ABCTransaction](#abctransaction) object. Does not broadcast this to the blockchain or save it in the local transaction cache. [ABCTransaction](#abctransaction).txid is null until this routine is called.
+Signs this [AbcTransaction](#abctransaction) object. Does not broadcast this to the blockchain or save it in the local transaction cache. [AbcTransaction](#abctransaction).txid is null until this routine is called.
 
-Call [ABCTransaction.broadcastTx](#broadcasttx) followed by [ABCTransaction.saveTx](#savetx) to broadcast and save the transaction.
+Call [AbcTransaction.broadcastTx](#broadcasttx) followed by [AbcTransaction.saveTx](#savetx) to broadcast and save the transaction.
 
 ### broadcastTx
 
@@ -2465,12 +2465,12 @@ abcCurrencyWallet.broadcastTx(abcTransaction, function(error) {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcTransaction | [`ABCTransaction`](#abctransaction) | Signed [ABCTransaction](#abctransaction) object |
+| abcTransaction | [`AbcTransaction`](#abctransaction) | Signed [AbcTransaction](#abctransaction) object |
 | callback | `Callback` | (Javascript) Callback function |
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| abcError | [`ABCError`](#abcerror) | [ABCError](#abcerror) object |
+| abcError | [`AbcError`](#abcerror) | [AbcError](#abcerror) object |
 
 Broadcasts transaction to the blockchain.
 
@@ -2490,12 +2490,12 @@ abcCurrencyWallet.saveTx(abcTransaction, function(error) {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcTransaction | [`ABCTransaction`](#abctransaction) | Signed [ABCTransaction](#abctransaction) object |
+| abcTransaction | [`AbcTransaction`](#abctransaction) | Signed [AbcTransaction](#abctransaction) object |
 | callback | `Callback` | (Javascript) Callback function |
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| abcError | [`ABCError`](#abcerror) | [ABCError](#abcerror) object |
+| abcError | [`AbcError`](#abcerror) | [AbcError](#abcerror) object |
 
 Saves transaction to local cache. This will cause the transaction to show in calls to [abcCurrencyWallet.getTransactions](#gettransactions).
 
@@ -2515,12 +2515,12 @@ abcCurrencyWallet.signBroadcastAndSave(abcTransaction, function(error) {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcTransaction | [`ABCTransaction`](#abctransaction) | Unsigned [ABCTransaction](#abctransaction) object |
+| abcTransaction | [`AbcTransaction`](#abctransaction) | Unsigned [AbcTransaction](#abctransaction) object |
 | callback | `Callback` | (Javascript) Callback function |
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| abcError | [`ABCError`](#abcerror) | [ABCError](#abcerror) object |
+| abcError | [`AbcError`](#abcerror) | [AbcError](#abcerror) object |
 
 Convenience routine to do `signTx`, `broadcastTx`, then `saveTx` in one call.
 
@@ -2554,10 +2554,10 @@ const abcSpendInfo:AbcSpendInfo = {
 
 | Callback Param | Type | Description |
 | --- | --- | --- |
-| abcError | [`ABCError`](#abcerror) | [ABCError](#abcerror) object |
+| abcError | [`AbcError`](#abcerror) | [AbcError](#abcerror) object |
 | abcPaymentProtocolInfo | [`ABCPaymentProtocolInfo`](#abcpaymentprotocolinfo) | [ABCPaymentProtocolInfo](#abcpaymentprotocolinfo) object |
 
-Communicates over network with BIP70 payment request URL to get exact payment parameters. This returns a [ABCPaymentProtocolInfo](#abcpaymentprotocolinfo) which contains a custom, non-editable [ABCSpendTarget](#abcspendtarget) that can simply be placed into an [ABCSpendInfo](#abcspendinfo) object to send the transaction.
+Communicates over network with BIP70 payment request URL to get exact payment parameters. This returns a [ABCPaymentProtocolInfo](#abcpaymentprotocolinfo) which contains a custom, non-editable [AbcSpendTarget](#abcspendtarget) that can simply be placed into an [AbcSpendInfo](#abcspendinfo) object to send the transaction.
 
 
 ### getMaxSpendable
@@ -2584,7 +2584,7 @@ abcCurrencyWallet.getMaxSpendable(abcSpendInfo, function(error, maxNativeAmount)
 })
 ```
 
-Get the maximum amount spendable from this wallet given the parameters of an [ABCSpendInfo](#abcspendinfo) object. The [ABCSpendInfo.spendTargets](#abcspendtarget) `nativeAmount` values are ignored when calculating the max spendable amount. This only ever returns the max spendable of the primary currency of the wallet. Any meta-tokens of the wallet will always have a max spendable equal to the number of meta-tokens in the wallet determined by [getBalance](#getbalance).
+Get the maximum amount spendable from this wallet given the parameters of an [AbcSpendInfo](#abcspendinfo) object. The [AbcSpendInfo.spendTargets](#abcspendtarget) `nativeAmount` values are ignored when calculating the max spendable amount. This only ever returns the max spendable of the primary currency of the wallet. Any meta-tokens of the wallet will always have a max spendable equal to the number of meta-tokens in the wallet determined by [getBalance](#getbalance).
 
 ### sweepPrivateKey
 
@@ -2628,15 +2628,15 @@ Parameters
 | --- | --- | --- |
 | currencyCode | `String` | Chooses the currency or meta-token to spend from. (Required) |
 | noUnconfirmed | `Boolean` | (Optional) If set to TRUE, this will not spend from any unconfirmed funds. Default is FALSE |
-| spendTargets | `Array` | Array of [ABCSpendTarget](#abcspendtarget) objects |
+| spendTargets | `Array` | Array of [AbcSpendTarget](#abcspendtarget) objects |
 | networkFeeOption | `String` | Adjusts network fee amount. Must be either "low", "standard", "high", or "custom". If unspecified, the default is "standard" |
 | customNetworkFee | `String` | Amount of per byte network fee if `networkFeeOption` is set to `custom`. Should be specified as smallest denomination of currency, as a string (i.e. Satoshis or Wei) |
 | nativeAmount | `String` | (Optional) Only used for currency exchange (ie. Shapeshift) to specify the amount to exchange using the source currency instead of the destination currency. It is an error to specify `nativeAmount` in AbcSpendInfo if it is also specified in an AbcSpendTarget.
-| metadata | [`ABCMetadata`](#abcMetadata) | [ABCMetadata](#abcMetadata) object. Outgoing transaction will have the specified metadata copied to the [ABCTransaction](#abctransaction) object |
+| metadata | [`AbcMetadata`](#abcMetadata) | [AbcMetadata](#abcMetadata) object. Outgoing transaction will have the specified metadata copied to the [AbcTransaction](#abctransaction) object |
 
-Parameter object used for creating an unsigned [ABCTransaction](#abctransaction) object.
+Parameter object used for creating an unsigned [AbcTransaction](#abctransaction) object.
 
-## ABCSpendTarget
+## AbcSpendTarget
 
 ```javascript
 // Example spend target with a public addresses
@@ -2676,10 +2676,10 @@ Parameters
 | publicAddress | `String` | Public address in the format of the current wallet's currency. This requires the `nativeAmount` field to be set. Must not set both `publicAddress` and `destWallet` |
 | nativeAmount | `String` | Amount to send in the smallest denomination of the source wallet's currency, as a string. ie Satoshis or Wei |
 | destWallet | [`ABCWallet`](#abcwallet) | Destination wallet to transfer funds to. Must also set `nativeAmount`. Must not set both `publicAddress` and `destWallet` |
-| destMetadata | [`ABCMetadata`](#abcmetadata) | [ABCMetadata](#abcmetadata) object with which will tag the transaction in the destination wallet. Must only be used when `destWallet` is set. |
+| destMetadata | [`AbcMetadata`](#abcmetadata) | [AbcMetadata](#abcmetadata) object with which will tag the transaction in the destination wallet. Must only be used when `destWallet` is set. |
 
 
-## ABCParsedUri
+## AbcParsedUri
 
 | Property | Type | Description |
 | --- | --- | --- |
@@ -2690,7 +2690,7 @@ Parameters
 | bitIDCallbackUri | `String` | BitID Callback URI |
 | paymentProtocolUri | `String` | BIP70 Payment Request URL |
 | nativeAmount | `String` | Amount in the currency's smallest denomination, as a string (i.e. Satoshis or Wei)
-| metadata | [`ABCMetadata`](#abcmetadata) | [ABCMetadata](#abcmetadata) object with info extracted from URI |
+| metadata | [`AbcMetadata`](#abcmetadata) | [AbcMetadata](#abcmetadata) object with info extracted from URI |
 | returnUri | `String` | URI to send user after URI/payment has been processed |
 | bitidPaymentAddress | `Bool` | True if BitID URI is requesting a payment address (experimental)|
 | bitidKycProvider | `Bool` | True if BitID URI would like to provide KYC token (experimental) |
@@ -2701,7 +2701,7 @@ Object contains various parts of a parsed URI depending on the source URI. Any o
 
 ## ABCPaymentProtocolInfo
 
-Object provides basic UI displayable info about a BIP70 payment request. Also includes an [ABCSpendTarget](#abcspendtarget) for use in an [ABCSpendInfo](#abcspendinfo) to send the transaction.
+Object provides basic UI displayable info about a BIP70 payment request. Also includes an [AbcSpendTarget](#abcspendtarget) for use in an [AbcSpendInfo](#abcspendinfo) to send the transaction.
 
 | Property | Type | Description |
 | --- | --- | --- |
@@ -2709,19 +2709,19 @@ Object provides basic UI displayable info about a BIP70 payment request. Also in
 | nativeAmount | `String` | Amount of request, as a string |
 | memo | `String` | Memo field returned by merchant |
 | merchant | `String` | Name of merchat (may be blank) |
-| abcSpendTarget | [`ABCSpendTarget`](#abcspendtarget) | [ABCSpendTarget](#abcspendtarget) object that can be used in an [ABCSpendInfo](#abcspendinfo) |
+| abcSpendTarget | [`AbcSpendTarget`](#abcspendtarget) | [AbcSpendTarget](#abcspendtarget) object that can be used in an [AbcSpendInfo](#abcspendinfo) |
 
-## ABCReceiveAddress
+## AbcReceiveAddress
 
 | Property | Type | Description |
 | --- | --- | --- |
 | publicAddress | `String` | Raw public address in native format of wallet currency type. (ie. base58 for bitcoin, base16 for ethereum) |
 | nativeAmount | `String` | Amount of request denominated in the smallest unit of this wallet's currency, as a string (i.e. Satoshis or Wei) |
-| metadata | `ABCMetadata` | [ABCMetadata](#abcmetadata) object corresponding to this address. Any transactions receiving funds into this address will automatically have this metadata in the [ABCTransaction](#abctransaction) object.
+| metadata | `AbcMetadata` | [AbcMetadata](#abcmetadata) object corresponding to this address. Any transactions receiving funds into this address will automatically have this metadata in the [AbcTransaction](#abctransaction) object.
 
-## ABCMetadata
+## AbcMetadata
 
-Non-blockchain transaction meta data associated to an [ABCTransaction](#abctransaction) or to an [ABCReceiveAddress](#abcreceiveaddress)
+Non-blockchain transaction meta data associated to an [AbcTransaction](#abctransaction) or to an [AbcReceiveAddress](#abcreceiveaddress)
 
 | Property | Type | Description |
 | --- | --- | --- |
@@ -2732,15 +2732,15 @@ Non-blockchain transaction meta data associated to an [ABCTransaction](#abctrans
 | bizId | `Int` | Unique bizId associated to a business listing in the Airbitz Business Directory |
 | miscJson | `String` | Generic JSON string that can be used for additional meta data |
 
-## ABCTransaction
+## AbcTransaction
 
 Object represents a signed or unsigned transaction that may or may not be broadcast to the blockchain.
 
 | Property | Type | Description |
 | --- | --- | --- |
-| wallet | [`ABCCurrencyWallet`](#abccurrencywallet) | [ABCCurrencyWallet](#abccurrencywallet) this transaction is from |
+| wallet | [`AbcCurrencyWallet`](#abccurrencywallet) | [AbcCurrencyWallet](#abccurrencywallet) this transaction is from |
 | currencyCode | `String` | Which blockchain currency or token this transaction applies to. |
-| metadata | [`ABCMetadata`](#abcmetadata) | [ABCMetadata](#abcmetadata) of this transaction |
+| metadata | [`AbcMetadata`](#abcmetadata) | [AbcMetadata](#abcmetadata) of this transaction |
 | txid | `String` | Transaction ID as represented by the wallet's crypto currency. For bitcoin this is base16. This parameter is `null` until [signTx](#signtx) is called. |
 | date | `Date` | Date that transaction was broadcast, detected, or confirmed on the blockchain. If the tx detection date is after the confirmation time, then this is the confirmation time. `null` if transaction has not been broadcast |
 | blockHeight | `Int` | Block number that included this transaction |
@@ -2760,7 +2760,7 @@ Object represents a signed or unsigned transaction that may or may not be broadc
 | isDoubleSpend | `Bool` | True if this transaction is found to be a double spend attempt |
 | inputOutputList | `Array` | Array of transaction inputs and outputs |
 
-## ABCDataDump
+## AbcDataDump
 
 An object that contains an entire dump of the memory and disk cache of a wallet.
 
@@ -2769,9 +2769,9 @@ An object that contains an entire dump of the memory and disk cache of a wallet.
 | walletId | `string` | The Id of the dumped wallet |
 | walletType | `string` | The wallet type of the dumped wallet |
 | pluginType | `string` | The plugin type (network) of the dumped wallet |
-| data | `any` | An object containing the actual dump. Every key/value contains a dump of a different cache from inside the wallet. different plugins (for example Etherum and Bitcoin) might return different data structures |
+| data | `any` | An object containing the actual dump. Every key/value contains a dump of a different cache from inside the wallet. different plugins (for example Ethereum and Bitcoin) might return different data structures |
 
-## ABCExchangeRateCache
+## AbcExchangeRateCache
 
 ### addSource
 
@@ -2781,7 +2781,7 @@ const sourceCoinbase = require('airbitz-core-js-bitcoin').exchangeRateSources.co
 const sourceBitcoinAverage = require('airbitz-core-js-bitcoin').exchangeRateSources.bitcoinaverage
 const sourceBraveNewCoin   = require('airbitz-core-js-bitcoin').exchangeRateSources.bravenewcoin
 
-const abcExchangeRateCache = new ABCExchangeRateCache()
+const abcExchangeRateCache = new AbcExchangeRateCache()
 abcExchangeRateCache.addSource(sourceBitstamp)
 abcExchangeRateCache.addSource(sourceCoinbase)
 abcExchangeRateCache.addSource(sourceBitcoinAverage)
@@ -3024,9 +3024,9 @@ console.log(abcParsedUri.paymentProtocolURL) // -> https://bitpay.com/i/7TEzdBg6
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| abcParsedUri | [`ABCParsedUri`](#abcparseduri) | Object with parsed parameters |
+| abcParsedUri | [`AbcParsedUri`](#abcparseduri) | Object with parsed parameters |
 
-Parses a URI extracting various elements into an [ABCParsedUri](#abcparseduri) object
+Parses a URI extracting various elements into an [AbcParsedUri](#abcparseduri) object
 
 ### encodeUri
 
@@ -3050,13 +3050,13 @@ console.log(uri)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcParsedUri | [`ABCParsedUri`](#abcparseduri) | Object with parsed parameters |
+| abcParsedUri | [`AbcParsedUri`](#abcparseduri) | Object with parsed parameters |
 
 | Return Param | Type | Description |
 | --- | --- | --- |
 | uri | `String` | URI output |
 
-Encodes a URI given a [ABCParsedUri](#abcparseduri) object
+Encodes a URI given a [AbcParsedUri](#abcparseduri) object
 
 ### createPrivateKey
 
@@ -3070,13 +3070,13 @@ const walletKey = currencyPlugin.createPrivateKey('wallet:ethereum')
 }
 ```
 
-Creates a new random master private key. The returned object will be used as the `keys` member of an [`ABCWalletInfo`](#abcwalletinfo) structure. Please see [`ABCWalletInfo`](#abcwalletinfo) for documentation on the various key types Edge understands. If your currency is not documented in that section, please submit a pull request to add your format to [the documentation](https://github.com/Airbitz/airbitz-docs/tree/full-api-docs).
+Creates a new random master private key. The returned object will be used as the `keys` member of an [`AbcWalletInfo`](#abcwalletinfo) structure. Please see [`AbcWalletInfo`](#abcwalletinfo) for documentation on the various key types Edge understands. If your currency is not documented in that section, please submit a pull request to add your format to [the documentation](https://github.com/Airbitz/airbitz-docs/tree/full-api-docs).
 
 | Param | Type | Description |
 | --- | --- | --- |
-| type | `string` | The type of wallet to create. See [`ABCWalletInfo`](#abcwalletinfo) for valid wallet types. |
+| type | `string` | The type of wallet to create. See [`AbcWalletInfo`](#abcwalletinfo) for valid wallet types. |
 
-The core will treat the returned object as the `keys` member of an [`ABCWalletInfo`](#abcwalletinfo) object. The core will generate a random `id`, and will use the same `type` as passed to `createPrivateKey`. The core will also insert the `dataKey` and `syncKey`, so the currency plugin does not need to worry about those either.
+The core will treat the returned object as the `keys` member of an [`AbcWalletInfo`](#abcwalletinfo) object. The core will generate a random `id`, and will use the same `type` as passed to `createPrivateKey`. The core will also insert the `dataKey` and `syncKey`, so the currency plugin does not need to worry about those either.
 
 ### derivePublicKey
 
@@ -3097,18 +3097,18 @@ const readOnlyWalletKey = currencyPlugin.derivePublicKey(walletInfo)
 }
 ```
 
-Converts a spending-capable [`ABCWalletInfo`](#abcwalletinfo) structure into a receive-only wallet. The core will treat the return value as the `keys` member of a new [`ABCWalletInfo`](#abcwalletinfo) structure. This has multiple uses:
+Converts a spending-capable [`AbcWalletInfo`](#abcwalletinfo) structure into a receive-only wallet. The core will treat the return value as the `keys` member of a new [`AbcWalletInfo`](#abcwalletinfo) structure. This has multiple uses:
 
 1. Saving a unencrypted wallet on the local device for offline balance checks.
 2. Sharing a wallet with another user is a watch-only mode.
 
-For Bitcoin, this means converting the private seed into an xpub-format key. For Ethereum, it means converting the private key into a payment address. Please see [`ABCWalletInfo`](#abcwalletinfo) for documentation on the various key types Airbitz understands. If your currency is not documented in that section, please submit a pull request to [the documentation](https://github.com/Airbitz/airbitz-docs/tree/full-api-docs).
+For Bitcoin, this means converting the private seed into an xpub-format key. For Ethereum, it means converting the private key into a payment address. Please see [`AbcWalletInfo`](#abcwalletinfo) for documentation on the various key types Airbitz understands. If your currency is not documented in that section, please submit a pull request to [the documentation](https://github.com/Airbitz/airbitz-docs/tree/full-api-docs).
 
 | Param | Type | Description |
 | --- | --- | --- |
-| walletInfo | [`ABCWalletInfo`](#abcwalletinfo) | The private keys to the wallet. |
+| walletInfo | [`AbcWalletInfo`](#abcwalletinfo) | The private keys to the wallet. |
 
-The core will treat the returned object as the `keys` member of a new [`ABCWalletInfo`](#abcwalletinfo) object. The core also manages the `dataKey` and `syncKey`, so the currency plugin does not need to worry about those either.
+The core will treat the returned object as the `keys` member of a new [`AbcWalletInfo`](#abcwalletinfo) object. The core also manages the `dataKey` and `syncKey`, so the currency plugin does not need to worry about those either.
 
 ### displayPrivateKey
 
@@ -3141,14 +3141,14 @@ const options = {
   optionalSettings
 }
 
-const abcTxEngine = await currencyPlugin.makeEngine(walletInfo, options)
+const currencyEngine = await currencyPlugin.makeEngine(walletInfo, options)
 ```
 
-This function creates an [`ABCTxEngine`](#abctxengine) object to send, receive, and list transactions for an individual wallet instance.
+This function creates an [`AbcCurrencyEngine`](#abccurrencyengine) object to send, receive, and list transactions for an individual wallet instance.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| walletInfo | [`ABCWalletInfo`](#abcwalletinfo) | The keys to the wallet. This may include just the pubic key (no private key) in read-only scenarios. See the [`ABCWalletInfo`](#abcwalletinfo) documentation for details. |
+| walletInfo | [`AbcWalletInfo`](#abcwalletinfo) | The keys to the wallet. This may include just the pubic key (no private key) in read-only scenarios. See the [`AbcWalletInfo`](#abcwalletinfo) documentation for details. |
 | options | `Object` | Options for [`currencyPlugin.makeEngine`](#makeengine) |
 
 | Options | Type | Description |
@@ -3160,28 +3160,28 @@ This function creates an [`ABCTxEngine`](#abctxengine) object to send, receive, 
 
 | Return | Type | Description |
 | --- | --- | --- |
-| engine | `Promise<ABCTxEngine>` | A promise that will resolve to the requested engine, or an error. |
+| engine | `Promise<AbcCurrencyEngine>` | A promise that will resolve to the requested engine, or an error. |
 
-The fresh [`ABCTxEngine`](#abctxengine) instance should either load cached transactions from disk, if available, or start with a blank transaction list if this is its first time running for a particular wallet. This makes the [`ABCTxEngine`](#abctxengine) usable right away, creating a fast start-up experience.
+The fresh [`AbcCurrencyEngine`](#abccurrencyengine) instance should either load cached transactions from disk, if available, or start with a blank transaction list if this is its first time running for a particular wallet. This makes the [`AbcCurrencyEngine`](#abccurrencyengine) usable right away, creating a fast start-up experience.
 
-The [`ABCTxEngine`](#abctxengine) instance should only start querying the blockchain for transactions after the core calls `startEngine`. There are cases where the user will want to view their cached transactions without hitting the network, such as with archived walles. In these cases, the core will never call `startEngine`.
+The [`AbcCurrencyEngine`](#abccurrencyengine) instance should only start querying the blockchain for transactions after the core calls `startEngine`. There are cases where the user will want to view their cached transactions without hitting the network, such as with archived walles. In these cases, the core will never call `startEngine`.
 
 The engine should store its per-wallet transaction cache inside the provided `walletLocalFolder`. This location is unencrypted, so the plugin must never cache private keys in here.
 
-Multiple engines may be watching the same blockchain. If these engines would like to share common chain informaiton, such as the last block height or SPV headers, they can maintain a shared cache in the `opts.io.folder` folder passed to the [ABCCorePlugin](#abccoreplugin)'s `createPlugin` method. This is an unencrypted app-wide location.
+Multiple engines may be watching the same blockchain. If these engines would like to share common chain informaiton, such as the last block height or SPV headers, they can maintain a shared cache in the `opts.io.folder` folder passed to the [AbcCorePlugin](#abccoreplugin)'s `createPlugin` method. This is an unencrypted app-wide location.
 
 The `walletFolder` location should never be used for normal currencies. This location is for encrypted and backed-up metadata. There are proposals such as payment channels that may require metadata in the future, but normal currencies don't need this.
 
-All these locations are [Disklet](https://www.npmjs.com/package/disklet) folders. Please see the Disklet documentation for examples of how to access them, or see the sample code for [ABCStorageWallet](#abcstoragewallet).
+All these locations are [Disklet](https://www.npmjs.com/package/disklet) folders. Please see the Disklet documentation for examples of how to access them, or see the sample code for [AbcStorageWallet](#abcstoragewallet).
 
-## ABCTxEngine
+## AbcCurrencyEngine
 
-An `ABCTxEngine` object sends, receives, and lists transactions for a single user wallet. The [ABCCurrencyPlugin](#abccurrencyplugin) object creates `ABCTxEngine` instances through its `makeEngine` method.
+An `AbcCurrencyEngine` object sends, receives, and lists transactions for a single user wallet. The [AbcCurrencyPlugin](#abccurrencyplugin) object creates `AbcCurrencyEngine` instances through its `makeEngine` method.
 
 ### updateSettings
 
 ```javascript
-abcTxEngine.updateSettings(settings)
+currencyEngine.updateSettings(settings)
 ```
 
 | Param | Type | Description |
@@ -3195,7 +3195,7 @@ Returns void. This method is optional if the currency does not have settings.
 ### startEngine
 
 ```javascript
-await abcTxEngine.startEngine()
+await currencyEngine.startEngine()
 ```
 
 Begins checking the blockchain for incoming transactions. Prior to this method, the engine should simply return whatever cached data it has (or nothing, if this is the first run).
@@ -3207,7 +3207,7 @@ Begins checking the blockchain for incoming transactions. Prior to this method, 
 ### killEngine
 
 ```javascript
-await abcTxEngine.killEngine()
+await currencyEngine.killEngine()
 ```
 
 Stops checking the blockchain for new transactions, and flushes any caches to disk. It should be safe to shut down the app once this method completes.
@@ -3285,7 +3285,7 @@ const tokens = {
   tokens: [ "XCP", "TATIANACOIN" ]
 }
 
-abcTxEngine.enableTokens(tokens).catch(handleError)
+currencyEngine.enableTokens(tokens).catch(handleError)
 ```
 
 | Param | Type | Description |
@@ -3326,7 +3326,7 @@ getEnabledTokens():Promise<Array<string>>
 
 // Example
 try {
-  const tokens = await abcTxEngine.getEnabledTokens()
+  const tokens = await currencyEngine.getEnabledTokens()
   console.log(tokens) // => ['WINGS', 'REP']
 } catch (error) {
   console.log(error)
@@ -3362,7 +3362,7 @@ Enable support for a custom meta token
 
 ```javascript
 // Example
-var blockHeight = abcTxEngine.getBlockHeight()
+var blockHeight = currencyEngine.getBlockHeight()
 console.log(blockHeight)
 "455487"
 ```
@@ -3373,7 +3373,7 @@ Retrieve the current block height from the network.
 
 ```javascript
 // Example
-const balance = abcTxEngine.getBalance(options)
+const balance = currencyEngine.getBalance(options)
 ```
 
 | Param | Type | Description |
@@ -3394,7 +3394,7 @@ Get the current balance of this wallet in the currency's smallest denomination (
 
 ```javascript
 // Example
-const numTransactions = abcTxEngine.getNumTransactions(options)
+const numTransactions = currencyEngine.getNumTransactions(options)
 ```
 
 | Param | Type | Description |
@@ -3419,7 +3419,7 @@ const options = {
   numEnteries: 50
 }
 
-abcTxEngine.getTransactions(options)
+currencyEngine.getTransactions(options)
   .then(transaction => {
     console.log(transactions[0].txid) // => "1209befa09ab3efc039abf09490ac34fe09abc938"
   })
@@ -3433,9 +3433,9 @@ abcTxEngine.getTransactions(options)
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| transactions | `Promise<Array<ABCTransaction>>` | A promise that resolves to an array of [ABCTransaction](#abctransaction) objects |
+| transactions | `Promise<Array<AbcTransaction>>` | A promise that resolves to an array of [AbcTransaction](#abctransaction) objects |
 
-Returns an array of transactions matching the options specified. The plugin must fill in the following [ABCTransaction](#abctransaction) fields:
+Returns an array of transactions matching the options specified. The plugin must fill in the following [AbcTransaction](#abctransaction) fields:
 
 * `txid`
 * `date`
@@ -3465,7 +3465,7 @@ Returns an array of all the txids that this wallet currently has. All txids retu
 ### getFreshAddress
 
 ```javascript
-const addressObj = abcTxEngine.getFreshAddress(options)
+const addressObj = currencyEngine.getFreshAddress(options)
 
 console.log(addressObj) // =>
 
@@ -3494,7 +3494,7 @@ Returns an address object that has never received funds. `getFreshAddress` will 
 ### addGapLimitAddresses
 
 ```javascript
-const abcError = abcTxEngine.addGapLimitAddresses(addresses, options)
+const abcError = currencyEngine.addGapLimitAddresses(addresses, options)
 ```
 
 | Param | Type | Description |
@@ -3510,14 +3510,14 @@ The `options` parameter may include the following:
 
 | Return | Type | Description |
 | --- | --- | --- |
-| abcError | [`ABCError`](#abcerror) | [ABCError](#abcerror) object |
+| abcError | [`AbcError`](#abcerror) | [AbcError](#abcerror) object |
 
 When implementing an HD wallet with multiple addresses, wallet implementations typically search for funds by going a limited number of addresses ahead of the last address that has funds received. This is usually about 10 addresses. `addGapLimitAddresses` allows ABC to specify to the plugin to treat the given addresses as if they had funds received and to forward their gap limit accordingly.
 
 ### isAddressUsed
 
 ```javascript
-const isUsed = abcTxEngine.isAddressUsed(address, options)
+const isUsed = currencyEngine.isAddressUsed(address, options)
 ```
 
 | Param | Type | Description |
@@ -3559,15 +3559,7 @@ This routine will set [AbcTransaction](#abctransaction).signedTx to an Array of 
 await abcTxEngine.broadcastTx(abcTransaction)
 ```
 
-Takes a signed [ABCTransaction](#abctransaction) and broadcasts it to the blockchain network.
-
-### saveTx
-
-```javascript
-await abcTxEngine.saveTx(abcTransaction)
-```
-
-Saves an already signed [ABCTransaction](#abctransaction) object to the local cache so that funds are considered spent by the wallet. Any future calls to [getTransactions](#gettransactions), [getBalance](#getbalance), or [getNumTransactions](#getNumTransactions) should reflect the outcome of this saved transaction. This routine should also trigger the callback [transactionsChanged](#transactionschanged).
+Saves an already signed [AbcTransaction](#abctransaction) object to the local cache so that funds are considered spent by the wallet. Any future calls to [getTransactions](#gettransactions), [getBalance](#getbalance), or [getNumTransactions](#getNumTransactions) should reflect the outcome of this saved transaction. This routine should also trigger the callback [transactionsChanged](#transactionschanged).
 
 ## AbcCurrencyPluginCallbacks
 
@@ -3614,9 +3606,9 @@ onTransactionsChanged(abcTransactions)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| abcTransactions | `Array` | Array of [ABCTransaction](#abctransaction) objects which are new or have changed. Changes may include the block height when this transaction was confirmed |
+| abcTransactions | `Array` | Array of [AbcTransaction](#abctransaction) objects which are new or have changed. Changes may include the block height when this transaction was confirmed |
 
-Callback fires when the plugin detects new or updated transactions from the blockchain network. The plugin must fill in the following [ABCTransaction](#abctransaction) fields:
+Callback fires when the plugin detects new or updated transactions from the blockchain network. The plugin must fill in the following [AbcTransaction](#abctransaction) fields:
 
 * `txid`
 * `date`
@@ -3625,7 +3617,7 @@ Callback fires when the plugin detects new or updated transactions from the bloc
 * `nativeAmount`
 * `ourReceiveAddresses`
 
-## ABCExchangePlugin
+## AbcExchangePlugin
 
 ```javascript
 // SDK users should do this:
@@ -3639,9 +3631,9 @@ const context = makeContext({
 const exchangePlugin = await coinbasePlugin.makePlugin({ io })
 ```
 
-These plugins fetch price information from various exchange-rate providers. They begin life as a generic [ABCCorePlugin](#abccoreplugin) that returns an `ABCExchangePlugin` instance from is `createPlugin` method.
+These plugins fetch price information from various exchange-rate providers. They begin life as a generic [AbcCorePlugin](#abccoreplugin) that returns an `AbcExchangePlugin` instance from is `createPlugin` method.
 
-The `ABCExchangePlugin` object provides information about the exchange, as well as the ability to fetch rates. Exchange plugins should not spin up background tasks, but should make a fresh server connection on every `fetchExchangeRates` call.
+The `AbcExchangePlugin` object provides information about the exchange, as well as the ability to fetch rates. Exchange plugins should not spin up background tasks, but should make a fresh server connection on every `fetchExchangeRates` call.
 
 ### exchangeInfo
 
@@ -3735,8 +3727,8 @@ Create an overlay popup where a user can register a new account or login to a pr
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
-| account | [`ABCAccount`](#abcaccount) | Edge account object |
+| error | [`AbcError`](#abcerror) | (Javascript) Error object. `null` if no error |
+| account | [`AbcAccount`](#abcaccount) | Edge account object |
 
 ![Login UI](#https://airbitz.co/go/wp-content/uploads/2016/08/Screen-Shot-2016-08-26-at-12.50.04-PM.png)
 
@@ -3752,12 +3744,7 @@ Launch an account management window for changing password, PIN, and recovery que
 
 | Param | Type | Description |
 | --- | --- | --- |
-| account | [`ABCAccount`](#abcaccount) | Edge account object to modify |
-| callback | `Callback` | (Javascript) Callback function |
-
-| Return Param | Type | Description |
-| --- | --- | --- |
-| error | [`ABCError`](#abcerror) | (Javascript) Error object. `null` if no error |
+| account | [`AbcAccount`](#abcaccount) | Edge account object to modify |
 
 ![Manage UI](#https://airbitz.co/go/wp-content/uploads/2016/08/Screen-Shot-2016-08-26-at-12.50.26-PM.png)
 

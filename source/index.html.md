@@ -266,7 +266,7 @@ abcContext.loginWithPassword(
   { callbacks },
   function (error, account) {
     if (error) {
-      if (error.code === ABCConditionCodeInvalidOTP) {
+      if (error.name === 'OtpError') {
         console.log("otpResetToken: " + error.otpResetToken)
       } else {
         // login failed.
@@ -308,7 +308,7 @@ AbcAccount *abcAccount;
 
 Login to an Edge account with a full password. May optionally send 'otp' key which is required for any accounts that have OTP enabled using [AbcAccount.enableOtp](#enableotp). OTP key can be retrieved from a device that has account logged in and OTP enabled using getOtpLocalKey.
 
-If routine returns with error.code == ABCConditionCodeInvalidOTP, then the account has OTP enabled and needs the OTP key specified in parameter 'otp'. AbcError object may have properties otpResetToken and otpResetDate set which allow the user to call requestOtpReset to disable OTP.
+If routine returns with `error.name` == 'OtpError', then the account has OTP enabled and needs the OTP key specified in parameter 'otp'. AbcError object may have properties otpResetToken and otpResetDate set which allow the user to call requestOtpReset to disable OTP.
 
 This routine allows caller to receive back an error.otpResetToken which is used with requestOtpReset to remove OTP from the specified account.
 
@@ -633,7 +633,7 @@ try {
 ```
 Launches an OTP reset timer on the server, which will disable the OTP authentication requirement on the account `username` when timeout expires. The expiration timeout is set when OTP is first enabled using [AbcAccount.enableOtp](#enableotp).
 
-To obtain an otpResetToken, attempt a login into the OTP protected account using loginWithPassword with the correct username/password. The login should fail with error.code == ABCConditionCodeInvalidOTP. The OTP token will be in the error.otpResetToken property of the AbcError object.
+To obtain an otpResetToken, attempt a login into the OTP protected account using loginWithPassword with the correct username/password. The login should fail with error.name == 'OtpError'. The OTP token will be in the error.otpResetToken property of the AbcError object.
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1018,7 +1018,7 @@ try {
 }
 ```
 
-Removes the OTP reset request from the server for the currently logged in user. When a user logs in on a new device for an account with OTP enabled, the login will fail with ABCConditionCodeInvalidOTP. A reset request can then be made using AbcContext.requestOtpReset. cancelOtpResetRequest allows a logged in user to cancel that request and prevent that device from logging in.
+Removes the OTP reset request from the server for the currently logged in user. When a user logs in on a new device for an account with OTP enabled, the login will fail with 'OtpError'. A reset request can then be made using AbcContext.requestOtpReset. cancelOtpResetRequest allows a logged in user to cancel that request and prevent that device from logging in.
 
 ### signBitIDRequest
 
@@ -1064,7 +1064,7 @@ abcAccount.createWallet("wallet:repo:ethereum",
                         function (error, id) { /* your callback */ })
 ```
 
-Create a new [ABCWallet](#abcwallet) object and add it to the current account. Each wallet object represents key storage for a specific cryptocurrency type or other misc functionality such as BitID or general data storage. Once a wallet is created, the wallet keys cannot be modified. ABCWallet objects may be shared between AbcAccount objects of the same or different users given permission by the user.
+Create a new [AbcWalletInfo](#abcwalletinfo) object and add it to the current account. Each wallet object represents key storage for a specific cryptocurrency type or other misc functionality such as BitID or general data storage. Once a wallet is created, the wallet keys cannot be modified. AbcWalletInfo objects may be shared between AbcAccount objects of the same or different users given permission by the user.
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1076,7 +1076,7 @@ Create a new [ABCWallet](#abcwallet) object and add it to the current account. E
 | error | [`AbcError`](#abcerror) | (Javascript) Error object. `null` if no error |
 | id | `String` | Strings of wallet ID |
 
-Please seee the [AbcWalletInfo](#abcwalletinfo) documentation for the different wallet types Edge understands.
+Please see the [AbcWalletInfo](#abcwalletinfo) documentation for the different wallet types Edge understands.
 
 ### listWalletIds
 
@@ -1099,7 +1099,7 @@ abcAccount.getWallet(walletId)
 const abcWallet = abcAccount.getWallet(walletId)
 ```
 
-Get an [ABCWallet](#abcwallet) object given a `walletId`
+Get an [AbcWalletInfo](#abcwalletinfo) object given a `walletId`
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1107,7 +1107,7 @@ Get an [ABCWallet](#abcwallet) object given a `walletId`
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| abcWallet | [`ABCWallet`](#abcwallet) | [ABCWallet](#abcwallet) object |
+| abcWallet | [`AbcWalletInfo`](#abcwalletinfo) | [AbcWalletInfo](#abcwalletinfo) object |
 
 ### getFirstWallet
 
@@ -1118,7 +1118,7 @@ abcAccount.getFirstWallet(walletType)
 const abcWallet = abcAccount.getFirstWallet('wallet:repo:ethereum')
 ```
 
-Get the first [ABCWallet](#abcwallet) object of type `walletType`
+Get the first [AbcWalletInfo](#abcwalletinfo) object of type `walletType`
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1127,7 +1127,7 @@ Get the first [ABCWallet](#abcwallet) object of type `walletType`
 
 | Return Param | Type | Description |
 | --- | --- | --- |
-| abcWallet | [`ABCWallet`](#abcwallet) | (Javascript) Error object. `null` if no error |
+| abcWallet | [`AbcWalletInfo`](#abcwalletinfo) | (Javascript) Error object. `null` if no error |
 
 ### changeWalletStates
 
@@ -2675,7 +2675,7 @@ Parameters
 | currencyCode | `String` | (Optional) Chooses the currency or meta-token type for the destination receiving address or wallet. If not specified, uses the primary currency of this wallet. If the specified `currencyCode` differs from that specified in the parent [`AbcSpendInfo`](#abcspendinfo) then this spend will utilize an exchange operation (if possible) using a 3rd party service such as Shape Shift. |
 | publicAddress | `String` | Public address in the format of the current wallet's currency. This requires the `nativeAmount` field to be set. Must not set both `publicAddress` and `destWallet` |
 | nativeAmount | `String` | Amount to send in the smallest denomination of the source wallet's currency, as a string. ie Satoshis or Wei |
-| destWallet | [`ABCWallet`](#abcwallet) | Destination wallet to transfer funds to. Must also set `nativeAmount`. Must not set both `publicAddress` and `destWallet` |
+| destWallet | [`AbcCurrencyWallet`](#abccurrencywallet) | Destination wallet to transfer funds to. Must also set `nativeAmount`. Must not set both `publicAddress` and `destWallet` |
 | destMetadata | [`AbcMetadata`](#abcmetadata) | [AbcMetadata](#abcmetadata) object with which will tag the transaction in the destination wallet. Must only be used when `destWallet` is set. |
 
 

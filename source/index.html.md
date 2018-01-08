@@ -800,10 +800,10 @@ Change the PIN of the currently logged in AbcAccount, and configure whether the 
 | --- | --- |
 | Promise<void> | Resolves or rejects once the function finishes. |
 
-### changeRecoveryQuestions
+### changeRecovery
 
 ```javascript
-const recoveryKey = await abcAccount.changeRecoveryQuestions(
+const recoveryKey = await abcAccount.changeRecovery(
   [
     'What is your name?',
     'What is your quest?',
@@ -881,10 +881,10 @@ Removes the PIN from this account. The [`AbcAccount.checkPin`](#checkpin) functi
 | --- | --- |
 | Promise<void> | Resolves or rejects once the function finishes. |
 
-### deleteRecoveryQuestions
+### deleteRecovery
 
 ```javascript
-await abcAccount.deleteRecoveryQuestions()
+await abcAccount.deleteRecovery()
 ```
 
 Removes the recovery questions from this account.

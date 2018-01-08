@@ -785,7 +785,7 @@ Change the password of the currently logged in AbcAccount
 
 | Return Type | Description |
 | --- | --- |
-| Promise<void> | Resolves or rejects once the function finishes. |
+| `Promise<void>` | Resolves or rejects once the function finishes. |
 
 ### changePin
 
@@ -821,7 +821,7 @@ Change the PIN of the currently logged in AbcAccount, and configure whether the 
 
 | Return Type | Description |
 | --- | --- |
-| Promise<void> | Resolves or rejects once the function finishes. |
+| `Promise<void>` | Resolves or rejects once the function finishes. |
 
 ### changeRecovery
 
@@ -851,7 +851,7 @@ Change the recovery questions and anwers for the the logged in AbcAccount.
 
 | Return Type | Description |
 | --- | --- |
-| Promise<string> | Resolves or rejects once the function finishes. The resolved value is a recoveryKey, which the user should email to themselves. Logging in via recovery requires having access to this key. |
+| `Promise<string>` | Resolves or rejects once the function finishes. The resolved value is a recoveryKey, which the user should email to themselves. Logging in via recovery requires having access to this key. |
 
 ### checkPassword
 
@@ -902,7 +902,7 @@ Removes the PIN from this account. The [`AbcAccount.checkPin`](#checkpin) functi
 
 | Return Type | Description |
 | --- | --- |
-| Promise<void> | Resolves or rejects once the function finishes. |
+| `Promise<void>` | Resolves or rejects once the function finishes. |
 
 ### deleteRecovery
 
@@ -914,7 +914,7 @@ Removes the recovery questions from this account.
 
 | Return Type | Description |
 | --- | --- |
-| Promise<void> | Resolves or rejects once the function finishes. |
+| `Promise<void>` | Resolves or rejects once the function finishes. |
 
 ### OTP Properties
 
@@ -933,7 +933,7 @@ Removes the OTP reset request from the server for the currently logged in user. 
 
 | Return Type | Description |
 | --- | --- |
-| Promise<void> | Resolves or rejects once the function finishes. |
+| `Promise<void>` | Resolves or rejects once the function finishes. |
 
 ### disableOtp
 
@@ -945,7 +945,7 @@ Removes the OTP authentication requirement from the server for the currently log
 
 | Return Type | Description |
 | --- | --- |
-| Promise<void> | Resolves or rejects once the function finishes. |
+| `Promise<void>` | Resolves or rejects once the function finishes. |
 
 ### enableOtp
 
@@ -962,7 +962,7 @@ Enables 2-factor protection for this account.
 
 | Return Type | Description |
 | --- | --- |
-| Promise<void> | Resolves or rejects once the function finishes. |
+| `Promise<void>` | Resolves or rejects once the function finishes. |
 
 ### fetchLobby
 

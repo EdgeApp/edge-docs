@@ -238,7 +238,7 @@ abcContext.getLocalAccount("JoeHomey", null,
 
 (Proposal)
 
-Get local account details for a previously logged in account. This returns an AbcAccount object with a `null` `dataStore` object but with a functioning `localDataStore` object. This is effectively getting the non-encrypted account data which can be accessed without the user logging into the device with a password, PIN, or fingerpint.
+Get local account details for a previously logged in account. This returns an AbcAccount object with a `null` `dataStore` object but with a functioning `localDataStore` object. This is effectively getting the non-encrypted account data which can be accessed without the user logging into the device with a password, PIN, or fingerprint.
 
 Any [ABCWallet](#abcwallet) objects in the account will also have `null` `dataStore` objects but with functioning `localDataStore` objects. This is commonly used for background processing the accounts/wallets on a device to do querying of cryptocurrency transactions while the user is not logged in.
 
@@ -653,6 +653,29 @@ const plugins = await abcContext.getCurrencyPlugins()
 ```
 
 Retrieves an array of [`AbcCurrencyPlugin`](#abccurrencyplugin) objects extracted from the plugin list passed in at context creation time. These can be used for parsing URI's, retrieving currency information, and other currency-related tasks.
+
+### fetchMessages
+
+```javascript
+const messages = await context.fetchLoginMessages();
+
+for (const username of Object.keys(messages)) {
+  if (messages[username].otpResetPending) {
+    console.log(`User ${username} has an OTP reset pending`)
+  }
+}
+```
+
+Fetches account status alerts for all users that have ever logged into this device.
+
+| Return Type | Description |
+| --- | --- |
+| `Promise<AbcLoginMessages>` | A map from usernames to status flags. |
+
+| Status Flag | Type | Description |
+| --- | --- | --- |
+| otpResetPending | boolean | True if someone is trying to turn off OTP (2-factor) protection on this account. |
+| recovery2Corrupt | boolean | There was an error setting up recovery questions, so the user must re-configure these before recovery logins will work again. |
 
 ## AbcAccount
 

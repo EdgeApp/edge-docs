@@ -49,7 +49,24 @@ First you'll have to have the Edge Wallet building locally. Please follow the
 instructions in the Edge Wallet [README][edge-readme].
 
 Once you are able to build Edge Wallet, you can make your plugin a dependency
-and add it to the `plugins` array at the bottom of the `package.json`. 
+and add it to the `plugins` array at the bottom of the `package.json` like so:
+
+```
+    "devDependencies": {
+        ...
+        "edge-plugin-simplex": "https://github.com/Airbitz/edge-plugin-simplex.git#c1b81e1",
+        "my-edge-plugin": "https://github.com/MyUsername/my-edge-plugin.git"
+        ...
+    }
+
+...
+    "plugins": {
+        "buysell": [
+            "edge-plugin-simplex",
+            "my-edge-plugin"
+        ],
+        "spend": []
+```
 
 At this point you can build Edge Wallet, and use your plugin. If you need to
 debug your plugin, you can use Safari to debug iOS and

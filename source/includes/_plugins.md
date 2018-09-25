@@ -30,7 +30,7 @@ package, plugins can easily:
 ## Creating a plugin
 
 ```javascript
-git clone https://github.com/teneighty/edge-plugin-skeleton
+git clone https://github.com/EdgeApp/edge-plugin-skeleton
 cd edge-plugin-skeleton
 npm install
 ```

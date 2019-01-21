@@ -141,6 +141,9 @@ if (typeof window.edgeProvider === 'Object') {
   if (!authToken) {
     // Generate a random value to store in the wallet
     authToken = window.randomBytes(32).toString('hex')
+    await window.edgeProvider.writeData({
+      myAuthToken: authToken
+    })
   }
   // Send authToken to website to authenticate user or create a new account for them
 }
@@ -182,7 +185,7 @@ if (typeof window.edgeProvider === 'Object') {
           publicAddress: '39LPRaWgum1tPBsxToeydvYF9bbNAUdBZX',
           nativeAmount: '123456789'
         }
-      ]
+      ],
       metadata: {
         name: 'Bitrefill',
         category: 'Expense:Gift Cards',

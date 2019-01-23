@@ -17,6 +17,18 @@ provided by this object allowing the website to access the user wallet.
 The following examples illustrate the 3 basic use cases of the `edgeProvider` API for integration
 with an exchange service
 
+#### Check if edgeProvider object exists
+
+Website should check first for the existence of the `window.edgeProvider` object to determine
+the availability of the Edge Provider API
+
+```javascript
+// Check if running inside Edge
+if (typeof window.edgeProvider === 'object') {
+  // Continue with using window.edgeProvider
+}
+```
+
 #### Create and retrieve an authToken
 
 A typical use case for the EdgeProvider is for a website to generate a unique authentication
@@ -26,87 +38,72 @@ to read back the encrypted username and auth token and use it to authenticate th
 instead of asking for a username and password.
 
 ```javascript
-// Check if running inside Edge
-if (typeof window.edgeProvider === 'Object') {
-  let authToken
-  let username
-  try {
-    const results = await window.edgeProvider.readData('username', 'authToken')
-    authToken = results.authToken
-    username = results.username
-  } catch (e) {
-    console.log(e)
-  }
+let authToken
+let username
+try {
+  const results = await window.edgeProvider.readData('username', 'authToken')
+  authToken = results.authToken
+  username = results.username
+} catch (e) {
+  console.log(e)
+}
 
-  if (username && authToken) {
-    // Send username and authToken to website to authenticate user
-  } else {
-    // Website should launch into account creation mode. At account creation, website
-    // should create a unique authentication token for the user as an alternative to
-    // a password. Once created, save the username and auth token using
-    // saveAccountCredentials function below.
-  }
+if (username && authToken) {
+  // Send username and authToken to website to authenticate user
+} else {
+  // Website should launch into account creation mode. At account creation, website
+  // should create a unique authentication token for the user as an alternative to
+  // a password. Once created, save the username and auth token using
+  // saveAccountCredentials function below.
+}
 
-  const saveAccountCredentials = (username, authToken) => {
-    await window.edgeProvider.writeData({
-      username,
-      authToken
-    })
-  }
+const saveAccountCredentials = (username, authToken) => {
+  await window.edgeProvider.writeData({
+    username,
+    authToken
+  })
 }
 ```
 
 #### Get an address from wallet
 
 ```javascript
-// Check if running inside Edge
-if (typeof window.edgeProvider === 'Object') {
-  try {
-    const currencyCode = await window.edgeProvider.setCurrentWallet(['BCH', 'ETH', 'BTC'])
+const currencyCode = await window.edgeProvider.chooseCurrentWallet(['BCH', 'ETH', 'BTC'])
 
-    // Next line assumes the user chose an ETH wallet
-    const edgeReceiveAddress = await window.edgeProvider.getReceiveAddress({
-      metadata: {
-        name: 'Wyre',
-        category: 'Exchange:Buy ETH',
-        notes: 'Purchased 2 ETH for $400 USD on 2019-01-01. Order ID 1234567890abcd'
-      }
-    })
-
-    // Use the address
-    console.log(edgeReceiveAddress.publicAddress)
-  } catch (e) {
-    console.log(e)
+// Next line assumes the user chose an ETH wallet
+const edgeReceiveAddress = await window.edgeProvider.getReceiveAddress({
+  metadata: {
+    name: 'Wyre',
+    category: 'Exchange:Buy ETH',
+    notes: 'Purchased 2 ETH for $400 USD on 2019-01-01. Order ID 1234567890abcd'
   }
+})
+
+// Use the address
+console.log(edgeReceiveAddress.publicAddress)
 ```
 
 #### Request wallet to spend to an address
 
 ```javascript
-// Check if running inside Edge
-if (typeof window.edgeProvider === 'Object') {
-  try {
-    const currencyCode = await window.edgeProvider.setCurrentWallet(['BTC'])
-    const edgeTransaction = await window.edgeProvider.requestSpend({
-      currencyCode,
-      spendTargets: [
-        {
-          publicAddress: '39LPRaWgum1tPBsxToeydvYF9bbNAUdBZX',
-          nativeAmount: '123456789'
-        }
-      ],
-      metadata: {
-        name: 'Bitrefill',
-        category: 'Expense:Gift Cards',
-        notes: 'Purchase $200 Whole Foods gift card. Order ID 1234567890abcd'
-      }
-    })
-
-    // Get the txid of transaction
-    console.log(edgeTransaction.txid)
-  } catch (e) {
-    console.log(e)
+const currencyCode = await window.edgeProvider.chooseCurrentWallet(['BTC'])
+const edgeTransaction = await window.edgeProvider.requestSpend({
+  currencyCode,
+  spendTargets: [
+    {
+      publicAddress: '39LPRaWgum1tPBsxToeydvYF9bbNAUdBZX',
+      nativeAmount: '123456789'
+    }
+  ],
+  metadata: {
+    name: 'Bitrefill',
+    category: 'Expense:Gift Cards',
+    notes: 'Purchase $200 Whole Foods gift card. Order ID 1234567890abcd'
   }
+})
+
+// Get the txid of transaction
+console.log(edgeTransaction.txid)
 ```
 
 The following Javascript Flow types describes the functions available in the `window.edgeProvider` object.
@@ -116,16 +113,16 @@ const type EdgeProvider = {
   // Set the currency wallet to interact with. This will show a wallet selector modal
   // for the user to pick a wallet within their list of wallets that match `currencyCodes`
   // Returns the currencyCode chosen by the user
-  async setCurrentWallet: (currencyCodes: Array<string>) => string
+  async chooseCurrentWallet: (currencyCodes: Array<string>) => string
 
   // Get an address from the user's wallet
   async getReceiveAddress: (options: EdgeGetReceiveAddressOptions) => EdgeReceiveAddress,
 
   // Request that the user spend to an address or multiple addresses
-  async requestSpend: (options: EdgeRequestSpendOptions) => EdgeTransaction,
+  async requestSpend: (spendTargets: Array<EdgeSpendTarget>, options: EdgeRequestSpendOptions) => EdgeTransaction,
 
   // Request that the user spend to a URI
-  async requestSpendUri: (options: EdgeRequestSpendUriOptions) => EdgeTransaction,
+  async requestSpendUri: (uri: string, options: EdgeRequestSpendOptions) => EdgeTransaction,
 
   // Write data to user's account. This data is encrypted and persisted in their Edge
   // account and transferred between devices
@@ -170,10 +167,11 @@ const type EdgeMetadata = {
 
 const type EdgeRequestSpendOptions = {
   // Specify the currencyCode to spend to this URI. Required for spending tokens
-  currencyCode: string,
+  currencyCode?: string,
+
+  // This overrides any parameters specified in a URI such as label or message
   metadata?: EdgeMetadata,
   networkFeeOption?: 'low' | 'standard' | 'high',
-  spendTargets?: Array<EdgeSpendTarget>,
 
   // If true, do not allow the user to change the amount to spend
   lockInputs?: boolean,
@@ -182,19 +180,8 @@ const type EdgeRequestSpendOptions = {
   signOnly?: boolean,
 
   // Additional identifier such as a payment ID for Monero or destination tag for Ripple/XRP
+  // This overrides any parameters specified in a URI
   uniqueIdentifier?: string,
-}
-
-const type EdgeRequestSpendOptions = {
-  // Specify the currencyCdoe to spend to this URI. Required for spending tokens
-  currencyCode: string,
-
-  // BIP21 style string to parse and spend to.
-  // ie. "bitcoin:39LPRaWgum1tPBsxToeydvYF9bbNAUdBZX?amount=0.123&label=Bitrefill&message=GiftCards"
-  spendUri: string,
-
-  // Do not broadcast transaction
-  signOnly?: boolean
 }
 
 const type EdgeSignMessageOptions = {

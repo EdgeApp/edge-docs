@@ -72,7 +72,7 @@ const currencyCode = await window.edgeProvider.chooseCurrentWallet(['BCH', 'ETH'
 
 // Next line assumes the user chose an ETH wallet
 const edgeReceiveAddress = await window.edgeProvider.getReceiveAddress({
-  metadata: {
+  metadata: { // Optional metadata to tag incoming transactions with
     name: 'Wyre',
     category: 'Exchange:Buy ETH',
     notes: 'Purchased 2 ETH for $400 USD on 2019-01-01. Order ID 1234567890abcd'
@@ -87,20 +87,38 @@ console.log(edgeReceiveAddress.publicAddress)
 
 ```javascript
 const currencyCode = await window.edgeProvider.chooseCurrentWallet(['BTC'])
-const edgeTransaction = await window.edgeProvider.requestSpend({
-  currencyCode,
-  spendTargets: [
-    {
-      publicAddress: '39LPRaWgum1tPBsxToeydvYF9bbNAUdBZX',
-      nativeAmount: '123456789'
+const edgeTransaction = await window.edgeProvider.requestSpend(
+  [{
+  publicAddress: '39LPRaWgum1tPBsxToeydvYF9bbNAUdBZX',
+  nativeAmount: '123456789'
+  }],
+  {
+    metadata: { // Optional metadata to tag this transaction with
+      name: 'Bitrefill',
+      category: 'Expense:Gift Cards',
+      notes: 'Purchase $200 Whole Foods gift card. Order ID 1234567890abcd'
     }
-  ],
-  metadata: {
-    name: 'Bitrefill',
-    category: 'Expense:Gift Cards',
-    notes: 'Purchase $200 Whole Foods gift card. Order ID 1234567890abcd'
   }
-})
+)
+
+// Get the txid of transaction
+console.log(edgeTransaction.txid)
+```
+
+#### Request wallet to spend to a URI
+
+```javascript
+const currencyCode = await window.edgeProvider.chooseCurrentWallet(['BTC'])
+const edgeTransaction = await window.edgeProvider.requestSpendUri(
+  'bitcoin:39LPRaWgum1tPBsxToeydvYF9bbNAUdBZX?amount=1.23456789',
+  {
+    metadata: { // Optional metadata to tag this transaction with
+      name: 'Bitrefill',
+      category: 'Expense:Gift Cards',
+      notes: 'Purchase $200 Whole Foods gift card. Order ID 1234567890abcd'
+    }
+  }  
+)
 
 // Get the txid of transaction
 console.log(edgeTransaction.txid)
@@ -119,10 +137,10 @@ const type EdgeProvider = {
   async getReceiveAddress: (options: EdgeGetReceiveAddressOptions) => EdgeReceiveAddress,
 
   // Request that the user spend to an address or multiple addresses
-  async requestSpend: (spendTargets: Array<EdgeSpendTarget>, options: EdgeRequestSpendOptions) => EdgeTransaction,
+  async requestSpend: (spendTargets: Array<EdgeSpendTarget>, options?: EdgeRequestSpendOptions) => EdgeTransaction,
 
   // Request that the user spend to a URI
-  async requestSpendUri: (uri: string, options: EdgeRequestSpendOptions) => EdgeTransaction,
+  async requestSpendUri: (uri: string, options?: EdgeRequestSpendOptions) => EdgeTransaction,
 
   // Write data to user's account. This data is encrypted and persisted in their Edge
   // account and transferred between devices

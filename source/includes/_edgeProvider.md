@@ -131,7 +131,7 @@ const type EdgeProvider = {
   // Set the currency wallet to interact with. This will show a wallet selector modal
   // for the user to pick a wallet within their list of wallets that match `currencyCodes`
   // Returns the currencyCode chosen by the user
-  async chooseCurrentWallet: (currencyCodes: Array<string>) => string
+  async chooseCurrencyWallet: (currencyCodes: Array<string>) => string
 
   // Get an address from the user's wallet
   async getReceiveAddress: (options: EdgeGetReceiveAddressOptions) => EdgeReceiveAddress,

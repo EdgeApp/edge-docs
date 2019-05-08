@@ -68,7 +68,7 @@ const saveAccountCredentials = (username, authToken) => {
 #### Get an address from wallet
 
 ```javascript
-const currencyCode = await window.edgeProvider.chooseCurrentWallet(['BCH', 'ETH', 'BTC'])
+const currencyCode = await window.edgeProvider.chooseCurrencyWallet(['BCH', 'ETH', 'BTC'])
 
 // Next line assumes the user chose an ETH wallet
 const edgeReceiveAddress = await window.edgeProvider.getReceiveAddress({
@@ -86,7 +86,7 @@ console.log(edgeReceiveAddress.publicAddress)
 #### Request wallet to spend to an address
 
 ```javascript
-const currencyCode = await window.edgeProvider.chooseCurrentWallet(['BTC'])
+const currencyCode = await window.edgeProvider.chooseCurrencyWallet(['BTC'])
 const edgeTransaction = await window.edgeProvider.requestSpend(
   [{
   publicAddress: '39LPRaWgum1tPBsxToeydvYF9bbNAUdBZX',
@@ -108,7 +108,7 @@ console.log(edgeTransaction.txid)
 #### Request wallet to spend to a URI
 
 ```javascript
-const currencyCode = await window.edgeProvider.chooseCurrentWallet(['BTC'])
+const currencyCode = await window.edgeProvider.chooseCurrencyWallet(['BTC'])
 const edgeTransaction = await window.edgeProvider.requestSpendUri(
   'bitcoin:39LPRaWgum1tPBsxToeydvYF9bbNAUdBZX?amount=1.23456789',
   {

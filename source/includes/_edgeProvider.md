@@ -19,15 +19,35 @@ with an exchange service
 
 #### Check if edgeProvider object exists
 
-Website should check first for the existence of the `window.edgeProvider` object to determine
-the availability of the Edge Provider API
+Use the following funciton to determine if the website is running inside the Edge application's webview:
 
-```javascript
-// Check if running inside Edge
-if (typeof window.edgeProvider === 'object') {
-  // Continue with using window.edgeProvider
+```js
+function isEdge() {
+  return window.navigator.userAgent.indexOf("app.edge") >= 0;
 }
 ```
+
+Assuming this function returns true, the web page can use the following function to acquire the `edgeProvider` instance:
+
+```js
+/**
+ * Calls the provided callback when the EdgeProvider is ready.
+ */
+function getEdgeProvider(callback) {
+  if (window.edgeProvider != null) {
+    callback(window.edgeProvider);
+  } else {
+    document.addEventListener("edgeProviderReady", function() {
+      callback(window.edgeProvider);
+    });
+  }
+}
+
+// If you prefer a promise, just do this:
+const edgePromise = new Promise(getEdgeProvider);
+```
+
+This code is necessary because the `edgeProvider` object takes some time to appear on the `window` object, so a small wait may be necessary.
 
 #### Create and retrieve an authToken
 

@@ -143,6 +143,11 @@ const edgeTransaction = await window.edgeProvider.requestSpendUri(
 // Get the txid of transaction
 console.log(edgeTransaction.txid)
 ```
+#### Conversion Tracking
+All conversions from Crypto to Fiat are tracked generically. However we need to keep track of purchases of crypto from fiat. Upon completion of a transaction please call the conversion endpoing 
+```javascript
+window.edgeProvider.trackConversion() 
+```
 
 The following Javascript Flow types describes the functions available in the `window.edgeProvider` object.
 

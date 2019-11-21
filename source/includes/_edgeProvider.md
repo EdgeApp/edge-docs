@@ -117,7 +117,8 @@ const edgeTransaction = await window.edgeProvider.requestSpend(
       name: 'Bitrefill',
       category: 'Expense:Gift Cards',
       notes: 'Purchase $200 Whole Foods gift card. Order ID 1234567890abcd'
-    }
+    }, 
+    orderId: 'cWmFSzYKfRMGrN'
   }
 )
 
@@ -136,7 +137,8 @@ const edgeTransaction = await window.edgeProvider.requestSpendUri(
       name: 'Bitrefill',
       category: 'Expense:Gift Cards',
       notes: 'Purchase $200 Whole Foods gift card. Order ID 1234567890abcd'
-    }
+    },
+    orderId: 'cWmFSzYKfRMGrN'
   }  
 )
 
@@ -146,7 +148,7 @@ console.log(edgeTransaction.txid)
 #### Conversion Tracking
 All conversions from Crypto to Fiat are tracked generically. However we need to keep track of purchases of crypto from fiat. Upon completion of a transaction please call the conversion endpoing 
 ```javascript
-window.edgeProvider.trackConversion() 
+window.edgeProvider.trackConversion({currencyCode: 'iso:USD', exchangeAmount: 100, orderId: 'cWmFSzYKfRMGrN') // 1 USD 
 ```
 
 The following Javascript Flow types describes the functions available in the `window.edgeProvider` object.
@@ -178,6 +180,9 @@ const type EdgeProvider = {
 
   // Sign a message using a public address from the current wallet
   async signMessage: (options: EdgeSignMessageOptions) => EdgeSignedMessage,
+
+  // Track a buy conversion for analytics and referral program
+  async trackConversion: (options: EdgeTrackConversionOptions) => void
 }
 
 // ******************************************************
@@ -225,6 +230,9 @@ const type EdgeRequestSpendOptions = {
   // Additional identifier such as a payment ID for Monero or destination tag for Ripple/XRP
   // This overrides any parameters specified in a URI
   uniqueIdentifier?: string,
+
+  // Unique orderID for this exchange transaction
+  orderId?: string
 }
 
 const type EdgeSignMessageOptions = {
@@ -243,5 +251,16 @@ const type EdgeSignedMessage = {
   signedMessage: string
 }
 
-```
+const type EdgeTrackConversionOptions = {
+  // Currency code of the conversion amount
+  // I.e., "btc" or "iso:USD"
+  currencyCode: string,
 
+  // Amount of the conversion
+  amount: number,
+
+  // Unique orderID
+  orderId: string
+}
+
+```

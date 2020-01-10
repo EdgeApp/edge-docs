@@ -61,7 +61,7 @@ instead of asking for a username and password.
 let authToken
 let username
 try {
-  const results = await window.edgeProvider.readData('username', 'authToken')
+  const results = await window.edgeProvider.readData(['username', 'authToken'])
   authToken = results.authToken
   username = results.username
 } catch (e) {

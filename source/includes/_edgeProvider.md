@@ -104,7 +104,7 @@ console.log(edgeReceiveAddress.publicAddress)
 ```
 
 #### Request wallet to spend to an address
-
+Using nativeAmount:
 ```javascript
 const currencyCode = await window.edgeProvider.chooseCurrencyWallet(['BTC'])
 const edgeTransaction = await window.edgeProvider.requestSpend(
@@ -125,6 +125,29 @@ const edgeTransaction = await window.edgeProvider.requestSpend(
 // Get the txid of transaction
 console.log(edgeTransaction.txid)
 ```
+Using exchangeAmount:
+```javascript
+const currencyCode = await window.edgeProvider.chooseCurrencyWallet(['BTC'])
+const edgeTransaction = await window.edgeProvider.requestSpend(
+  [{
+  publicAddress: '39LPRaWgum1tPBsxToeydvYF9bbNAUdBZX',
+  exchangeAmount: '0.002'
+  }],
+  {
+    metadata: { // Optional metadata to tag this transaction with
+      name: 'Bitrefill',
+      category: 'Expense:Gift Cards',
+      notes: 'Purchase $200 Whole Foods gift card. Order ID 1234567890abcd'
+    }, 
+    orderId: 'cWmFSzYKfRMGrN'
+  }
+)
+
+// Get the txid of transaction
+console.log(edgeTransaction.txid)
+```
+
+
 
 #### Request wallet to spend to a URI
 
@@ -200,12 +223,17 @@ const type EdgeGetReceiveAddressOptions = {
   metadata?: EdgeMetadata
 }
 
-const type EdgeSpendTarget = {
+const type EdgeProviderSpendTarget = {
   // Public address of destination
   publicAddress: string,
 
-  // Amount in the smallest unit of the currency (ie. satoshis)
-  nativeAmount: string
+  // Amount in the smallest unit of the currency (ie. satoshis). 
+  // If this is specified do not pass exchangeAmount
+  nativeAmount?: string,
+  
+  // Amount specified in the denomination useed by exchange ie., BTC, ETH, BCH
+  // If this is specified do not pass nativeAmount
+  exchangeAmount?: string
 }
 
 const type EdgeMetadata = {

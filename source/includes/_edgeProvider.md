@@ -179,7 +179,7 @@ window.edgeProvider.trackConversion({currencyCode: 'iso:USD', exchangeAmount: 10
 
 Get a list of transactions for the currently selected wallet. User will have to confirm before transactions are returned. Method returns an EdgeGetTransactionsResult object. 
 ```javascript
-const transactions = await window.edgeProvider.getTransactions({currencyCode: 'ETH') 
+const transactions = await window.edgeProvider.getTransactions() 
 ```
 
 The following Javascript Flow types describes the functions available in the `window.edgeProvider` object.
@@ -195,7 +195,7 @@ const type EdgeProvider = {
   async getReceiveAddress: (options: EdgeGetReceiveAddressOptions) => EdgeReceiveAddress,
 
   // Request that the user spend to an address or multiple addresses
-  async requestSpend: (spendTargets: Array<EdgeSpendTarget>, options?: EdgeRequestSpendOptions) => EdgeTransaction,
+  async requestSpend: (spendTargets: Array<EdgeProviderSpendTarget>, options?: EdgeRequestSpendOptions) => EdgeTransaction,
 
   // Request that the user spend to a URI
   async requestSpendUri: (uri: string, options?: EdgeRequestSpendOptions) => EdgeTransaction,
@@ -250,9 +250,6 @@ const type EdgeMetadata = {
 }
 
 const type EdgeRequestSpendOptions = {
-  // Specify the currencyCode to spend to this URI. Required for spending tokens
-  currencyCode?: string,
-
   // This overrides any parameters specified in a URI such as label or message
   metadata?: EdgeMetadata,
   networkFeeOption?: 'low' | 'standard' | 'high',

@@ -175,11 +175,11 @@ All conversions from Crypto to Fiat are tracked generically. However we need to 
 window.edgeProvider.trackConversion({currencyCode: 'iso:USD', exchangeAmount: 100, orderId: 'cWmFSzYKfRMGrN') // 100 USD 
 ```
 
-#### Get Transaction History
+#### Get Wallet History
 
-Get a list of transactions for the currently selected wallet. User will have to confirm before transactions are returned. Method returns an EdgeGetTransactionsResult object. 
+Get a list of transactions for the currently selected wallet. User will have to confirm before transactions are returned. Method returns an EdgeGetWalletHistoryResult object. 
 ```javascript
-const transactions = await window.edgeProvider.getTransactions() 
+const transactions = await window.edgeProvider.getWalletHistory() 
 ```
 
 The following Javascript Flow types describes the functions available in the `window.edgeProvider` object.
@@ -323,7 +323,7 @@ type EdgeTransaction = {
   metadata?: EdgeMetadata
 }
 
-type EdgeGetTransactionsResult = {
+type EdgeGetWalletHistoryResult = {
   fiatCurrencyCode: string, // the fiat currency code of all transactions in the wallet. I.e. "iso:USD"
   balance: string, // the current balance of wallet in the native amount units. I.e. "satoshis"
   transactions: Array<EdgeTransaction>

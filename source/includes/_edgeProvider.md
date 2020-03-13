@@ -172,7 +172,7 @@ console.log(edgeTransaction.txid)
 
 All conversions from Crypto to Fiat are tracked generically. However we need to keep track of purchases of crypto from fiat. Upon completion of a transaction please call the conversion endpoing 
 ```javascript
-window.edgeProvider.trackConversion({currencyCode: 'iso:USD', exchangeAmount: 100, orderId: 'cWmFSzYKfRMGrN') // 100 USD 
+window.edgeProvider.trackConversion({currencyCode: 'iso:USD', exchangeAmount: 100, orderId: 'cWmFSzYKfRMGrN'}) // 100 USD 
 ```
 
 #### Get Wallet History

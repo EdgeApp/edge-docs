@@ -1,14 +1,14 @@
-# Edge Wallet Provider
+# Edge Provider
 
-Edge Wallet Provider is a method for external webpages to access the functionality
-of a logged in user's Edge account while running inside a webview of Edge Wallet on 
+Edge Provider is a method for external webpages to access the functionality
+of a logged in user's Edge account while running inside a webview of Edge on 
 iOS and Android. It's intended use is to provide the wallet additional functionality
 such as buying and selling cryptocurrency by automating the sending and receiving
 of funds from exchanges.
 
 ## How it works
 
-Edge Wallet can launch an embedded browser for a website and provide a globally
+Edge can launch an embedded browser for a website and provide a globally
 accessible `window.edgeProvider` object to the website. Various functions are
 provided by this object allowing the website to access the user wallet.
 
@@ -170,7 +170,7 @@ console.log(edgeTransaction.txid)
 ```
 #### Conversion Tracking
 
-All conversions from Crypto to Fiat are tracked generically. However we need to keep track of purchases of crypto from fiat. Upon completion of a transaction please call the conversion endpoing 
+All conversions from Crypto to Fiat are tracked using the `orderId` provided when calling `requestSpend` or `requestSpendUri`. However, to track purchases of crypto from fiat, please call the conversion endpoint 
 ```javascript
 window.edgeProvider.trackConversion({currencyCode: 'iso:USD', exchangeAmount: 100, orderId: 'cWmFSzYKfRMGrN'}) // 100 USD 
 ```

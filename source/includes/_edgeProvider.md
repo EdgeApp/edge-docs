@@ -110,7 +110,7 @@ const currencyCode = await window.edgeProvider.chooseCurrencyWallet(['BTC'])
 const edgeTransaction = await window.edgeProvider.requestSpend(
   [{
   publicAddress: '39LPRaWgum1tPBsxToeydvYF9bbNAUdBZX',
-  nativeAmount: '123456789'
+  nativeAmount: '123456789' //The smallest denomination of the source wallet’s currency, as a string. ie Satoshis, Wei, drops
   }],
   {
     metadata: { // Optional metadata to tag this transaction with

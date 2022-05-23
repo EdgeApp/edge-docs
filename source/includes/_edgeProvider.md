@@ -88,7 +88,7 @@ const saveAccountCredentials = (username, authToken) => {
 #### Get an address from wallet
 
 ```javascript
-const currencyCode = await window.edgeProvider.chooseCurrencyWallet(['BCH', 'ETH', 'BTC'])
+const currencyCode = await window.edgeProvider.chooseCurrencyWallet(['BCH', 'ETH', 'BTC', 'ETH-USDC'])
 
 // Next line assumes the user chose an ETH wallet
 const edgeReceiveAddress = await window.edgeProvider.getReceiveAddress({
@@ -147,9 +147,59 @@ const edgeTransaction = await window.edgeProvider.requestSpend(
 console.log(edgeTransaction.txid)
 ```
 
+#### Request wallet to spend a token to an address
+
+Using nativeAmount:
+```javascript
+const currencyCode = await window.edgeProvider.chooseCurrencyWallet(['ETH-USDC', 'MATIC-USDC'])
+// currencyCode <== 'ETH-USDC' if user chose such asset
+
+const edgeTransaction = await window.edgeProvider.requestSpend(
+  [{
+  publicAddress: '0x18af1a7713dc3524519a7d1d3eab77828c1202c6',
+  nativeAmount: '201500000'
+  }],
+  {
+    currencyCode: 'ETH-USDC',
+    metadata: { // Optional metadata to tag this transaction with
+      name: 'Bitrefill',
+      category: 'Expense:Gift Cards',
+      notes: 'Purchase $200 Whole Foods gift card. Order ID 1234567890abcd'
+    }, 
+    orderId: 'cWmFSzYKfRMGrN'
+  }
+)
+
+// Get the txid of transaction
+console.log(edgeTransaction.txid)
+```
+Using exchangeAmount:
+```javascript
+const currencyCode = await window.edgeProvider.chooseCurrencyWallet(['ETH-USDC'])
+const edgeTransaction = await window.edgeProvider.requestSpend(
+  [{
+  publicAddress: '0x18af1a7713dc3524519a7d1d3eab77828c1202c6',
+  exchangeAmount: '201.50'
+  }],
+  {
+    currencyCode: 'ETH-USDC',
+    metadata: { // Optional metadata to tag this transaction with
+      name: 'Bitrefill',
+      category: 'Expense:Gift Cards',
+      notes: 'Purchase $200 Whole Foods gift card. Order ID 1234567890abcd'
+    }, 
+    orderId: 'cWmFSzYKfRMGrN'
+  }
+)
+
+// Get the txid of transaction
+console.log(edgeTransaction.txid)
+```
 
 
 #### Request wallet to spend to a URI
+
+URI may be a JSON Payment Protocol compliant URI which would already include the amount and address to be paid
 
 ```javascript
 const currencyCode = await window.edgeProvider.chooseCurrencyWallet(['BTC'])
